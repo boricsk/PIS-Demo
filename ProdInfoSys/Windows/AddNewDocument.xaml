@@ -1,0 +1,139 @@
+﻿<Window x:Class="ProdInfoSys.Windows.AddNewDocument"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:ProdInfoSys.Windows"
+        xmlns:ViewModels="clr-namespace:ProdInfoSys.ViewModels"        
+        xmlns:xctk="http://schemas.xceed.com/wpf/xaml/toolkit"
+        xmlns:notification="clr-namespace:RbCreation.Wpf.ProgressNotifier;assembly=RbCreation.Wpf.ProgressNotifier"
+        xmlns:System="clr-namespace:System;assembly=mscorlib"
+        mc:Ignorable="d"
+        Title="Új followup dokumentum hozzáadása" Height="900" Width="1200" WindowStartupLocation="CenterScreen">
+   <Window.Resources>
+        <BooleanToVisibilityConverter x:Key="BoolToVisibilityConverter"/>
+    </Window.Resources>
+    <!--    <Window.DataContext>
+        <ViewModels:AddNewDocumentViewModel/>
+    </Window.DataContext> -->
+
+    <Grid>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="*"/>
+            <ColumnDefinition Width="3*"/>
+        </Grid.ColumnDefinitions>
+        <Grid>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="50"/>
+                <RowDefinition Height="*"/>
+            </Grid.RowDefinitions>
+            <TextBlock Grid.Row="0" TextWrapping="Wrap" TextAlignment="Center" VerticalAlignment="Center" Text="1. Válassza ki a követési időszakhoz tartozó gépcsoportokat és adja meg a napi tervezett mennyiségeket!"/>
+            <ListBox ItemsSource="{Binding ErpMachineCenters}" Grid.Row="1" Margin="5 5 5 5">
+                <ListBox.ItemTemplate>
+                    <DataTemplate>
+                        <StackPanel Orientation="Horizontal" Margin="2">
+                            <TextBox Text="{Binding DailyPlan, Mode=TwoWay}" Width="50" Margin="0 0 5 0" />
+                            <CheckBox IsChecked="{Binding IsSelected, Mode=TwoWay}"/>
+                            <TextBlock Text="{Binding Workcenter}" Margin="10 0 0 0"/>
+                        </StackPanel>
+                    </DataTemplate>
+                </ListBox.ItemTemplate>
+            </ListBox>
+        </Grid>
+        <Grid Grid.Column="1">
+
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="*"/>
+                
+             </Grid.ColumnDefinitions>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="50"/>
+                <RowDefinition Height="*"/>
+                <RowDefinition Height="*"/>
+                <RowDefinition Height="*"/>
+            </Grid.RowDefinitions>
+            <TextBlock Grid.Column="0" Grid.Row="0" TextWrapping="Wrap" TextAlignment="Center" VerticalAlignment="Center" Text="2. Válassza ki a követési időszakhoz tartozó termelési tervet!" />
+            <ListBox Grid.Column="0" Grid.Row="1"  ItemsSource="{Binding NameOfPlans}" Margin="5,5,5,5" Grid.RowSpan="3" SelectedItem="{Binding NewFollowupDocument.PlanName}"/>            
+            <TextBlock Grid.Column="1" Grid.Row="0" TextWrapping="Wrap" TextAlignment="Center" VerticalAlignment="Center" Text="3. Adja meg a követési időszak adatait!" />
+            <StackPanel Grid.Column="1" Grid.Row="1" Margin="5 5 5 5" Grid.RowSpan="3" >
+                <TextBlock Grid.Column="1" Grid.Row="0" Margin="5 0 0 0" TextWrapping="Wrap" Text="Követési időszak neve" />
+                <TextBox Margin="5" Height="23" VerticalContentAlignment="Center" Text="{Binding NewFollowupDocument.DocumentName}"/>
+                
+                <TextBlock Grid.Column="1" Grid.Row="0" Margin="5 0 0 0" TextWrapping="Wrap" Text="Követési időszak kezdeti dátum" />
+                <DatePicker Margin="5" SelectedDate="{Binding NewFollowupDocument.StartDate}"/>
+                
+                <TextBlock Grid.Column="1" Grid.Row="0" Margin="5 0 0 0" TextWrapping="Wrap" Text="Követési időszak befejezési dátum" />
+                <DatePicker Margin="5" SelectedDate="{Binding NewFollowupDocument.FinishDate}"/>
+
+                <TextBlock Grid.Column="1" Grid.Row="0" Margin="5 0 0 0" TextWrapping="Wrap" Text="További munkanapok hozzáadása" />
+                <DatePicker Margin="5" SelectedDate="{Binding SelectedPickerDate}" SelectedDateFormat="Short"/>
+
+                <ListBox Height="70" Margin="5 0 5 0" ItemsSource="{Binding AdditionalWorkdays}" SelectedItem="{Binding SelectedAdditionalDate}"></ListBox>
+                <WrapPanel>
+                <Button Margin="5 5 5 0" Command="{Binding AddAdditionalDate}" Width="130" Height="30" HorizontalAlignment="Left">
+                    <StackPanel Orientation="Horizontal">                        
+                        <TextBlock Margin="5,0" VerticalAlignment="Center">Hozzáadás a listához</TextBlock>
+                    </StackPanel>
+                </Button>
+                <Button Margin="5 5 5 0" Command="{Binding RemoveAdditionalDate}" Width="130" Height="30" HorizontalAlignment="Right">
+                    <StackPanel Orientation="Horizontal">
+                        <TextBlock Margin="5,0" VerticalAlignment="Center">Törlés a listáról</TextBlock>
+                    </StackPanel>
+                </Button>
+                </WrapPanel>
+                <!-- 
+                <TextBlock Grid.Column="1" Grid.Row="0" Margin="5 0 0 0" TextWrapping="Wrap" Text="Munkanapok száma" />
+                <xctk:IntegerUpDown Grid.Column="1" Value="{Binding NewFollowupDocument.Workdays}" Margin="5 5 0 0" Width="100" HorizontalAlignment="Left" VerticalAlignment="Center" Minimum="1" Increment="1"/>
+                -->
+                <TextBlock Grid.Column="1" Grid.Row="0" Margin="5 0 0 0" TextWrapping="Wrap" Text="Napi műszakhossz (Kézi)" />
+                <xctk:DecimalUpDown Grid.Column="1" Value="{Binding NewFollowupDocument.ManualShiftLength}" Margin="5 5 0 0" Width="100" HorizontalAlignment="Left" VerticalAlignment="Center" Minimum="1" Increment="1"/>
+
+
+                <TextBlock Grid.Column="1" Grid.Row="0" Margin="5 0 0 0" TextWrapping="Wrap" Text="Napi műszakhossz (Gépi)" />
+                <xctk:DecimalUpDown Grid.Column="1" Value="{Binding NewFollowupDocument.MachineShiftLength}" Margin="5 5 0 0" Width="100" HorizontalAlignment="Left" VerticalAlignment="Center" Minimum="1" Increment="1"/>
+
+
+                <TextBlock Grid.Column="1" Grid.Row="0" Margin="5 0 0 0" TextWrapping="Wrap" Text="Műszakszám (Kézi)" />
+                <xctk:IntegerUpDown Grid.Column="1" Value="{Binding NewFollowupDocument.ManualShiftNumber}" Margin="5 5 0 0" Width="100" HorizontalAlignment="Left" VerticalAlignment="Center" Minimum="1" Increment="1"/>
+
+                <TextBlock Grid.Column="1" Grid.Row="0" Margin="5 0 0 0" TextWrapping="Wrap" Text="Műszakszám (Gépi)" />
+                <xctk:IntegerUpDown Grid.Column="1" Value="{Binding NewFollowupDocument.MachineShiftNumber}" Margin="5 5 0 0" Width="100" HorizontalAlignment="Left" VerticalAlignment="Center" Minimum="1" Increment="1"/>
+
+                <TextBlock Grid.Column="1" Grid.Row="0" Margin="5 0 0 0" TextWrapping="Wrap" Text="Hiányzási arány (%)" />
+                <xctk:DecimalUpDown Grid.Column="1" Value="{Binding NewFollowupDocument.AbsenseRatio}" Margin="5 5 0 0" Width="100" HorizontalAlignment="Left" VerticalAlignment="Center" Minimum="1" Increment="1"/>
+                
+                <TextBlock Grid.Column="1" Grid.Row="0" Margin="5 0 0 0" TextWrapping="Wrap" Text="Létszámterv (Nettó)" />
+                <xctk:DecimalUpDown Grid.Column="1" Value="{Binding NewFollowupDocument.HeadcountPlanNet}" Margin="5 5 0 0" Width="100" HorizontalAlignment="Left" VerticalAlignment="Center" Minimum="1" Increment="1"/>
+
+                <TextBlock Grid.Column="1" Grid.Row="0" Margin="5 0 0 0" TextWrapping="Wrap" Text="Létszámterv (Bruttó)" />
+                <xctk:DecimalUpDown Grid.Column="1" Value="{Binding NewFollowupDocument.HeadcountPlanBr}" Margin="5 5 0 0" Width="100" HorizontalAlignment="Left" VerticalAlignment="Center" Minimum="1" Increment="1"/>
+               
+                <TextBlock Grid.Column="1" Grid.Row="0" Margin="5 0 0 0" TextWrapping="Wrap" Text="Megjegyzés" />
+                <TextBox Margin="5" Height="23" VerticalContentAlignment="Center" Text="{Binding NewFollowupDocument.Description}"/>
+                <Button Margin="5 0 5 0" Command="{Binding AddNewDocument}" Height="40">
+                    <StackPanel Orientation="Horizontal">
+                        <Image Source="/img/icons8-create-document-30.png" />
+                        <TextBlock Margin="5,0" VerticalAlignment="Center">Dokumentum létrehozás</TextBlock>
+                    </StackPanel>
+                </Button>
+
+                <Grid Grid.Row="3" Visibility="{Binding IsLoading, Converter={StaticResource BoolToVisibilityConverter}}" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="20">
+                    <notification:ProgressNotifier x:Name="progress" 
+                                       Foreground="#4DA1A9"
+                                       FontFamily="Cascadia Code"
+                                       FontSize="20"
+                                       SpinnerHeight="50"
+                                       SpinnerWidth="50"                                       
+                                       IsBusy="True" VerticalAlignment="Center">
+                        <notification:ProgressNotifier.ProgressTextSource>
+                            <System:String>Betöltés...</System:String>
+                        </notification:ProgressNotifier.ProgressTextSource>
+                    </notification:ProgressNotifier>
+                </Grid>
+            </StackPanel>
+            
+        </Grid>
+    </Grid>
+</Window>

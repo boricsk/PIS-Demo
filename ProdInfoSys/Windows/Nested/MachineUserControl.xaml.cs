@@ -1,0 +1,59 @@
+﻿using ProdInfoSys.Models;
+using ProdInfoSys.ViewModels.Nested;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using System.Windows;
+using System.Windows.Controls;
+using System.Windows.Data;
+using System.Windows.Documents;
+using System.Windows.Input;
+using System.Windows.Media;
+using System.Windows.Media.Imaging;
+using System.Windows.Navigation;
+using System.Windows.Shapes;
+
+namespace ProdInfoSys.Windows.Nested
+{
+    /// <summary>
+    /// Interaction logic for MachineUserControl.xaml
+    /// </summary>
+    public partial class MachineUserControl : UserControl
+    {
+        public MachineUserControl()
+        {
+            InitializeComponent();
+        }
+        private void UserControl_Loaded(object sender, RoutedEventArgs e)
+        {
+            if (DataContext is MachineViewModel vm)
+            {
+                vm.ForceCommit = () =>
+                {
+                    // 1) Commit a cellára és a sorra
+                    DataGrid.CommitEdit(DataGridEditingUnit.Cell, true);
+                    DataGrid.CommitEdit(DataGridEditingUnit.Row, true);
+
+                    // 2) Aktív vezérlő binding frissítése
+                    if (Keyboard.FocusedElement is FrameworkElement fe)
+                    {
+                        fe.GetBindingExpression(TextBox.TextProperty)?.UpdateSource();
+                        fe.GetBindingExpression(CheckBox.IsCheckedProperty)?.UpdateSource();
+                        fe.GetBindingExpression(ComboBox.SelectedItemProperty)?.UpdateSource();
+                        fe.GetBindingExpression(ComboBox.SelectedValueProperty)?.UpdateSource();
+                        fe.GetBindingExpression(DatePicker.SelectedDateProperty)?.UpdateSource();
+                    }
+
+                    // 3) Biztonság kedvéért fókusz le-fel
+                    DataGrid.Focus();
+                    Keyboard.ClearFocus();
+
+                    // 4) UI frissítés
+                    DataGrid.UpdateLayout();
+                };
+            }
+        }
+    }
+}

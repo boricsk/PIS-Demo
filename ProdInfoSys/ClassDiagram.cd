@@ -1,0 +1,419 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<ClassDiagram MajorVersion="1" MinorVersion="1">
+  <Class Name="ProdInfoSys.Classes.BindingProxy" Collapsed="true">
+    <Position X="4" Y="0.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAABAAAAAAAAAgACA=</HashCode>
+      <FileName>Classes\BindingProxy.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="ProdInfoSys.Classes.BuildEmail" Collapsed="true">
+    <Position X="5.75" Y="0.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAACIAAAAARAAAAQAAAABQAAAAgAAAACAgAAAACoAgA=</HashCode>
+      <FileName>Classes\BuildEmail.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="ProdInfoSys.Classes.DapperFunctions" Collapsed="true">
+    <Position X="9.25" Y="0.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAgAACCAAAAAAAAAgAAAAAAABAAAAAAAA=</HashCode>
+      <FileName>Classes\DapperFunctions.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="ProdInfoSys.Classes.DataExchangeManagement" Collapsed="true">
+    <Position X="11" Y="0.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>EAAAAgAAAAAAAAAACABAAAAIAADAAICAAAAAAAAAAAA=</HashCode>
+      <FileName>Classes\DataExchangeManagement.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="ProdInfoSys.Classes.DpApiStorage" Collapsed="true">
+    <Position X="4" Y="1.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AQAAAAAAAAAAAAAQAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Classes\DpApiStorage.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="ProdInfoSys.Classes.ExcelIO" Collapsed="true">
+    <Position X="5.75" Y="1.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAABABAAAAAAAAAAAAAAAAAAAAAQAAAAAAAAAAA=</HashCode>
+      <FileName>Classes\ExcelIO.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="ProdInfoSys.Classes.FollowupDocManagement" Collapsed="true">
+    <Position X="7.5" Y="1.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>ABAAAAAAAAEAAAAAAAAAQAAAAAAAAAAAAAAAAIAAAAA=</HashCode>
+      <FileName>Classes\FollowupDocManagement.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="ProdInfoSys.Classes.MongoDbModel" Collapsed="true">
+    <Position X="4" Y="3.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAACAAAAAAAAAAAAAAAAAAAAAAAgAAA=</HashCode>
+      <FileName>Classes\MongoDbModel.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="ProdInfoSys.Classes.MongoDbOperations&lt;TDocument&gt;" Collapsed="true">
+    <Position X="5.75" Y="3.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAEAgAAAAAAAAAAAAgAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Classes\MongoDbOperations.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="ProdInfoSys.Classes.PasswordBoxHelper" Collapsed="true">
+    <Position X="0.5" Y="4.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>ABAAAAAAAAAAAAAEAAAgABAAAAAgAAAAAAAAAACAAAA=</HashCode>
+      <FileName>Classes\PasswordBoxHelper.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="ProdInfoSys.Classes.RegistryManagement" Collapsed="true">
+    <Position X="4" Y="4.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAACAAAAAAAAAAAAAAAARABAAAAABAAAAAAAAAAEAA=</HashCode>
+      <FileName>Classes\RegistryManagement.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="ProdInfoSys.Classes.SetupManagement" Collapsed="true">
+    <Position X="5.75" Y="4.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AIAAAAAAgQAAAgAAAAAAAAAAACACAACAAAAABAAQAAA=</HashCode>
+      <FileName>Classes\SetupManagement.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="ProdInfoSys.Classes.SqlQueries" Collapsed="true">
+    <Position X="11" Y="4.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAIAAAAAAAAAABAAAAAAACQAAAAEAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Classes\SqlQueries.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="ProdInfoSys.Classes.WindowFactory" Collapsed="true" BaseTypeListCollapsed="true">
+    <Position X="0.5" Y="6.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAEAAEAAAAAAAAAAAAA=</HashCode>
+      <FileName>Classes\WindowFactory.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" Collapsed="true" />
+  </Class>
+  <Class Name="ProdInfoSys.CommandRelay.ProjectCommandRelay" Collapsed="true" BaseTypeListCollapsed="true">
+    <Position X="2.25" Y="4.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAEACAAQAAECAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>CommandRelay\ProjectCommandRelay.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" Collapsed="true" />
+  </Class>
+  <Class Name="ProdInfoSys.DI.ConnectionManagement" Collapsed="true" BaseTypeListCollapsed="true">
+    <Position X="7.5" Y="0.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>IAAEAAAEAAAAAAAACEIAAAAAAAEAAAQAgAAAAEAgAAA=</HashCode>
+      <FileName>DI\ConnectionManagement.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" Collapsed="true" />
+  </Class>
+  <Class Name="ProdInfoSys.DI.UserControlFunctions" Collapsed="true" BaseTypeListCollapsed="true">
+    <Position X="9.25" Y="5.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AEICAAAAAAAAQAACAAAAAAAQAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>DI\UserControlFunctions.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" Collapsed="true" />
+  </Class>
+  <Class Name="ProdInfoSys.DI.UserDialogServices" Collapsed="true" BaseTypeListCollapsed="true">
+    <Position X="11" Y="5.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAgBAAAAAAAAEAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>DI\UserDialogServices.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" Collapsed="true" />
+  </Class>
+  <Class Name="ProdInfoSys.ViewModels.Nested.HeadcountViewModel" Collapsed="true" BaseTypeListCollapsed="true">
+    <Position X="11" Y="1.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AEACkBAAFAQYoAwIoAAAAgIQkAEAEEIlAAACCAQEECE=</HashCode>
+      <FileName>ViewModels\Nested\HeadcountViewModel.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" Collapsed="true" />
+  </Class>
+  <Class Name="ProdInfoSys.ViewModels.Nested.InspectionViewModel" Collapsed="true" BaseTypeListCollapsed="true">
+    <Position X="2.25" Y="2.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>pFEGkBASEARx4EQIoIABigMTwAAAUUKHYBxGCAQEECA=</HashCode>
+      <FileName>ViewModels\Nested\InspectionViewModel.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" Collapsed="true" />
+  </Class>
+  <Class Name="ProdInfoSys.ViewModels.Nested.MachineViewModel" Collapsed="true" BaseTypeListCollapsed="true">
+    <Position X="5.75" Y="2.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>hFUGkBCSEARx4EQIoIAHigMTwAAAUUKHYBxGDAQEECA=</HashCode>
+      <FileName>ViewModels\Nested\MachineViewModel.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" Collapsed="true" />
+  </Class>
+  <Class Name="ProdInfoSys.ViewModels.Nested.ManualViewModel" Collapsed="true" BaseTypeListCollapsed="true">
+    <Position X="11" Y="2.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>hFEGkBAQEARQ8EQKoIAHiiETwAAAUUKHYBxmKAQMECA=</HashCode>
+      <FileName>ViewModels\Nested\ManualViewModel.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" Collapsed="true" />
+  </Class>
+  <Class Name="ProdInfoSys.ViewModels.Nested.StatusReportQrqcViewModel" Collapsed="true" BaseTypeListCollapsed="true">
+    <Position X="2.25" Y="5.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>ORBQYAGQADISA8MHsBA2wEWZp9xBgMiiYlxWwAUhHQI=</HashCode>
+      <FileName>ViewModels\Nested\StatusReportQrqcViewModel.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" Collapsed="true" />
+  </Class>
+  <Class Name="ProdInfoSys.ViewModels.Nested.StatusReportViewModel" Collapsed="true" BaseTypeListCollapsed="true">
+    <Position X="5.75" Y="5.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>OVBQYFCQAjISA8eHoRI2wAWRp11FgsKiYlxWyAchHRI=</HashCode>
+      <FileName>ViewModels\Nested\StatusReportViewModel.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" Collapsed="true" />
+  </Class>
+  <Class Name="ProdInfoSys.ViewModels.AddNewDocumentViewModel" Collapsed="true" BaseTypeListCollapsed="true">
+    <Position X="2.25" Y="0.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>IEAAAAAAQIChFAEgIAAAAQAQggAAgCCAAAAIAEAgAMI=</HashCode>
+      <FileName>ViewModels\AddNewDocumentViewModel.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" Collapsed="true" />
+  </Class>
+  <Class Name="ProdInfoSys.ViewModels.DeleteWindowViewModel" Collapsed="true" BaseTypeListCollapsed="true">
+    <Position X="2.25" Y="1.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>BEAAAAAAAAggAAAAIAAAAAAAgAQAAAACAAAAAACAACA=</HashCode>
+      <FileName>ViewModels\DeleteWindowViewModel.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" Collapsed="true" />
+  </Class>
+  <Class Name="ProdInfoSys.ViewModels.MainWindowViewModel" Collapsed="true" BaseTypeListCollapsed="true">
+    <Position X="7.5" Y="2.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AGAAABAAAQggAB3EMQSAABECgABwiCCAQAAIAAqAAQI=</HashCode>
+      <FileName>ViewModels\MainWindowViewModel.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" Collapsed="true" />
+  </Class>
+  <Class Name="ProdInfoSys.ViewModels.MeetingMemoViewModel" Collapsed="true" BaseTypeListCollapsed="true">
+    <Position X="0.5" Y="3.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>BEAAAQIYBCAQoEAAIAQACMAAgQBEOAAQBBQAAIIAAAA=</HashCode>
+      <FileName>ViewModels\MeetingMemoViewModel.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" Collapsed="true" />
+  </Class>
+  <Class Name="ProdInfoSys.ViewModels.NewQrqcStatusReportViewModel" Collapsed="true" BaseTypeListCollapsed="true">
+    <Position X="7.5" Y="3.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>l0EFIACAEAbQAoEkoTACUEBQgxADRSKlIgBWgAOgFh8=</HashCode>
+      <FileName>ViewModels\NewQrqcStatusReportViewModel.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" Collapsed="true" />
+  </Class>
+  <Class Name="ProdInfoSys.ViewModels.NewStatusReportViewModel" Collapsed="true" BaseTypeListCollapsed="true">
+    <Position X="11" Y="3.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>n0EFIAiAEBZSA4EkoTACUAFQgxADRSKlIgBWgAOgFhU=</HashCode>
+      <FileName>ViewModels\NewStatusReportViewModel.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" Collapsed="true" />
+  </Class>
+  <Class Name="ProdInfoSys.ViewModels.SetupWindowViewModel" Collapsed="true" BaseTypeListCollapsed="true">
+    <Position X="9.25" Y="4.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>ANNDTgQBYAqOBAQKIQlCgiIJigjYPiGOSwgULCWgJCo=</HashCode>
+      <FileName>ViewModels\SetupWindowViewModel.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" Collapsed="true" />
+  </Class>
+  <Class Name="ProdInfoSys.Windows.Nested.HeadcountUserControl" Collapsed="true" BaseTypeListCollapsed="true">
+    <Position X="9.25" Y="1.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAABAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Windows\Nested\HeadcountUserControl.xaml.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" Collapsed="true" />
+  </Class>
+  <Class Name="ProdInfoSys.Windows.Nested.InspectionUserControl" Collapsed="true" BaseTypeListCollapsed="true">
+    <Position X="0.5" Y="2.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAABAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Windows\Nested\InspectionUserControl.xaml.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" Collapsed="true" />
+  </Class>
+  <Class Name="ProdInfoSys.Windows.Nested.MachineUserControl" Collapsed="true" BaseTypeListCollapsed="true">
+    <Position X="4" Y="2.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAABAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Windows\Nested\MachineUserControl.xaml.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" Collapsed="true" />
+  </Class>
+  <Class Name="ProdInfoSys.Windows.Nested.ManualUserControl" Collapsed="true" BaseTypeListCollapsed="true">
+    <Position X="9.25" Y="2.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAABAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Windows\Nested\ManualUserControl.xaml.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" Collapsed="true" />
+  </Class>
+  <Class Name="ProdInfoSys.Windows.Nested.StatusReportQrqcUserControl" Collapsed="true" BaseTypeListCollapsed="true">
+    <Position X="0.5" Y="5.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Windows\Nested\StatusReportQrqcUserControl.xaml.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" Collapsed="true" />
+  </Class>
+  <Class Name="ProdInfoSys.Windows.Nested.StatusReportUserControl" Collapsed="true" BaseTypeListCollapsed="true">
+    <Position X="4" Y="5.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Windows\Nested\StatusReportUserControl.xaml.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" Collapsed="true" />
+  </Class>
+  <Class Name="ProdInfoSys.Windows.AddNewDocument" Collapsed="true" BaseTypeListCollapsed="true">
+    <Position X="0.5" Y="0.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Windows\AddNewDocument.xaml.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" Collapsed="true" />
+  </Class>
+  <Class Name="ProdInfoSys.Windows.DeleteWindow" Collapsed="true" BaseTypeListCollapsed="true">
+    <Position X="0.5" Y="1.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Windows\DeleteWindow.xaml.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" Collapsed="true" />
+  </Class>
+  <Class Name="ProdInfoSys.Windows.MeetingMemoWindow" Collapsed="true" BaseTypeListCollapsed="true">
+    <Position X="2.25" Y="3.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Windows\MeetingMemoWindow.xaml.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" Collapsed="true" />
+  </Class>
+  <Class Name="ProdInfoSys.Windows.NewQrqcStatusReportWindow" Collapsed="true" BaseTypeListCollapsed="true">
+    <Position X="9.25" Y="3.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Windows\NewQrqcStatusReportWindow.xaml.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" Collapsed="true" />
+  </Class>
+  <Class Name="ProdInfoSys.Windows.StatusReportWindow" Collapsed="true" BaseTypeListCollapsed="true">
+    <Position X="7.5" Y="5.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Windows\NewStatusReportWindow.xaml.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" Collapsed="true" />
+  </Class>
+  <Class Name="ProdInfoSys.Windows.SetupWindow" Collapsed="true" BaseTypeListCollapsed="true">
+    <Position X="7.5" Y="4.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Windows\SetupWindow.xaml.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" Collapsed="true" />
+  </Class>
+  <Interface Name="ProdInfoSys.DI.IConnectionManagement" Collapsed="true">
+    <Position X="0.5" Y="7.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>IAAEAAAEAAAAAAAAAEIAAAAAAAEAAAAAgAAAAEAgAAA=</HashCode>
+      <FileName>DI\IConnectionManagement.cs</FileName>
+    </TypeIdentifier>
+  </Interface>
+  <Interface Name="ProdInfoSys.DI.IUserControlFunctions" Collapsed="true">
+    <Position X="9.25" Y="7.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAICAAAAAAAAQAACAAAAAAAQAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>DI\IUserControlFunctions.cs</FileName>
+    </TypeIdentifier>
+  </Interface>
+  <Interface Name="ProdInfoSys.DI.IUserDialogService" Collapsed="true">
+    <Position X="11" Y="7.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAgBAAAAAAAAEAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>DI\IUserDialogService.cs</FileName>
+    </TypeIdentifier>
+  </Interface>
+  <Interface Name="ProdInfoSys.Interfaces.IHasFieldFollowupDoc" Collapsed="true">
+    <Position X="2.25" Y="7.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAACAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Interfaces\IHasFieldFollowupDoc.cs</FileName>
+    </TypeIdentifier>
+  </Interface>
+  <Interface Name="ProdInfoSys.Interfaces.IHasFieldHCFollowupDoc" Collapsed="true">
+    <Position X="4" Y="7.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAgAAAAAAAQAAAAAAAAAAAAAAAAAAAAAAAAAE=</HashCode>
+      <FileName>Interfaces\IHasFieldHCFollowupDoc.cs</FileName>
+    </TypeIdentifier>
+  </Interface>
+  <Interface Name="ProdInfoSys.Interfaces.IHasFieldMachineFollowupDoc" Collapsed="true">
+    <Position X="5.75" Y="7.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AACAAAAAAAAAAAAAQAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Interfaces\IHasFieldMachineFollowupDoc.cs</FileName>
+    </TypeIdentifier>
+  </Interface>
+  <Interface Name="ProdInfoSys.Interfaces.IHasFieldManualFollowupDoc" Collapsed="true">
+    <Position X="7.5" Y="7.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAQAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Interfaces\IHasFieldManualFollowupDoc.cs</FileName>
+    </TypeIdentifier>
+  </Interface>
+  <Interface Name="ProdInfoSys.Interfaces.IWindowFactory" Collapsed="true">
+    <Position X="0.5" Y="8.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAEAAAAAAAAAAAAA=</HashCode>
+      <FileName>Interfaces\IWindowFactory.cs</FileName>
+    </TypeIdentifier>
+  </Interface>
+  <Enum Name="ProdInfoSys.Enums.EnumCallerEntity" Collapsed="true">
+    <Position X="0.5" Y="9.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAEAAAAAAAAAAAAAAAAAQAAAAAAAAAAA=</HashCode>
+      <FileName>Enums\EnumCallerEntity.cs</FileName>
+    </TypeIdentifier>
+  </Enum>
+  <Enum Name="ProdInfoSys.Enums.EnumConStringType" Collapsed="true">
+    <Position X="2.25" Y="9.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAEAIAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Enums\EnumConStringType.cs</FileName>
+    </TypeIdentifier>
+  </Enum>
+  <Enum Name="ProdInfoSys.Enums.EnumMachineType" Collapsed="true">
+    <Position X="4" Y="9.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAABEAAAAAAAAAAAAAIAAAAAAAAAAAAAAgAAAACA=</HashCode>
+      <FileName>Enums\EnumMachineType.cs</FileName>
+    </TypeIdentifier>
+  </Enum>
+  <Enum Name="ProdInfoSys.Enums.EnumTaskStatus" Collapsed="true">
+    <Position X="5.75" Y="9.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAQAAAAAAAAAAAAAAAAEAAAAAAAAAAAAAAAAACA=</HashCode>
+      <FileName>Enums\EnumTaskStatus.cs</FileName>
+    </TypeIdentifier>
+  </Enum>
+  <Font Name="Segoe UI" Size="9" />
+</ClassDiagram>

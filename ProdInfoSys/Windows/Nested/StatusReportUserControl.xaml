@@ -1,0 +1,525 @@
+﻿<UserControl x:Class="ProdInfoSys.Windows.Nested.StatusReportUserControl"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:ProdInfoSys.Windows.Nested"
+             xmlns:lvc="clr-namespace:LiveCharts.Wpf;assembly=LiveCharts.Wpf"
+             mc:Ignorable="d" 
+             d:DesignHeight="450" d:DesignWidth="800">
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="30"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+        <ToolBar Grid.Row="0">
+            <Button Margin="0" Height="30" ToolTip="Összefoglaló küldése" Command="{Binding SendSummarizeMail}" >
+                <StackPanel Orientation="Horizontal">
+                    <Image Source="/img/icons8-email-25.png" />
+                </StackPanel>
+            </Button>
+            <Separator/>
+            <TextBlock Text="{Binding ReportName}" VerticalAlignment="Center" Margin="5 0 5 0" FontFamily="Consolas" FontWeight="Bold"/>
+            <Separator/>
+            <TextBlock Text="{Binding ReportIssueDate}" VerticalAlignment="Center" Margin="15 0 5 0" FontFamily="Consolas" />
+            <Separator/>
+            <TextBlock Text="{Binding CurrentWorkday}" VerticalAlignment="Center" Margin="15 0 5 0" FontFamily="Consolas" />
+        </ToolBar>
+        <TabControl Grid.Row="1" Margin="5">
+            <TabItem Header="Összesítés">
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="*"/>
+                    </Grid.ColumnDefinitions>
+                    <Grid Grid.Column="0">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="*"/>
+                        </Grid.ColumnDefinitions>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="20"/>
+                            <RowDefinition Height="20"/>
+                            <RowDefinition Height="20"/>
+                            <RowDefinition Height="20"/>
+                            <RowDefinition Height="20"/>
+                            <RowDefinition Height="20"/>
+                            <RowDefinition Height="20"/>
+                            <RowDefinition Height="20"/>
+                            <RowDefinition Height="20"/>
+                            <RowDefinition Height="20"/>
+                        </Grid.RowDefinitions>
+                        <TextBlock Grid.Row="0" Grid.Column="1" Text="{Binding SamplePrice}" VerticalAlignment="Center" FontSize="15" FontFamily="Consolas"/>
+                        <TextBlock Grid.Row="1" Grid.Column="1" Text="{Binding PlanPrice}" VerticalAlignment="Center" FontSize="15" FontFamily="Consolas"/>
+                        <TextBlock Grid.Row="2" Grid.Column="1" Text="{Binding PlanDcPrice}" VerticalAlignment="Center" FontSize="15" FontFamily="Consolas"/>
+                        <TextBlock Grid.Row="3" Grid.Column="1" Text="{Binding MaterialCost}" VerticalAlignment="Center" FontSize="15" FontFamily="Consolas"/>
+                        <TextBlock Grid.Row="4" Grid.Column="1" Text="{Binding RepackMaterialCost}" VerticalAlignment="Center" FontSize="15" FontFamily="Consolas"/>
+                        <TextBlock Grid.Row="5" Grid.Column="1" Text="{Binding KftMaterialCost}" VerticalAlignment="Center" FontSize="15" FontFamily="Consolas"/>
+                        <TextBlock Grid.Row="6" Grid.Column="1" Text="{Binding TtlPlan}" VerticalAlignment="Center" FontSize="15" FontWeight="Bold" FontFamily="Consolas"/>
+                        <TextBlock Grid.Row="7" Grid.Column="1" Text="{Binding SalesPlan}" VerticalAlignment="Center" FontSize="15" FontWeight="Bold" FontFamily="Consolas"/>
+                        <TextBlock Grid.Row="8" Grid.Column="1" Text="{Binding SalesPlanDc}" VerticalAlignment="Center" FontSize="15" FontWeight="Bold" FontFamily="Consolas"/>
+                        <TextBlock Grid.Row="9" Grid.Column="1" Text="{Binding DcMovement}" VerticalAlignment="Center" FontSize="15" FontWeight="Bold" FontFamily="Consolas"/>
+
+
+                        <TextBlock Grid.Row="0" Grid.Column="0" Text="Minta" VerticalAlignment="Center" FontSize="15" FontFamily="Consolas"/>
+                        <TextBlock Grid.Row="1" Grid.Column="0" Text="Kimeneti terv" VerticalAlignment="Center" FontSize="15" FontFamily="Consolas"/>
+                        <TextBlock Grid.Row="2" Grid.Column="0" Text="Kimeneti terv DC" VerticalAlignment="Center" FontSize="15" FontFamily="Consolas"/>
+                        <TextBlock Grid.Row="3" Grid.Column="0" Text="Anyagktg. (TTL)" VerticalAlignment="Center" FontSize="15" FontFamily="Consolas"/>
+                        <TextBlock Grid.Row="4" Grid.Column="0" Text="Anyagktg. (Rep.)" VerticalAlignment="Center" FontSize="15" FontFamily="Consolas"/>
+                        <TextBlock Grid.Row="5" Grid.Column="0" Text="Anyagktg. (KFT)" VerticalAlignment="Center" FontSize="15" FontFamily="Consolas"/>
+                        <TextBlock Grid.Row="6" Grid.Column="0" Text="TTL Kimenet" VerticalAlignment="Center" FontWeight="Bold" FontSize="15" FontFamily="Consolas"/>
+                        <TextBlock Grid.Row="7" Grid.Column="0" Text="Sales terv" VerticalAlignment="Center" FontWeight="Bold" FontSize="15" FontFamily="Consolas"/>
+                        <TextBlock Grid.Row="8" Grid.Column="0" Text="Sales terv DC" VerticalAlignment="Center" FontWeight="Bold" FontSize="15" FontFamily="Consolas"/>
+                        <TextBlock Grid.Row="9" Grid.Column="0" Text="DC movement" VerticalAlignment="Center" FontWeight="Bold" FontSize="15" FontFamily="Consolas"/>
+                    </Grid>
+
+                    <Grid Grid.Column="1">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="*"/>
+                        </Grid.ColumnDefinitions>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="20"/>
+                            <RowDefinition Height="20"/>
+                            <RowDefinition Height="20"/>
+                            <RowDefinition Height="20"/>
+                            <RowDefinition Height="20"/>
+
+                        </Grid.RowDefinitions>
+                        <TextBlock Grid.Row="0" Grid.Column="1" Text="{Binding KftProdCompleteRatio}" VerticalAlignment="Center" FontSize="15" FontFamily="Consolas"/>
+                        <TextBlock Grid.Row="1" Grid.Column="1" Text="{Binding KftTimePropRatio}" VerticalAlignment="Center" FontSize="15" FontFamily="Consolas"/>
+                        <TextBlock Grid.Row="2" Grid.Column="1" Text="{Binding RepackProdCompleteRatio}" VerticalAlignment="Center" FontSize="15" FontFamily="Consolas"/>
+                        <TextBlock Grid.Row="3" Grid.Column="1" Text="{Binding RepackTimePropRatio}" VerticalAlignment="Center" FontSize="15" FontFamily="Consolas"/>
+                        <TextBlock Grid.Row="4" Grid.Column="1" Text="{Binding TtlReject}" VerticalAlignment="Center" FontSize="15" FontWeight="Bold" FontFamily="Consolas"/>
+                        
+                        <TextBlock Grid.Row="0" Grid.Column="0" Text="KFT készültség" VerticalAlignment="Center" FontSize="15" FontFamily="Consolas"/>
+                        <TextBlock Grid.Row="1" Grid.Column="0" Text="KFT időarányos kész." VerticalAlignment="Center" FontSize="15" FontFamily="Consolas"/>
+                        <TextBlock Grid.Row="2" Grid.Column="0" Text="Átcs. készültség" VerticalAlignment="Center" FontSize="15" FontFamily="Consolas"/>
+                        <TextBlock Grid.Row="3" Grid.Column="0" Text="Átcs. időarányos kész." VerticalAlignment="Center" FontSize="15" FontFamily="Consolas"/>
+                        <TextBlock Grid.Row="4" Grid.Column="0" Text="TTL Selejt" VerticalAlignment="Center" FontWeight="Bold" FontSize="15" FontFamily="Consolas"/>
+                    </Grid>
+                </Grid>
+            </TabItem>
+            <TabItem Header="Gépcsoportok">
+                <ListBox Grid.Column="0" Margin="5" ItemsSource="{Binding StatusReportMahines}">
+                    <ListBox.ItemTemplate>
+                        <DataTemplate>
+                            <Grid>
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="25"/>
+                                    <RowDefinition Height="25"/>
+                                    <RowDefinition Height="27"/>
+                                    <RowDefinition Height="450"/>
+                                </Grid.RowDefinitions>
+
+                                <!-- Sor 1 -->
+                                <Grid Grid.Row="0" Margin="0 5">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="150"/>
+                                        <ColumnDefinition Width="350"/>
+                                        <ColumnDefinition Width="350"/>
+                                        <ColumnDefinition Width="130"/>
+                                    </Grid.ColumnDefinitions>
+
+                                    <TextBlock Grid.Column="0" Text="Workcenter:" FontSize="15" FontFamily="Consolas" Margin="0 0 10 0"/>
+                                    <TextBlock Grid.Column="1" Text="{Binding Workcenter}" FontWeight="Bold" FontSize="15" FontFamily="Consolas"/>
+                                    <TextBlock Grid.Column="2" Text="Diff.:" FontSize="15" FontFamily="Consolas" Margin="20 0 10 0"/>
+                                    <TextBlock Grid.Column="3" Text="{Binding Diff}" FontSize="15" FontFamily="Consolas"/>
+                                </Grid>
+
+                                <!-- Sor 2 -->
+                                <Grid Grid.Row="1" Margin="0 5">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="150"/>
+                                        <ColumnDefinition Width="350"/>
+                                        <ColumnDefinition Width="350"/>
+                                        <ColumnDefinition Width="130"/>
+                                    </Grid.ColumnDefinitions>
+
+                                    <TextBlock Grid.Column="0" Text="Kumulált kimenet:" FontSize="15" FontFamily="Consolas" Margin="0 0 10 0"/>
+                                    <TextBlock Grid.Column="1" Text="{Binding ComulatedOut}" FontSize="15" FontFamily="Consolas"/>
+                                    <TextBlock Grid.Column="2" Text="Kumulált terv:" FontSize="15" FontFamily="Consolas" Margin="20 0 10 0"/>
+                                    <TextBlock Grid.Column="3" Text="{Binding ComulatedPlan}" FontSize="15" FontFamily="Consolas"/>
+                                </Grid>
+
+                                <!-- Sor 3 -->
+                                <Grid Grid.Row="2" Margin="0 5">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="150"/>
+                                        <ColumnDefinition Width="350"/>
+                                        <ColumnDefinition Width="350"/>
+                                        <ColumnDefinition Width="130"/>
+                                    </Grid.ColumnDefinitions>
+
+                                    <TextBlock Grid.Column="0" Text="KFT Selejt:" FontSize="15" FontFamily="Consolas" Margin="0 0 10 0"/>
+                                    <TextBlock Grid.Column="1" Text="{Binding KftReject}" FontSize="15" FontFamily="Consolas"/>
+                                    <TextBlock Grid.Column="2" Text="Beszáll. selejt:" FontSize="15" FontFamily="Consolas" Margin="20 0 10 0"/>
+                                    <TextBlock Grid.Column="3" Text="{Binding SupplierReject}" FontSize="15" FontFamily="Consolas"/>
+                                </Grid>
+
+                                <!-- Sor 4: Chart -->
+                                <lvc:CartesianChart Grid.Row="3" Series="{Binding ChartData}" LegendLocation="Bottom" Margin="0 10 0 0">
+                                    <lvc:CartesianChart.AxisX>
+                                        <lvc:Axis Title="Munkanap" Labels="{Binding XAxisLabel}">
+                                            <lvc:Axis.Separator>
+                                                <lvc:Separator Step="1" IsEnabled="False"/>
+                                            </lvc:Axis.Separator>
+                                        </lvc:Axis>
+                                    </lvc:CartesianChart.AxisX>
+                                    <lvc:CartesianChart.AxisY>
+                                        <lvc:Axis Title="Kimenet" />
+                                    </lvc:CartesianChart.AxisY>
+                                </lvc:CartesianChart>
+                            </Grid>
+                        </DataTemplate>
+                    </ListBox.ItemTemplate>
+                </ListBox>
+            </TabItem>
+            <TabItem Header="Hatékonyság">
+                <lvc:CartesianChart Grid.Row="3" Series="{Binding EfficiencyChart}" LegendLocation="Bottom" Margin="0 10 0 0">
+                    <lvc:CartesianChart.AxisX>
+                        <lvc:Axis Title="Gépcsoport" Labels="{Binding WorkcenterNamesManual}">
+                            <lvc:Axis.Separator>
+                                <lvc:Separator Step="1" IsEnabled="False"/>
+                            </lvc:Axis.Separator>
+                        </lvc:Axis>
+                    </lvc:CartesianChart.AxisX>
+                    <lvc:CartesianChart.AxisY>
+                        <lvc:Axis Title="Hatékonyság" LabelFormatter="{Binding YFormatter}"/>
+                    </lvc:CartesianChart.AxisY>
+                </lvc:CartesianChart>
+            </TabItem>
+            <TabItem Header="KFT">
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="35"/>
+                        <RowDefinition Height="*"/>
+                    </Grid.RowDefinitions>
+                    <ToolBar Grid.Row="0">
+                        <Button Margin="0" Height="30" ToolTip="Excel export" Command="{Binding ExportKftStatus}" >
+                            <StackPanel Orientation="Horizontal">
+                                <Image Source="/img/icons8-xls-export-25.png" />
+                            </StackPanel>
+                        </Button>
+                    </ToolBar>
+                    <DataGrid Grid.Row="1" ItemsSource="{Binding KftDailyPlannedQty}" AutoGenerateColumns="False" IsReadOnly="True">
+                        <DataGrid.ColumnHeaderStyle>
+                            <Style TargetType="DataGridColumnHeader">
+                                <Setter Property="FontFamily" Value="Consolas"/>
+                                <Setter Property="FontSize" Value="13"/>
+                                <Setter Property="FontWeight" Value="Bold"/>
+                            </Style>
+                        </DataGrid.ColumnHeaderStyle>
+                        <DataGrid.RowStyle>
+                            <Style TargetType="DataGridRow">
+                                <Setter Property="FontFamily" Value="Consolas"/>
+                                <Setter Property="Foreground" Value="#38757a"/>
+                                <Setter Property="Background" Value="#eef6f7"/>
+                                <Setter Property="FontSize" Value="12"/>
+                            </Style>
+                        </DataGrid.RowStyle>
+                        <DataGrid.Columns>
+                            <DataGridTextColumn Header="Munkanap" Binding="{Binding Workday, StringFormat=\{0:yyyy-MM-dd\}}"/>
+                            <DataGridTextColumn Header="Tervezett Mennyiség" >
+                                <DataGridTextColumn.Binding>
+                                    <Binding Path="PlannedQty" StringFormat="{}{0:F3}" UpdateSourceTrigger="PropertyChanged"/>
+                                </DataGridTextColumn.Binding>
+                            </DataGridTextColumn>
+                            <DataGridTextColumn Header="Aktuális mennyiség" >
+                                <DataGridTextColumn.Binding>
+                                    <Binding Path="ActualQty" StringFormat="{}{0:F3}" UpdateSourceTrigger="PropertyChanged"/>
+                                </DataGridTextColumn.Binding>
+                            </DataGridTextColumn>
+                            <DataGridTextColumn Header="Diff." >
+                                <DataGridTextColumn.Binding>
+                                    <Binding Path="Diff" StringFormat="{}{0:F3}" UpdateSourceTrigger="PropertyChanged"/>
+                                </DataGridTextColumn.Binding>
+                            </DataGridTextColumn>
+                        </DataGrid.Columns>
+                    </DataGrid>
+                </Grid>
+            </TabItem>
+
+            <TabItem Header="Átcsomis">
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="35"/>
+                        <RowDefinition Height="*"/>
+                    </Grid.RowDefinitions>
+                    <ToolBar Grid.Row="0">
+                        <Button Margin="0" Height="30" ToolTip="Excel export" Command="{Binding ExportRepackStatus}" >
+                            <StackPanel Orientation="Horizontal">
+                                <Image Source="/img/icons8-xls-export-25.png" />
+                            </StackPanel>
+                        </Button>
+                    </ToolBar>
+                    <DataGrid Grid.Row="1" ItemsSource="{Binding RepackDailyPlannedQty}" AutoGenerateColumns="False" IsReadOnly="True">
+                        <DataGrid.ColumnHeaderStyle>
+                            <Style TargetType="DataGridColumnHeader">
+                                <Setter Property="FontFamily" Value="Consolas"/>
+                                <Setter Property="FontSize" Value="13"/>
+                                <Setter Property="FontWeight" Value="Bold"/>
+                            </Style>
+                        </DataGrid.ColumnHeaderStyle>
+                        <DataGrid.RowStyle>
+                            <Style TargetType="DataGridRow">
+                                <Setter Property="FontFamily" Value="Consolas"/>
+                                <Setter Property="Foreground" Value="#38757a"/>
+                                <Setter Property="Background" Value="#eef6f7"/>
+                                <Setter Property="FontSize" Value="12"/>
+                            </Style>
+                        </DataGrid.RowStyle>
+                        <DataGrid.Columns>
+                            <DataGridTextColumn Header="Munkanap" Binding="{Binding Workday, StringFormat=\{0:yyyy-MM-dd\}}"/>
+                            <DataGridTextColumn Header="Tervezett Mennyiség" >
+                                <DataGridTextColumn.Binding>
+                                    <Binding Path="PlannedQty" StringFormat="{}{0:F3}" UpdateSourceTrigger="PropertyChanged"/>
+                                </DataGridTextColumn.Binding>
+                            </DataGridTextColumn>
+                            <DataGridTextColumn Header="Aktuális mennyiség" >
+                                <DataGridTextColumn.Binding>
+                                    <Binding Path="ActualQty" StringFormat="{}{0:F3}" UpdateSourceTrigger="PropertyChanged"/>
+                                </DataGridTextColumn.Binding>
+                            </DataGridTextColumn>
+                            <DataGridTextColumn Header="Diff." >
+                                <DataGridTextColumn.Binding>
+                                    <Binding Path="Diff" StringFormat="{}{0:F3}" UpdateSourceTrigger="PropertyChanged"/>
+                                </DataGridTextColumn.Binding>
+                            </DataGridTextColumn>
+                        </DataGrid.Columns>
+                    </DataGrid>
+                </Grid>
+            </TabItem>
+            <TabItem Header="Terv változások">
+                <Grid Grid.Column="0">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="35"/>
+                        <RowDefinition Height="*"/>
+                    </Grid.RowDefinitions>
+                    <ToolBar>
+                        <Button Margin="0" Height="30" ToolTip="Excel export" Command="{Binding ExportPlanChanges}" >
+                            <StackPanel Orientation="Horizontal">
+                                <Image Source="/img/icons8-xls-export-25.png" />
+                            </StackPanel>
+                        </Button>
+                    </ToolBar>
+                    <GroupBox Header="Terv változások" Grid.Row="1" BorderBrush="#4DA1A9" BorderThickness="1" Padding="2" Margin="5" >
+                        <DataGrid ItemsSource="{Binding PlanChangeDetails}" AutoGenerateColumns="False">
+                            <DataGrid.ColumnHeaderStyle>
+                                <Style TargetType="DataGridColumnHeader">
+                                    <Setter Property="FontFamily" Value="Consolas"/>
+                                    <Setter Property="FontSize" Value="13"/>
+                                    <Setter Property="FontWeight" Value="Bold"/>
+                                </Style>
+                            </DataGrid.ColumnHeaderStyle>
+                            <DataGrid.RowStyle>
+                                <Style TargetType="DataGridRow">
+                                    <Setter Property="FontFamily" Value="Consolas"/>
+                                    <Setter Property="Foreground" Value="#38757a"/>
+                                    <Setter Property="Background" Value="#eef6f7"/>
+                                    <Setter Property="FontSize" Value="12"/>
+                                </Style>
+                            </DataGrid.RowStyle>
+                            <DataGrid.Columns>
+                                <DataGridTextColumn Header="Comment" Binding="{Binding Plan_Comment}"/>
+                                <DataGridTextColumn Header="Cikk" Binding="{Binding Plan_ItemFG}"/>
+                                <DataGridTextColumn Header="Mennyiség" >
+                                    <DataGridTextColumn.Binding>
+                                        <Binding Path="Plan_PlannedQty" StringFormat="{}{0:F3}" UpdateSourceTrigger="PropertyChanged"/>
+                                    </DataGridTextColumn.Binding>
+                                </DataGridTextColumn>
+                                <DataGridTextColumn Header="Eladási ár" >
+                                    <DataGridTextColumn.Binding>
+                                        <Binding Path="Plan_PriceOfPlanned" StringFormat="{}{0:F2}" UpdateSourceTrigger="PropertyChanged"/>
+                                    </DataGridTextColumn.Binding>
+                                </DataGridTextColumn>
+                            </DataGrid.Columns>
+                        </DataGrid>
+                    </GroupBox>
+                </Grid>
+            </TabItem>
+
+
+
+            <TabItem Header="Kiszállítási terv">
+                <Grid Grid.Column="1">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="35"/>
+                        <RowDefinition Height="*"/>
+                    </Grid.RowDefinitions>
+                    <ToolBar>
+                        <TextBlock Text="Keresés " VerticalAlignment="Center" Margin="15 0 5 0" FontFamily="Consolas" />
+                        <TextBox Width="200" Text="{Binding SearchText, UpdateSourceTrigger=PropertyChanged}"/>
+                        <Separator/>
+                        <Button Margin="0" Height="30" ToolTip="Excel export" Command="{Binding ExportShipoutPlan}" >
+                            <StackPanel Orientation="Horizontal">
+                                <Image Source="/img/icons8-xls-export-25.png" />
+                            </StackPanel>
+                        </Button>
+                    </ToolBar>
+                    <GroupBox Header="Kiszállítási terv" Grid.Row="1" BorderBrush="#4DA1A9" BorderThickness="1" Padding="2" Margin="5">
+                        <DataGrid AutoGenerateColumns="False" ItemsSource="{Binding ShipOutPlanDetails}">
+                            <DataGrid.ColumnHeaderStyle>
+                                <Style TargetType="DataGridColumnHeader">
+                                    <Setter Property="FontFamily" Value="Consolas"/>
+                                    <Setter Property="FontSize" Value="13"/>
+                                    <Setter Property="FontWeight" Value="Bold"/>
+                                </Style>
+                            </DataGrid.ColumnHeaderStyle>
+                            <DataGrid.RowStyle>
+                                <Style TargetType="DataGridRow">
+                                    <Setter Property="FontFamily" Value="Consolas"/>
+                                    <Setter Property="Foreground" Value="#38757a"/>
+                                    <Setter Property="Background" Value="#eef6f7"/>
+                                    <Setter Property="FontSize" Value="12"/>
+                                </Style>
+                            </DataGrid.RowStyle>
+                            <DataGrid.Columns>
+                                <DataGridTextColumn Header="BC rendelés" Binding="{Binding Bizonylatszam}"/>
+                                <DataGridTextColumn Header="Cikkszám" Binding="{Binding Szam}"/>
+                                <DataGridTextColumn Header="Nyitott mennyiség" Binding="{Binding NyitottMennyiseg}"/>
+                                <DataGridTextColumn Header="Nyitott összeg" Binding="{Binding NyitottOsszeg}"/>
+                                <DataGridTextColumn Header="Rendelés dátuma" Binding="{Binding OrderDate, StringFormat=\{0:yyyy-MM-dd\}}"/>
+                                <DataGridTextColumn Header="Kért dátum" Binding="{Binding EredetiKertDatum, StringFormat=\{0:yyyy-MM-dd\}}"/>
+                                <DataGridTextColumn Header="Kiszállítási dátum" Binding="{Binding KiszallitasiDatum, StringFormat=\{0:yyyy-MM-dd\}}"/>
+                                <DataGridTextColumn Header="Vevő" Binding="{Binding CustomerName}"/>
+                                <DataGridTextColumn Header="SAP PO" Binding="{Binding SapPoNum}"/>
+                                <DataGridTextColumn Header="SAP SO" Binding="{Binding SapSoNum}"/>
+                            </DataGrid.Columns>
+                        </DataGrid>
+                    </GroupBox>
+                </Grid>
+            </TabItem>
+
+
+
+            <TabItem Header="Terv változás">
+                <lvc:CartesianChart Grid.Row="3" Series="{Binding PlanChangesChart}" LegendLocation="Bottom" Margin="0 10 0 0">
+                    <lvc:CartesianChart.AxisX>
+                        <lvc:Axis Title="Állapotjelentés" />
+                    </lvc:CartesianChart.AxisX>
+                    <lvc:CartesianChart.AxisY>
+                        <lvc:Axis Title="Kimenet" />
+                    </lvc:CartesianChart.AxisY>
+                </lvc:CartesianChart>
+            </TabItem>
+
+            <TabItem Header="Sales változás">
+                <lvc:CartesianChart Grid.Row="3" Series="{Binding SalesChangesChart}" LegendLocation="Bottom" Margin="0 10 0 0">
+                    <lvc:CartesianChart.AxisX>
+                        <lvc:Axis Title="Állapotjelentés" />
+                    </lvc:CartesianChart.AxisX>
+                    <lvc:CartesianChart.AxisY>
+                        <lvc:Axis Title="Kimenet" />
+                    </lvc:CartesianChart.AxisY>
+                </lvc:CartesianChart>
+            </TabItem>
+
+
+
+            <TabItem Header="Gépcsop. selejtek">
+                <lvc:CartesianChart Grid.Row="3" Series="{Binding WorkcenterRejectChart}" LegendLocation="Bottom" Margin="0 10 0 0">
+                    <lvc:CartesianChart.AxisX>
+                        <lvc:Axis Title="Gépcsoport" Labels="{Binding WorkcenterNames}" LabelsRotation="0">
+                            <lvc:Axis.Separator>
+                                <lvc:Separator Step="1" IsEnabled="False"/>
+                            </lvc:Axis.Separator>
+                        </lvc:Axis>
+                    </lvc:CartesianChart.AxisX>
+                    <lvc:CartesianChart.AxisY>
+                        <lvc:Axis Title="Selejt" />
+                    </lvc:CartesianChart.AxisY>
+                </lvc:CartesianChart>
+            </TabItem>
+
+            <TabItem Header="Összesített selejt">
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="*"/>
+                    </Grid.ColumnDefinitions>
+                    <lvc:PieChart Series="{Binding RejectSumPieChart}" Grid.Column="0" LegendLocation="Bottom" Margin="20"/>
+                    <lvc:CartesianChart Grid.Column="1" Series="{Binding KftCumulativeRejectSumChart}" LegendLocation="Bottom" Grid.ColumnSpan="2" >
+                        <lvc:CartesianChart.AxisX>
+                            <lvc:Axis Title="KFT" Labels="" LabelsRotation="0">
+                                <lvc:Axis.Separator>
+                                    <lvc:Separator Step="1" IsEnabled="False"/>
+                                </lvc:Axis.Separator>
+                            </lvc:Axis>
+                        </lvc:CartesianChart.AxisX>
+                        <lvc:CartesianChart.AxisY>
+                            <lvc:Axis Title="Selejt" LabelFormatter="{Binding YFormatter}"/>
+                        </lvc:CartesianChart.AxisY>
+                    </lvc:CartesianChart>
+                </Grid>
+            </TabItem>
+
+            <TabItem Header="Selejt változások">
+                <lvc:CartesianChart Grid.Row="3" Series="{Binding RejectChangesChart}" LegendLocation="Bottom" Margin="0 10 0 0">
+                    <lvc:CartesianChart.AxisX>
+                        <lvc:Axis Title="Állapotjelentés" Labels="" LabelsRotation="0"/>
+                    </lvc:CartesianChart.AxisX>
+                    <lvc:CartesianChart.AxisY>
+                        <lvc:Axis Title="Selejt" />
+                    </lvc:CartesianChart.AxisY>
+                </lvc:CartesianChart>
+            </TabItem>
+
+            <TabItem Header="Selejt % (Ellenőrzési Folyamatok)">
+                <lvc:CartesianChart Grid.Row="3" Series="{Binding InspectionRejectSumChart}" LegendLocation="Bottom" Margin="0 10 0 0">
+                    <lvc:CartesianChart.AxisX>
+                        <lvc:Axis Title="Gépcsoport" Labels="{Binding WorkcenterNamesInspection}" LabelsRotation="0">
+                            <lvc:Axis.Separator>
+                                <lvc:Separator Step="1" IsEnabled="False"/>
+                            </lvc:Axis.Separator>
+                        </lvc:Axis>
+                    </lvc:CartesianChart.AxisX>
+                    <lvc:CartesianChart.AxisY>
+                        <lvc:Axis Title="TTL Selejt %" LabelFormatter="{Binding YFormatter}"/>
+                    </lvc:CartesianChart.AxisY>
+                </lvc:CartesianChart>
+            </TabItem>
+
+            <TabItem Header="Selejt % (Gépi Folyamatok)">
+                <lvc:CartesianChart Grid.Row="3" Series="{Binding MachineRejectSumChart}" LegendLocation="Bottom" Margin="0 10 0 0">
+                    <lvc:CartesianChart.AxisX>
+                        <lvc:Axis Title="Gépcsoport" Labels="{Binding WorkcenterNamesMachine}" LabelsRotation="0">
+                            <lvc:Axis.Separator>
+                                <lvc:Separator Step="1" IsEnabled="False"/>
+                            </lvc:Axis.Separator>
+                        </lvc:Axis>
+                    </lvc:CartesianChart.AxisX>
+                    <lvc:CartesianChart.AxisY>
+                        <lvc:Axis Title="TTL Selejt %" LabelFormatter="{Binding YFormatter}"/>
+                    </lvc:CartesianChart.AxisY>
+                </lvc:CartesianChart>
+            </TabItem>
+
+            <TabItem Header="Selejt % (Kézi Folyamatok)">
+                <lvc:CartesianChart Grid.Row="3" Series="{Binding ManualRejectSumChart}" LegendLocation="Bottom" Margin="0 10 0 0">
+                    <lvc:CartesianChart.AxisX>
+                        <lvc:Axis Title="Gépcsoport" Labels="{Binding WorkcenterNamesManual}" LabelsRotation="0">
+                            <lvc:Axis.Separator>
+                                <lvc:Separator Step="1" IsEnabled="False"/>
+                            </lvc:Axis.Separator>
+                        </lvc:Axis>
+                    </lvc:CartesianChart.AxisX>
+                    <lvc:CartesianChart.AxisY>
+                        <lvc:Axis Title="TTL Selejt %" LabelFormatter="{Binding YFormatter}"/>
+                    </lvc:CartesianChart.AxisY>
+                </lvc:CartesianChart>
+            </TabItem>
+
+            <TabItem Header="Selejt % (Összes Folyamat)">
+                <lvc:CartesianChart Grid.Row="3" Series="{Binding AllRejectSumChart}" LegendLocation="Bottom" Margin="0 10 0 0">
+                    <lvc:CartesianChart.AxisX>
+                        <lvc:Axis Title="Állapotjelentés"/>
+                    </lvc:CartesianChart.AxisX>
+                    <lvc:CartesianChart.AxisY>
+                        <lvc:Axis Title="TTL Selejt %" LabelFormatter="{Binding YFormatter}"/>
+                    </lvc:CartesianChart.AxisY>
+                </lvc:CartesianChart>
+            </TabItem>
+        </TabControl>
+    </Grid>
+</UserControl>

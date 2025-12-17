@@ -1,0 +1,328 @@
+﻿<UserControl x:Class="ProdInfoSys.Windows.Nested.ManualUserControl"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:ProdInfoSys.Windows.Nested"
+             xmlns:lvc="clr-namespace:LiveCharts.Wpf;assembly=LiveCharts.Wpf"     
+             xmlns:System="clr-namespace:System;assembly=mscorlib"
+             xmlns:Classes="clr-namespace:ProdInfoSys.Classes"
+             mc:Ignorable="d" 
+             Loaded="UserControl_Loaded"
+             d:DesignHeight="450" d:DesignWidth="800">
+    <UserControl.Resources>
+        <Classes:BindingProxy x:Key="Proxy" Data="{Binding}"/>
+        <BooleanToVisibilityConverter x:Key="BoolToVisibilityConverter"/>
+    </UserControl.Resources>
+    <UserControl.InputBindings>
+        <KeyBinding Command="{Binding SaveDocument}" Modifiers="Ctrl" Key="S"/>
+        <KeyBinding Command="{Binding ImportFromErp}" Key="I"/>
+    </UserControl.InputBindings>
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="30"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="7"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+        <ToolBar Margin="2 0 2 2" Grid.Row="0">
+            <Button Margin="0" Height="30" ToolTip="Mentés (Ctrl + S)" Command="{Binding SaveDocument}" >
+                <StackPanel Orientation="Horizontal">
+                    <Image Source="/img/icons8-save-25.png" />
+                </StackPanel>
+            </Button>
+            <Separator/>
+            <Button Margin="0" Height="30" ToolTip="Munkanap hozzáadása" Command="{Binding AddExtraWorkday}" >
+                <StackPanel Orientation="Horizontal">
+                    <Image Source="/img/icons8-workday-25.png" />
+                </StackPanel>
+            </Button>
+            <DatePicker SelectedDate="{Binding ExtraWorkday}"/>
+            <Separator/>
+            <Button Margin="0" Height="30" ToolTip="Törlés" Command="{Binding DeleteSelected}" >
+                <StackPanel Orientation="Horizontal">
+                    <Image Source="/img/icons8-delete-25.png" />
+                </StackPanel>
+            </Button>
+            <Button Margin="0" Height="30" ToolTip="Excel export" Command="{Binding ExportExcel}" >
+                <StackPanel Orientation="Horizontal">
+                    <Image Source="/img/icons8-xls-export-25.png" />
+                </StackPanel>
+            </Button>
+            <Separator/>
+            <Button Margin="0" Height="30" ToolTip="ERP Importálás (I)" Command="{Binding ImportFromErp}" >
+                <StackPanel Orientation="Horizontal">
+                    <Image Source="/img/icons8-import-30.png" />
+                </StackPanel>
+            </Button>
+            <Separator/>
+            <TextBlock Text="{Binding WorkcenterName}" VerticalAlignment="Center" Margin="15 0 5 0" FontFamily="Consolas" FontWeight="Bold"/>
+            <Separator/>
+            <TextBlock Text="{Binding Workdays}" VerticalAlignment="Center" Margin="15 0 5 0" FontFamily="Consolas"/>
+            <Separator/>
+            <TextBlock Text="{Binding ComulatedOut}" VerticalAlignment="Center" Margin="15 0 5 0" FontFamily="Consolas" FontWeight="Bold" Foreground="Red" FontSize="14"/>
+            <Separator/>
+            <TextBlock Text="{Binding Difference}" VerticalAlignment="Center" Margin="15 0 5 0" FontFamily="Consolas" FontWeight="Bold" Foreground="Red" FontSize="14"/>
+            <Separator/>
+            <TextBlock Text="{Binding MustSave}" VerticalAlignment="Center" FontFamily="Consolas" FontWeight="Bold" Foreground="Red" FontSize="20" Margin="10 0 10 0"/>
+        </ToolBar>
+
+        <DataGrid 
+            FrozenColumnCount="1"  
+            SelectedItem="{Binding SelectedDocument}" 
+            Grid.Row="1" AutoGenerateColumns="False" 
+            ItemsSource="{Binding ManualFollowupDocs, Mode=TwoWay}" 
+            Margin="2 0 2 2" HorizontalScrollBarVisibility="Auto"
+            x:Name="DataGrid"
+            VerticalScrollBarVisibility="Auto">
+            
+            <DataGrid.ColumnHeaderStyle>
+                <Style TargetType="DataGridColumnHeader">
+                    <Setter Property="FontFamily" Value="Consolas"/>
+                    <Setter Property="FontSize" Value="13"/>
+                    <Setter Property="FontWeight" Value="Bold"/>
+                </Style>
+            </DataGrid.ColumnHeaderStyle>
+            <DataGrid.RowStyle>
+                <Style TargetType="DataGridRow">
+                    <Setter Property="FontFamily" Value="Consolas"/>
+                    <Setter Property="Foreground" Value="#38757a"/>
+                    <Setter Property="Background" Value="#eef6f7"/>
+                    <Setter Property="FontSize" Value="{Binding Data.FontSize, Source={StaticResource Proxy}}"/>
+                </Style>
+            </DataGrid.RowStyle>
+            <DataGrid.Columns>
+                <DataGridTextColumn Header="Munkanap" Binding="{Binding Workday, StringFormat=\{0:yyyy-MM-dd\}}" IsReadOnly="True">
+                    <DataGridTextColumn.CellStyle>
+                        <Style TargetType="DataGridCell">
+                            <Setter Property="Background" Value="#ccf2ff"/>
+                            <Setter Property="Foreground" Value="#007399"/>
+                            <Style.Triggers>
+                                <Trigger Property="IsSelected" Value="True">
+                                    <Setter Property="Foreground" Value="Black"/>
+                                </Trigger>
+                            </Style.Triggers>
+                        </Style>
+                    </DataGridTextColumn.CellStyle>
+                </DataGridTextColumn>
+                <DataGridTextColumn Header="Napi terv" Binding="{Binding DailyPlan,Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+
+                <DataGridTextColumn Header="Napi terv (komulált)" Binding="{Binding ComulatedPlan, UpdateSourceTrigger=PropertyChanged}" IsReadOnly="True" >
+                    <DataGridTextColumn.CellStyle>
+                        <Style TargetType="DataGridCell">
+                            <Setter Property="Background" Value="#ccf2ff"/>
+                            <Setter Property="Foreground" Value="#007399"/>
+                            <Style.Triggers>
+                                <Trigger Property="IsSelected" Value="True">
+                                    <Setter Property="Foreground" Value="Black"/>
+                                </Trigger>
+                            </Style.Triggers>
+                        </Style>
+                    </DataGridTextColumn.CellStyle>
+                </DataGridTextColumn>
+
+                <DataGridTextColumn Header="Napi outp. (komulált)" Binding="{Binding ComulatedOutput, UpdateSourceTrigger=PropertyChanged}" IsReadOnly="True" >
+                    <DataGridTextColumn.CellStyle>
+                        <Style TargetType="DataGridCell">
+                            <Setter Property="Background" Value="#ccf2ff"/>
+                            <Setter Property="Foreground" Value="#007399"/>
+                            <Style.Triggers>
+                                <Trigger Property="IsSelected" Value="True">
+                                    <Setter Property="Foreground" Value="Black"/>
+                                </Trigger>
+                            </Style.Triggers>
+                        </Style>
+                    </DataGridTextColumn.CellStyle>
+                </DataGridTextColumn>
+
+                <DataGridTextColumn Header="Napi kimenet" Binding="{Binding OutputSum, UpdateSourceTrigger=PropertyChanged}" IsReadOnly="True" >
+                    <DataGridTextColumn.CellStyle>
+                        <Style TargetType="DataGridCell">
+                            <Setter Property="Background" Value="#ccf2ff"/>
+                            <Setter Property="Foreground" Value="#007399"/>
+                            <Style.Triggers>
+                                <Trigger Property="IsSelected" Value="True">
+                                    <Setter Property="Foreground" Value="Black"/>
+                                </Trigger>
+                            </Style.Triggers>
+                        </Style>
+                    </DataGridTextColumn.CellStyle>
+                </DataGridTextColumn>
+                <DataGridTextColumn Header="1 Műszak kimenet" Binding="{Binding Shift1KftOutput, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
+                <DataGridTextColumn Header="2 Műszak kimenet" Binding="{Binding Shift2KftOutput, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Visibility="{Binding Data.Is2ShiftVisible, Source={StaticResource Proxy}, Converter={StaticResource BoolToVisibilityConverter}}"/>
+                <DataGridTextColumn Header="3 Műszak kimenet" Binding="{Binding Shift3KftOutput, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Visibility="{Binding Data.Is3ShiftVisible, Source={StaticResource Proxy}, Converter={StaticResource BoolToVisibilityConverter}}"/>
+                <DataGridTextColumn Header="1 Műszak kimenet (Subc.)" Binding="{Binding Shift1SubconOutput, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Visibility="{Binding Data.IsVisible, Source={StaticResource Proxy}, Converter={StaticResource BoolToVisibilityConverter}}"/>
+                <DataGridTextColumn Header="2 Műszak kimenet (Subc.)" Binding="{Binding Shift2SubconOutput, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Visibility="{Binding Data.IsVisible, Source={StaticResource Proxy}, Converter={StaticResource BoolToVisibilityConverter}}"/>
+                <DataGridTextColumn Header="3 Műszak kimenet (Subc.)" Binding="{Binding Shift3SubconOutput, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Visibility="{Binding Data.IsVisible, Source={StaticResource Proxy}, Converter={StaticResource BoolToVisibilityConverter}}"/>
+
+
+                <DataGridTextColumn Header="Napi selejt" Binding="{Binding RejectSum, UpdateSourceTrigger=PropertyChanged}" IsReadOnly="True">
+                    <DataGridTextColumn.CellStyle>
+                        <Style TargetType="DataGridCell">
+                            <Setter Property="Background" Value="#ccf2ff"/>
+                            <Setter Property="Foreground" Value="#007399"/>
+                            <Style.Triggers>
+                                <Trigger Property="IsSelected" Value="True">
+                                    <Setter Property="Foreground" Value="Black"/>
+                                </Trigger>
+                            </Style.Triggers>
+                        </Style>
+                    </DataGridTextColumn.CellStyle>
+                </DataGridTextColumn>
+                <DataGridTextColumn Header="Napi selejt %" IsReadOnly="True">
+                    <DataGridTextColumn.Binding>
+                        <Binding Path="CalcRejectRatio" StringFormat="{}{0:P2}" UpdateSourceTrigger="PropertyChanged"/>
+                    </DataGridTextColumn.Binding>
+                    <DataGridTextColumn.CellStyle>
+                        <Style TargetType="DataGridCell">
+                            <Setter Property="Background" Value="#ccf2ff"/>
+                            <Setter Property="Foreground" Value="#007399"/>
+                            <Style.Triggers>
+                                <Trigger Property="IsSelected" Value="True">
+                                    <Setter Property="Foreground" Value="Black"/>
+                                </Trigger>
+                            </Style.Triggers>
+                        </Style>
+                    </DataGridTextColumn.CellStyle>
+                </DataGridTextColumn>
+                <DataGridTextColumn Header="1 Műszak selejt" Binding="{Binding Shift1KftReject, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
+                <DataGridTextColumn Header="2 Műszak selejt" Binding="{Binding Shift2KftReject, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Visibility="{Binding Data.Is2ShiftVisible, Source={StaticResource Proxy}, Converter={StaticResource BoolToVisibilityConverter}}"/>
+                <DataGridTextColumn Header="3 Műszak selejt" Binding="{Binding Shift3KftReject, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Visibility="{Binding Data.Is3ShiftVisible, Source={StaticResource Proxy}, Converter={StaticResource BoolToVisibilityConverter}}"/>
+                <DataGridTextColumn Header="1 Műszak selejt (Subc.)" Binding="{Binding Shift1SubconReject, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Visibility="{Binding Data.IsVisible, Source={StaticResource Proxy}, Converter={StaticResource BoolToVisibilityConverter}}"/>
+                <DataGridTextColumn Header="2 Műszak selejt (Subc.)" Binding="{Binding Shift2SubconReject, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Visibility="{Binding Data.IsVisible, Source={StaticResource Proxy}, Converter={StaticResource BoolToVisibilityConverter}}"/>
+                <DataGridTextColumn Header="3 Műszak selejt (Subc.)" Binding="{Binding Shift3SubconReject, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Visibility="{Binding Data.IsVisible, Source={StaticResource Proxy}, Converter={StaticResource BoolToVisibilityConverter}}"/>
+                <DataGridTextColumn Header="Beszállítói hiba" Binding="{Binding SupplierReject, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                <DataGridTextColumn Header="Beállítási selejt" Binding="{Binding BS, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                <DataGridTextColumn Header="Gyártási selejt" Binding="{Binding ManufacturingReject, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                <DataGridTextColumn Header="Hatékonyság (KFT)" >
+                    <DataGridTextColumn.Binding>
+                        <Binding Path="ProductivityKft" StringFormat="{}{0:N2}" UpdateSourceTrigger="PropertyChanged" Mode="TwoWay"/>
+                    </DataGridTextColumn.Binding>
+                </DataGridTextColumn>
+                <!-- <DataGridTextColumn Header="Hatékonyság Jegyzet (KFT)" Binding="{Binding ProdCommentKft, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/> -->
+
+                <DataGridTextColumn Header="Hatékonyság (Subcon.)" Visibility="{Binding Data.IsVisible, Source={StaticResource Proxy}, Converter={StaticResource BoolToVisibilityConverter}}">
+                    <DataGridTextColumn.Binding>
+                        <Binding Path="ProductivitySubcon" StringFormat="{}{0:N2}" UpdateSourceTrigger="PropertyChanged" Mode="TwoWay"/>
+                    </DataGridTextColumn.Binding>
+                </DataGridTextColumn>
+                <!-- <DataGridTextColumn Header="Hatékonyság Jegyzet (Subcon)" Binding="{Binding ProdCommentSubcon, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/> -->
+
+
+                <!-- <DataGridTextColumn Header="Jegyzet" Binding="{Binding CommentForRejects, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/> -->
+            </DataGrid.Columns>
+        </DataGrid>
+
+        <GridSplitter Grid.Row="2" HorizontalAlignment="Stretch" Background="#4DA1A9" Margin="2 2 2 2"/>
+
+        <Grid Grid.Row="3" Margin="2">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*"/>
+            </Grid.ColumnDefinitions>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="*"/>
+            </Grid.RowDefinitions>
+            <TabControl>
+                <TabItem Header="Jegyzet">
+                    <TextBox Text="{Binding SelectedDocument.CommentForRejects, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" 
+                             TextWrapping="Wrap" 
+                             FontFamily="Consolas" 
+                             FontSize="12"
+                             AcceptsReturn="True"
+                             VerticalScrollBarVisibility="Auto"
+                             HorizontalScrollBarVisibility="Auto"   
+                             />
+                </TabItem>
+
+                <TabItem Header="Kimenet nyomonkövetés">
+                    <lvc:CartesianChart Series="{Binding OutputChart}" LegendLocation="Bottom">
+                        <lvc:CartesianChart.AxisX>
+                            <lvc:Axis Title="Munkanap" Labels="{Binding Labels}" >
+                                <lvc:Axis.Separator>
+                                    <lvc:Separator Step="1" IsEnabled="False"/>
+                                </lvc:Axis.Separator>
+                            </lvc:Axis>
+                        </lvc:CartesianChart.AxisX>
+                        <lvc:CartesianChart.AxisY>
+                            <lvc:Axis Title="Kimenet" />
+                        </lvc:CartesianChart.AxisY>
+                    </lvc:CartesianChart>
+                </TabItem>
+
+                <TabItem Header="Kimenet nyomonkövetés (Komulált)">
+                    <lvc:CartesianChart Series="{Binding ComOutChart}" LegendLocation="Bottom">
+                        <lvc:CartesianChart.AxisX>
+                            <lvc:Axis Title="Munkanap" Labels="{Binding Labels}" >
+                                <lvc:Axis.Separator>
+                                    <lvc:Separator Step="1" IsEnabled="False"/>
+                                </lvc:Axis.Separator>
+                            </lvc:Axis>
+                        </lvc:CartesianChart.AxisX>
+                        <lvc:CartesianChart.AxisY>
+                            <lvc:Axis Title="Kimenet" />
+                        </lvc:CartesianChart.AxisY>
+                    </lvc:CartesianChart>
+                </TabItem>
+
+                <TabItem Header="Selejt mennyiség">
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="3*"/>
+                            <ColumnDefinition Width="*"/>
+                        </Grid.ColumnDefinitions>
+                        <lvc:CartesianChart Series="{Binding RejectChart}" LegendLocation="Bottom" Grid.Column="0">
+                            <lvc:CartesianChart.AxisX>
+                                <lvc:Axis Title="Munkanap" Labels="{Binding Labels}" >
+                                    <lvc:Axis.Separator>
+                                        <lvc:Separator Step="1" IsEnabled="False"/>
+                                    </lvc:Axis.Separator>
+                                </lvc:Axis>
+                            </lvc:CartesianChart.AxisX>
+                            <lvc:CartesianChart.AxisY>
+                                <lvc:Axis Title="Selejt mennyiség" LabelFormatter="{Binding ScrapYFormatter}"/>
+                            </lvc:CartesianChart.AxisY>
+                        </lvc:CartesianChart>
+
+                        <lvc:PieChart Series="{Binding RejectPieChart}" Grid.Column="1" LegendLocation="Bottom" InnerRadius="60">
+                        </lvc:PieChart>
+                    </Grid>
+                </TabItem>
+
+                <TabItem Header="Selejt %">
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*"/>
+                        </Grid.ColumnDefinitions>
+                        <lvc:CartesianChart Series="{Binding RejectPercentChart}" LegendLocation="Bottom" Grid.Column="0">
+                            <lvc:CartesianChart.AxisX>
+                                <lvc:Axis Title="Munkanap" Labels="{Binding Labels}" >
+                                    <lvc:Axis.Separator>
+                                        <lvc:Separator Step="1" IsEnabled="False"/>
+                                    </lvc:Axis.Separator>
+                                </lvc:Axis>
+                            </lvc:CartesianChart.AxisX>
+                            <lvc:CartesianChart.AxisY>
+                                <lvc:Axis Title="Selejt %" LabelFormatter="{Binding YFormatter}"/>
+                            </lvc:CartesianChart.AxisY>
+                        </lvc:CartesianChart>
+                    </Grid>
+                </TabItem>
+
+                <TabItem Header="Hatékonyság">
+                    <lvc:CartesianChart Series="{Binding EfficiencyChart}" LegendLocation="Bottom">
+                        <lvc:CartesianChart.AxisX>
+                            <lvc:Axis Title="Munkanap" Labels="{Binding Labels}" >
+                                <lvc:Axis.Separator>
+                                    <lvc:Separator Step="1" IsEnabled="False"/>
+                                </lvc:Axis.Separator>
+                            </lvc:Axis>
+                        </lvc:CartesianChart.AxisX>
+                        <lvc:CartesianChart.AxisY>
+                            <lvc:Axis Title="Hatékonyság" LabelFormatter="{Binding YFormatter}"/>
+                        </lvc:CartesianChart.AxisY>
+                    </lvc:CartesianChart>
+                </TabItem>
+            </TabControl>
+        </Grid>
+    </Grid>
+</UserControl>

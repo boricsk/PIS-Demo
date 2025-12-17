@@ -1,0 +1,127 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+	<PropertyGroup>		
+		<OutputType>WinExe</OutputType>
+		<TargetFramework>net8.0-windows</TargetFramework>
+		<Nullable>enable</Nullable>
+		<ImplicitUsings>enable</ImplicitUsings>
+		<UseWPF>true</UseWPF>
+		<ApplicationIcon>img\info_icon.ico</ApplicationIcon>
+		<Title>Production Info System</Title>
+		<Copyright>SEI Interconnect Products Kft.</Copyright>
+		<Description>Production Information System</Description>
+	</PropertyGroup>
+
+	<ItemGroup>
+		<None Remove="img\icons8-at-sign-60.png" />
+		<None Remove="img\icons8-create-document-30.png" />
+		<None Remove="img\icons8-danger-100.png" />
+		<None Remove="img\icons8-delete-25.png" />
+		<None Remove="img\icons8-delete-64.png" />
+		<None Remove="img\icons8-email-25.png" />
+		<None Remove="img\icons8-graph-report-64.png" />
+		<None Remove="img\icons8-graph-report-qrqc-64.png" />
+		<None Remove="img\icons8-import-30.png" />
+		<None Remove="img\icons8-loading-80.png" />
+		<None Remove="img\icons8-meeting-room-64.png" />
+		<None Remove="img\icons8-new-file-64.png" />
+		<None Remove="img\icons8-projector-64.png" />
+		<None Remove="img\icons8-save-25.png" />
+		<None Remove="img\icons8-save-60.png" />
+		<None Remove="img\icons8-search.gif" />
+		<None Remove="img\icons8-setup-64.png" />
+		<None Remove="img\icons8-workday-25.png" />
+		<None Remove="img\icons8-xls-export-25.png" />
+		<None Remove="img\icons8-xls-import-60.png" />
+		<None Remove="img\info_icon.ico" />
+		<None Remove="img\SEI.png" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<Content Include="img\info_icon.ico" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<PackageReference Include="CalendarManagement" Version="1.0.1" />
+		<PackageReference Include="ClosedXML" Version="0.105.0" />
+		<PackageReference Include="Dapper" Version="2.1.66" />
+		<PackageReference Include="Extended.Wpf.Toolkit" Version="5.0.0" />
+		<PackageReference Include="LiveCharts.Wpf" Version="0.9.7" />
+		<PackageReference Include="Microsoft.Data.SqlClient" Version="6.1.2" />
+		<PackageReference Include="Microsoft.Extensions.Hosting" Version="9.0.9" />
+		<PackageReference Include="MongoDB.Bson" Version="3.5.0" />
+		<PackageReference Include="MongoDB.Driver" Version="3.5.0" />
+		<PackageReference Include="MongoDB.Driver.Core" Version="2.30.0" />
+		<PackageReference Include="WPF.ProgressNotifier" Version="1.3.0" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<Resource Include="img\icons8-at-sign-60.png">
+			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+		</Resource>
+		<Resource Include="img\icons8-create-document-30.png">
+			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+		</Resource>
+		<Resource Include="img\icons8-danger-100.png">
+			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+		</Resource>
+		<Resource Include="img\icons8-delete-25.png">
+			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+		</Resource>
+		<Resource Include="img\icons8-delete-64.png">
+			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+		</Resource>
+		<Resource Include="img\icons8-email-25.png">
+			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+		</Resource>
+		<Resource Include="img\icons8-graph-report-64.png">
+			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+		</Resource>
+		<Resource Include="img\icons8-graph-report-qrqc-64.png">
+			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+		</Resource>
+		<Resource Include="img\icons8-import-30.png">
+			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+		</Resource>
+		<Resource Include="img\icons8-loading-80.png">
+		  <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+		</Resource>
+		<Resource Include="img\icons8-meeting-room-64.png">
+			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+		</Resource>
+		<Resource Include="img\icons8-new-file-64.png">
+			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+		</Resource>
+		<Resource Include="img\icons8-projector-64.png">
+			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+		</Resource>
+		<Resource Include="img\icons8-save-25.png">
+			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+		</Resource>
+		<Resource Include="img\icons8-save-60.png">
+			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+		</Resource>
+		<Resource Include="img\icons8-search.gif">
+			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+		</Resource>
+		<Resource Include="img\icons8-setup-64.png">
+			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+		</Resource>
+		<Resource Include="img\icons8-workday-25.png">
+			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+		</Resource>
+		<Resource Include="img\icons8-xls-export-25.png">
+			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+		</Resource>
+		<Resource Include="img\icons8-xls-import-60.png">
+			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+		</Resource>
+		<Resource Include="img\info_icon.ico">
+			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+		</Resource>
+		<Resource Include="img\SEI.png">
+			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+		</Resource>
+	</ItemGroup>
+
+</Project>

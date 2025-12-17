@@ -1,0 +1,20 @@
+﻿OK - Diagramok -> Terv vonal, tény bar
+OK - Headcount -> Visszarakni a terv létszámot
+OK - Gépek esetén a hatékonysági adatokat a BC-ből kérje le
+OK - Napi terv változtatható legyen.
+OK - Extra műszak hozzáadása a doksi létrehozása után is
+OK - Inspection kategóriában ellenőrizni az availWH-t
+OK - Maual process nami selejt % nem számol beíráskor
+OK - Extra nap hozzáadásakor ellenőrizze van-e már ezzel a dátummal
+OK - Maual process productivity hiányzik
+OK - Meeting memo módosításnál legyen a status választható
+OK - 2 email lista -> meeting memo és report
+OK - report html.
+OK - A sales változás nem lesz jó, mert ha nincs feltöltve a kiszterv akkor nem lesz jó. QRQC-hez külön kéne a starts report?
+OK - A vetítéshez kapcsolódó gépcsoportokat setupolni lehessen!!
+OK - KFT gyártás és átcsomis status
+OK - PROD jelentésbe csak a bundling és a Packaging legyen
+OK - Vetítés adatfrissítés -> 30 percenként újra tölt
+
+Állásidő adatok
+Manual selejtbe 1 oszlop is elég az összesnek. Meg kell nézni, hogy mi használja.

@@ -1,0 +1,44 @@
+[{
+  "_id": {
+    "$oid": "688329809b0d65cc393aa6b2"
+  },
+  "Email list": [
+    "borics.krisztian@sumi-electric.hu",
+    "muzsnyai.laszlo@sumi-electric.hu",
+    "rebicsek.adam@sumi-electric.hu",
+    "urban.orsolya@sumi-electric.hu",
+    "luda.ferenc@sumi-electric.hu",
+    "varga.klaudia@sumi-electric.hu",
+    "gergely.daniel@sumi-electric.hu",
+    "istvan.farkas@sumi-electric.hu",
+    "qacommon@sumi-electric.hu"
+  ],
+  "Leader Email list": [
+    "borics.krisztian@sumi-electric.hu",
+    "laszlo.tamas@sumi-electric.hu",
+    "muzsnyai.laszlo@sumi-electric.hu"
+  ],
+  "Production meeting workcenters": [
+    "BUNDLING",
+    "PACKAGING"
+  ],
+  "Manual workcenters for avg": [
+    "ATTACH PLASTIC PART",
+    "ATTACH TAPE",
+    "ATTACHT+BENDING",
+    "BENDING",
+    "CU SHIELD WRAP",
+    "HAND LINE MARKING",
+    "WRAPPING"
+  ],
+  "Projector workcenters": [
+    "AD AMI",
+    "AD AUTOMATA PUNCHING",
+    "CYT",
+    "APIM",
+    "SS AUTOMATA BENDING",
+    "BUNDLING",
+    "PACKAGING"
+  ],
+  "Actual followup": "202510"
+}]
