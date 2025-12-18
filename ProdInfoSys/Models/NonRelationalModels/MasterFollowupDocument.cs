@@ -2,14 +2,17 @@
 using MongoDB.Bson.Serialization.Attributes;
 using ProdInfoSys.Models.FollowupDocuments;
 using ProdInfoSys.Models.StatusReportModels;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace ProdInfoSys.Models.NonRelationalModels
 {
+    /// <summary>
+    /// Represents a master follow-up document containing scheduling, staffing, and status information for a production
+    /// plan or project.
+    /// </summary>
+    /// <remarks>This class aggregates key details such as document and plan names, scheduling dates, shift
+    /// information, headcount, machine and manual follow-ups, inspection data, and status reports. It is typically used
+    /// to track and manage the progress and resources of a manufacturing or operational plan. All properties are
+    /// intended for data storage and retrieval; business logic should be implemented externally.</remarks>
     public class MasterFollowupDocument
     {
         [BsonId]
@@ -33,7 +36,7 @@ namespace ProdInfoSys.Models.NonRelationalModels
 
         [BsonElement("Shift Length (Manual)")]
         public decimal ShiftLenManual { get; set; }
-        
+
         [BsonElement("Shift Length (Machine)")]
         public decimal ShiftLenMachine { get; set; }
 
@@ -51,7 +54,7 @@ namespace ProdInfoSys.Models.NonRelationalModels
 
         [BsonElement("Headcount")]
         public List<HeadCountFollowupDocument> Headcount { get; set; } = new List<HeadCountFollowupDocument>();
-        
+
         [BsonElement("Machine followup")]
         public List<Machines> MachineFollowups { get; set; }
 
@@ -60,7 +63,7 @@ namespace ProdInfoSys.Models.NonRelationalModels
 
         [BsonElement("Manual followup")]
         public List<Manual> ManualFollowups { get; set; }
-        
+
         [BsonElement("Status reports")]
         public List<StatusReport> StatusReports { get; set; }
 

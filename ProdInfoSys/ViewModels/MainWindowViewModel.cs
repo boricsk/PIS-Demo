@@ -13,14 +13,12 @@ using ProdInfoSys.Windows;
 using ProdInfoSys.Windows.Nested;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
-using System.Linq;
 using System.Net;
 using System.Net.Mail;
 using System.Runtime.CompilerServices;
 using System.Windows;
 using System.Windows.Input;
 using System.Windows.Threading;
-//using MessageBox = Xceed.Wpf.Toolkit.MessageBox;
 
 namespace ProdInfoSys.ViewModels
 {
@@ -32,17 +30,32 @@ namespace ProdInfoSys.ViewModels
         private readonly IUserControlFunctions _userControlFunctions;
         private readonly IConnectionManagement _connectionManagement;
         #endregion
+
         private ObservableCollection<ErpMachineCenter> _erpMachineCenters;
         private List<string> _inspectionMachines = new List<string>();
         private List<string> _manualMachines = new List<string>();
-        private List<string> _machines = new List<string>();        
+        private List<string> _machines = new List<string>();
         private TreeNodeModel _selectedTreeNode = new TreeNodeModel();
 
         public ObservableCollection<TreeNodeModel> TreeNodes { get; set; } = new ObservableCollection<TreeNodeModel>();
 
         #region PropChangedInterface
-
+        /// <summary>
+        /// Occurs when a property value changes.
+        /// </summary>
+        /// <remarks>This event is typically raised by the implementation of the INotifyPropertyChanged
+        /// interface to notify subscribers that a property value has changed. Handlers attached to this event receive
+        /// information about which property was changed.</remarks>
         public event PropertyChangedEventHandler? PropertyChanged;
+
+        /// <summary>
+        /// Raises the PropertyChanged event to notify listeners that a property value has changed.
+        /// </summary>
+        /// <remarks>Call this method in a property's setter to notify subscribers that the property's
+        /// value has changed. This is commonly used to implement the INotifyPropertyChanged interface in data-binding
+        /// scenarios.</remarks>
+        /// <param name="propertyName">The name of the property that changed. This value is optional and is automatically provided when called from
+        /// a property setter.</param>
         protected void OnPropertyChanged([CallerMemberName] string? propertyName = null)
         {
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
@@ -75,6 +88,15 @@ namespace ProdInfoSys.ViewModels
 
         #region Command Relay
         public ICommand SelectMenuCommand => new ProjectCommandRelay(SelectMenu);
+        /// <summary>
+        /// Updates the selected menu item and displays the corresponding content based on the specified tree node
+        /// parameter.
+        /// </summary>
+        /// <remarks>If the parameter is not a TreeNodeModel, the method performs no action. The displayed
+        /// content is determined by the name and hierarchy of the selected tree node. This method also updates the
+        /// RootName property and notifies listeners of the change.</remarks>
+        /// <param name="param">An object representing the selected tree node. Must be of type TreeNodeModel to update the menu selection
+        /// and content.</param>
         private void SelectMenu(object param)
         {
             if (param is TreeNodeModel selected)
@@ -87,7 +109,7 @@ namespace ProdInfoSys.ViewModels
                 {
                     var hc = new HeadcountViewModel(_dialogs, _userControlFunctions, _connectionManagement);
                     hc.Init(selected.GetRoot());
-                    var view = new HeadcountUserControl { DataContext = hc };                    
+                    var view = new HeadcountUserControl { DataContext = hc };
                     SelectedContent = view;
                 }
                 if (_inspectionMachines.Contains(selected.Name))
@@ -105,7 +127,7 @@ namespace ProdInfoSys.ViewModels
                     SelectedContent = view;
                 }
                 if (_machines.Contains(selected.Name))
-                {                                                                                   
+                {
                     var hc = new MachineViewModel(_dialogs, _userControlFunctions, _connectionManagement);
                     hc.Init(selected.GetRoot(), selected.Name);
                     var view = new MachineUserControl { DataContext = hc };
@@ -121,7 +143,7 @@ namespace ProdInfoSys.ViewModels
                         var view = new StatusReportUserControl { DataContext = hc };
                         SelectedContent = view;
                     }
-                    
+
                     if (selected.Parent.Name == "Status reports QRQC")
                     {
                         var hc = new StatusReportQrqcViewModel();
@@ -133,11 +155,16 @@ namespace ProdInfoSys.ViewModels
             }
         }
         public ICommand? ShowStatusReport => new ProjectCommandRelay(_ => ShowingStatusReport());
+        /// <summary>
+        /// Displays the status report dialog for the currently selected document, if available.
+        /// </summary>
+        /// <remarks>If no document is selected, an error message is shown to the user. This method is
+        /// intended to be called in response to user actions that require viewing a status report.</remarks>
         private void ShowingStatusReport()
         {
             if (!_rootName.IsNullOrEmpty())
             {
-                
+
                 NewStatusReportViewModel statusReportViewModel = new NewStatusReportViewModel(_dialogs);
                 statusReportViewModel.Init(_rootName);
 
@@ -153,6 +180,11 @@ namespace ProdInfoSys.ViewModels
         }
 
         public ICommand? ShowQRQCStatusReport => new ProjectCommandRelay(_ => ShowingQRQCStatusReport());
+        /// <summary>
+        /// Displays the QRQC status report dialog for the currently selected document, if available.
+        /// </summary>
+        /// <remarks>If no document is selected, an error message is shown to the user. This method is
+        /// intended to be called in response to user actions that require viewing the QRQC status report.</remarks>
         private void ShowingQRQCStatusReport()
         {
             if (!_rootName.IsNullOrEmpty())
@@ -172,6 +204,9 @@ namespace ProdInfoSys.ViewModels
         }
 
         public ICommand? ShowNewDocument => new ProjectCommandRelay(_ => ShowingNewDocument());
+        /// <summary>
+        /// Displays the dialog for adding a new document and refreshes the document tree after the dialog is closed.
+        /// </summary>
         private void ShowingNewDocument()
         {
             var window = _windowFactory.Create<AddNewDocument>();
@@ -179,18 +214,32 @@ namespace ProdInfoSys.ViewModels
             LoadTree();
         }
         public ICommand? ShowMeetingMemoWindow => new ProjectCommandRelay(_ => ShowingMeetingMemoWindow());
+        /// <summary>
+        /// Displays the meeting memo window as a modal dialog.
+        /// </summary>
+        /// <remarks>This method blocks execution until the meeting memo window is closed. Use this method
+        /// when user input or review of meeting memos is required before proceeding.</remarks>
         private void ShowingMeetingMemoWindow()
         {
             var window = _windowFactory.Create<MeetingMemoWindow>();
             window.ShowDialog();
         }
         public ICommand? ShowSetupWindow => new ProjectCommandRelay(_ => ShowingSetupWindow());
+        /// <summary>
+        /// Displays the setup window as a modal dialog.
+        /// </summary>
+        /// <remarks>This method blocks execution until the setup window is closed by the user. Use this
+        /// method when user input or configuration is required before proceeding.</remarks>
         private void ShowingSetupWindow()
         {
             var window = _windowFactory.Create<SetupWindow>();
             window.ShowDialog();
         }
         public ICommand? DeleteDocument => new ProjectCommandRelay(_ => DeletingDocument());
+        /// <summary>
+        /// Handles the process of displaying the document deletion dialog and refreshing the document tree after
+        /// deletion.
+        /// </summary>
         private void DeletingDocument()
         {
             var window = _windowFactory.Create<DeleteWindow>();
@@ -199,6 +248,12 @@ namespace ProdInfoSys.ViewModels
         }
 
         public ICommand? SendMemo => new ProjectCommandRelay(_ => SendingMemo());
+        /// <summary>
+        /// Sends a meeting memo email to all configured recipients after user confirmation.
+        /// </summary>
+        /// <remarks>This method retrieves all open meeting minutes, builds an email message, and sends it
+        /// using SMTP settings from the application configuration. If the user does not confirm the action, no email is
+        /// sent. If an error occurs during the sending process, an error dialog is displayed to the user.</remarks>
         private void SendingMemo()
         {
             if (_dialogs.ShowConfirmation("Biztosan küldeni szeretné a meeting memo-t?", "Email küldés"))
@@ -237,8 +292,8 @@ namespace ProdInfoSys.ViewModels
         #endregion
 
         #region Constructor
-        public MainWindowViewModel(IUserDialogService dialog, 
-            IWindowFactory windowFactory, 
+        public MainWindowViewModel(IUserDialogService dialog,
+            IWindowFactory windowFactory,
             IUserControlFunctions userControlFunctions,
             IConnectionManagement connectionManagement
             )
@@ -246,7 +301,7 @@ namespace ProdInfoSys.ViewModels
             Application.Current.ShutdownMode = ShutdownMode.OnExplicitShutdown;
             var loading = new StartWindow();
             loading.Show();
-            
+
             _dialogs = dialog;
             _windowFactory = windowFactory;
             _userControlFunctions = userControlFunctions;
@@ -269,7 +324,7 @@ namespace ProdInfoSys.ViewModels
                 _machines = _erpMachineCenters
                     .Where(m => m.MachineType == EnumMachineType.FFCMachineProcess)
                     .Select(m => m.Workcenter)
-                    .ToList();               
+                    .ToList();
 
             }
             catch (Exception ex)
@@ -288,7 +343,9 @@ namespace ProdInfoSys.ViewModels
         #endregion
 
         #region Private methods
-
+        /// <summary>
+        /// Initializes and starts a timer that triggers an event at regular intervals.
+        /// </summary>
         private void TimerInit()
         {
             DispatcherTimer tmr = new DispatcherTimer();
@@ -296,6 +353,12 @@ namespace ProdInfoSys.ViewModels
             tmr.Tick += Tmr_Tick;
             tmr.Start();
         }
+
+        /// <summary>
+        /// Handles the timer tick event by updating the current time and notifying listeners of the change.
+        /// </summary>
+        /// <param name="sender">The source of the event, typically the timer that triggered the tick.</param>
+        /// <param name="e">An object that contains the event data.</param>
         private void Tmr_Tick(object? sender, EventArgs e)
         {
             _time = DateTime.Now.ToString();
@@ -322,8 +385,6 @@ namespace ProdInfoSys.ViewModels
                 if (doc.Headcount?.Any() == true)
                 {
                     var headNode = new TreeNodeModel { Name = "Headcount" };
-                    //foreach (var hc in doc.Headcount)
-                    //headNode.Children.Add(new TreeNodeModel { Name = hc.ToString() });
                     docNode.Children.Add(headNode);
                 }
 

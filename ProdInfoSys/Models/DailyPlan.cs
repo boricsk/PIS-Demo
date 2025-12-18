@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace ProdInfoSys.Models
+﻿namespace ProdInfoSys.Models
 {
     /// <summary>
     /// Represents a daily production plan, including the planned and actual quantities for a specific workday.
@@ -14,8 +8,8 @@ namespace ProdInfoSys.Models
     public class DailyPlan
     {
         public decimal Diff => ActualQty - PlannedQty;
-        public DateTime Workday {get; set;}
-        public decimal PlannedQty {get; set;}
-        public decimal ActualQty {get; set;}        
+        public DateTime Workday { get; set; }
+        public decimal PlannedQty { get; set; }
+        public decimal ActualQty { get; set; }
     }
 }

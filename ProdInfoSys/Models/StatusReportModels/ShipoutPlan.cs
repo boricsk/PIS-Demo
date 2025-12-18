@@ -1,14 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace ProdInfoSys.Models.StatusReportModels
+﻿namespace ProdInfoSys.Models.StatusReportModels
 {
     public class ShipoutPlan
     {
-
         public string Bizonylatszam { get; set; }
         public string Szam { get; set; }
         public decimal NyitottMennyiseg { get; set; }
@@ -24,6 +17,6 @@ namespace ProdInfoSys.Models.StatusReportModels
         public string CustomerNo { get; set; }
         public string SeiCustRefNo { get; set; }
         public string ETD { get; set; }
-        public decimal ShipOutStd {get; set; } = 0;
+        public decimal ShipOutStd { get; set; } = 0;
     }
 }

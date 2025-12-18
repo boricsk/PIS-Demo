@@ -1,18 +1,17 @@
 ﻿using ProdInfoSys.Models.ErpDataModels;
-using System;
-using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace ProdInfoSys.Models
 {
+    /// <summary>
+    /// Represents a production planning document containing scheduling, resource, and shift information for
+    /// manufacturing operations.
+    /// </summary>
+    /// <remarks>Use this class to encapsulate all relevant data for a new production plan, including machine
+    /// centers, shift details, headcount planning, and scheduling dates. The properties provide access to both
+    /// high-level plan metadata and detailed scheduling parameters.</remarks>
     public class NewDocument
     {
-        /// <summary>
-        /// A followup dokumentum felépítéséhez szükséges adatok az új dolumentum létrehozásáról
-        /// </summary>
         public ObservableCollection<ErpMachineCenter> MachineCenters { get; set; }
         public string PlanName { get; set; }
         public string DocumentName { get; set; }
@@ -27,7 +26,7 @@ namespace ProdInfoSys.Models
         public int HeadcountPlanNet { get; set; }
         public int HeadcountPlanBr { get; set; }
         public string Description { get; set; }
-        public List<DateOnly> WorkdayList {get; set;}
+        public List<DateOnly> WorkdayList { get; set; }
 
     }
 }

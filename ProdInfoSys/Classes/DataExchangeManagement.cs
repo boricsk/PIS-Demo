@@ -1,16 +1,10 @@
 ﻿using ProdInfoSys.Models.ErpDataModels;
-using System;
-using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.Diagnostics;
-using System.Linq;
 using System.Net.Http;
 using System.Text;
 using System.Text.Json;
 using System.Text.Json.Nodes;
-using System.Threading.Tasks;
 using System.Web;
-using System.Windows.Documents;
 
 namespace ProdInfoSys.Classes
 {
@@ -47,11 +41,11 @@ namespace ProdInfoSys.Classes
         /// capacity ledger entries matching the specified work center and date. The collection is empty if no entries
         /// are found.</returns>
         public async Task<ObservableCollection<CapacityLedgerEntry>> GetCapacityLedgerEntries(string workcenter, string date)
-        { 
+        {
             ObservableCollection<CapacityLedgerEntry> ret = new ObservableCollection<CapacityLedgerEntry>();
-                        
+
             var url = $"http://{_serverIp}/{_erpEnv}/ODataV4/Company('{_company}')/SEICapacityLedger?$filter=PostingDate eq {date} and Workcenter eq '{workcenter}'";
-            
+
             var client = new HttpClient();
             var byteArray = Encoding.UTF8.GetBytes($"{_user}:{_passw}");
 
@@ -61,7 +55,7 @@ namespace ProdInfoSys.Classes
 
             if (response.IsSuccessStatusCode)
             {
-                var result = await response.Content.ReadAsStringAsync();                
+                var result = await response.Content.ReadAsStringAsync();
                 var json = JsonNode.Parse(result);
                 var valueJson = json["value"].ToJsonString();
                 var list = JsonSerializer.Deserialize<List<CapacityLedgerEntry>>(valueJson);
@@ -71,7 +65,7 @@ namespace ProdInfoSys.Classes
             {
                 MessageBox.Show(response.StatusCode.ToString());
             }
-            
+
             return ret;
         }
         //TODO : Szimulációra át kell írni

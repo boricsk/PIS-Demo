@@ -7,20 +7,23 @@ using ProdInfoSys.DI;
 using ProdInfoSys.Models;
 using ProdInfoSys.Models.FollowupDocuments;
 using ProdInfoSys.Models.NonRelationalModels;
-using System;
-using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
-using System.Linq;
 using System.Runtime.CompilerServices;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows;
 using System.Windows.Input;
-using System.Windows.Threading;
 
 namespace ProdInfoSys.ViewModels.Nested
 {
+    /// <summary>
+    /// Represents the view model for managing manual follow-up documents, chart data, and related user interactions in
+    /// a WPF application.
+    /// </summary>
+    /// <remarks>The ManualViewModel coordinates data binding, user commands, and chart updates for manual
+    /// production follow-up workflows. It implements INotifyPropertyChanged to support property change notifications
+    /// for UI updates. The view model exposes properties for chart data, document collections, and various UI state
+    /// flags, as well as commands for importing, saving, and exporting data. It is intended to be used as the data
+    /// context for WPF views that display and edit manual follow-up information. Thread safety is not guaranteed; all
+    /// members are expected to be accessed from the UI thread.</remarks>
     public class ManualViewModel : INotifyPropertyChanged
     {
         #region Dependency injection
@@ -36,8 +39,23 @@ namespace ProdInfoSys.ViewModels.Nested
         public Action? ForceCommit { get; set; }
 
         #region PropChangedInterface
-
+        /// <summary>
+        /// Occurs when a property value changes.
+        /// </summary>
+        /// <remarks>This event is typically raised by the implementation of the INotifyPropertyChanged
+        /// interface to notify subscribers that a property value has changed. Handlers attached to this event receive
+        /// the name of the property that changed in the PropertyChangedEventArgs parameter. This event is commonly used
+        /// in data binding scenarios to update UI elements when underlying data changes.</remarks>
         public event PropertyChangedEventHandler? PropertyChanged;
+
+        /// <summary>
+        /// Raises the PropertyChanged event to notify listeners that a property value has changed.
+        /// </summary>
+        /// <remarks>Call this method in a property's setter to notify subscribers that the property's
+        /// value has changed. This is commonly used to support data binding in applications that implement the
+        /// INotifyPropertyChanged interface.</remarks>
+        /// <param name="propertyName">The name of the property that changed. This value is optional and is automatically provided when called from
+        /// a property setter.</param>
         protected void OnPropertyChanged([CallerMemberName] string? propertyName = null)
         {
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
@@ -180,6 +198,15 @@ namespace ProdInfoSys.ViewModels.Nested
 
         #region ICommand
         public ICommand ImportFromErp => new ProjectCommandRelay(async _ => await ImportingFromErp());
+        /// <summary>
+        /// Imports production and capacity data from the ERP system and updates the corresponding manual follow-up
+        /// document with the retrieved values.
+        /// </summary>
+        /// <remarks>This method updates shift output, reject quantities, supplier rejects, and
+        /// productivity metrics for the selected document based on ERP data. After updating, it notifies property
+        /// changes and persists the document state. This method should be called when synchronizing manual follow-up
+        /// documents with the latest ERP data.</remarks>
+        /// <returns>A task that represents the asynchronous import operation.</returns>
         private async Task ImportingFromErp()
         {
             if (_selectedDocument != null)
@@ -192,18 +219,18 @@ namespace ProdInfoSys.ViewModels.Nested
 
                 if (capacity != null && actualDocument != null)
                 {
-                    actualDocument.Shift1KftOutput = (int)capacity.Where(s => s.ShiftCode == "1").Sum(s => s.OutputQuantity * 1000);
-                    actualDocument.Shift2KftOutput = (int)capacity.Where(s => s.ShiftCode == "2").Sum(s => s.OutputQuantity * 1000);
-                    actualDocument.Shift3KftOutput = (int)capacity.Where(s => s.ShiftCode == "3").Sum(s => s.OutputQuantity * 1000);
-                    actualDocument.Shift1KftReject = (int)capacity.Where(s => s.ShiftCode == "1" && !_notInvolvedScrapCodes.Contains(s.ScrapCode)).Sum(s => s.ScrapQuantity * 1000);
-                    actualDocument.Shift2KftReject = (int)capacity.Where(s => s.ShiftCode == "2" && !_notInvolvedScrapCodes.Contains(s.ScrapCode)).Sum(s => s.OutputQuantity * 1000);
-                    actualDocument.Shift3KftReject = (int)capacity.Where(s => s.ShiftCode == "3" && !_notInvolvedScrapCodes.Contains(s.ScrapCode)).Sum(s => s.OutputQuantity * 1000);
+                    actualDocument.Shift1Output = (int)capacity.Where(s => s.ShiftCode == "1").Sum(s => s.OutputQuantity * 1000);
+                    actualDocument.Shift2Output = (int)capacity.Where(s => s.ShiftCode == "2").Sum(s => s.OutputQuantity * 1000);
+                    actualDocument.Shift3Output = (int)capacity.Where(s => s.ShiftCode == "3").Sum(s => s.OutputQuantity * 1000);
+                    actualDocument.Shift1Reject = (int)capacity.Where(s => s.ShiftCode == "1" && !_notInvolvedScrapCodes.Contains(s.ScrapCode)).Sum(s => s.ScrapQuantity * 1000);
+                    actualDocument.Shift2Reject = (int)capacity.Where(s => s.ShiftCode == "2" && !_notInvolvedScrapCodes.Contains(s.ScrapCode)).Sum(s => s.OutputQuantity * 1000);
+                    actualDocument.Shift3Reject = (int)capacity.Where(s => s.ShiftCode == "3" && !_notInvolvedScrapCodes.Contains(s.ScrapCode)).Sum(s => s.OutputQuantity * 1000);
                     actualDocument.SupplierReject = (int)capacity.Where(s => s.ScrapCode == "E").Sum(s => s.ScrapQuantity * 1000);
                     actualDocument.BS = (int)capacity.Where(s => s.ScrapCode == "BS").Sum(s => s.ScrapQuantity * 1000);
 
                     if (capacity.Where(s => s.Perf != 0).Count() != 0)
                     {
-                        actualDocument.ProductivityKft = capacity.Where(s => s.Perf != 0).Average(s => s.Perf);
+                        actualDocument.Productivity = capacity.Where(s => s.Perf != 0).Average(s => s.Perf);
                     }
                 }
                 OnPropertyChanged(nameof(ManualFollowupDocs));
@@ -212,6 +239,13 @@ namespace ProdInfoSys.ViewModels.Nested
             }
         }
         public ICommand AddExtraWorkday => new ProjectCommandRelay(_ => AddingExtraWorkday());
+        /// <summary>
+        /// Adds an extra workday to the manual follow-up documents and updates related state.
+        /// </summary>
+        /// <remarks>This method updates the collection of manual follow-up documents by adding an extra
+        /// workday, reordering the collection, and subscribing to property change notifications for each document. It
+        /// also updates the main document and notifies listeners of changes. This method should be called when an
+        /// additional workday needs to be reflected in the manual follow-up workflow.</remarks>
         private void AddingExtraWorkday()
         {
             if (_manualFollowupDocs != null && ManualFollowupDocs != null)
@@ -228,6 +262,12 @@ namespace ProdInfoSys.ViewModels.Nested
         }
 
         public ICommand? DeleteSelected => new ProjectCommandRelay(_ => DeletingSelected());
+        /// <summary>
+        /// Deletes the currently selected document after user confirmation.
+        /// </summary>
+        /// <remarks>This method prompts the user for confirmation before removing the selected document
+        /// from the manual follow-up documents collection. After deletion, it updates the main document and saves
+        /// changes. No action is taken if no document is selected.</remarks>
         private void DeletingSelected()
         {
             if (_selectedDocument != null && ManualFollowupDocs != null && SelectedDocument != null)
@@ -242,6 +282,14 @@ namespace ProdInfoSys.ViewModels.Nested
         }
 
         public ICommand? SaveDocument => new ProjectCommandRelay(_ => SavingDocument());
+        /// <summary>
+        /// Saves the current follow-up document to the database and updates related state. Optionally displays a
+        /// confirmation or error message to the user based on the outcome.
+        /// </summary>
+        /// <remarks>This method updates related properties and triggers UI notifications as part of the
+        /// save process. If no follow-up document is present, the method performs no action.</remarks>
+        /// <param name="isConfirm">true to display a confirmation or error dialog after attempting to save; otherwise, false to suppress user
+        /// notifications.</param>
         private void SavingDocument(bool isConfirm = true)
         {
             if (_followupDocument != null)
@@ -268,6 +316,12 @@ namespace ProdInfoSys.ViewModels.Nested
         }
 
         public ICommand? ExportExcel => new ProjectCommandRelay(_ => ExportingExcel());
+        /// <summary>
+        /// Exports the current manual follow-up documents to an Excel file using the selected work center as the file
+        /// name and worksheet name.
+        /// </summary>
+        /// <remarks>If an error occurs during the export process, an error dialog is displayed to inform
+        /// the user. This method is intended for internal use and does not return a value.</remarks>
         private void ExportingExcel()
         {
             try
@@ -297,7 +351,11 @@ namespace ProdInfoSys.ViewModels.Nested
         #endregion
 
         #region Public methods
-
+        /// <summary>
+        /// Initializes the current instance with the specified parent node and workcenter identifier.
+        /// </summary>
+        /// <param name="parent">The parent node to associate with this instance. Cannot be null.</param>
+        /// <param name="workcenter">The identifier of the workcenter to select. Cannot be null or empty.</param>
         public void Init(TreeNodeModel parent, string workcenter)
         {
             _parent = parent;
@@ -311,12 +369,26 @@ namespace ProdInfoSys.ViewModels.Nested
             SetVisibility();
         }
 
+        /// <summary>
+        /// Gets a function that formats Y-axis values as percentage strings with two decimal places.
+        /// </summary>
         public Func<double, string> YFormatter => value => value.ToString("P2");
+
+        /// <summary>
+        /// Gets a function that formats a double-precision value as a string with two decimal places.
+        /// </summary>
         public Func<double, string> ScrapYFormatter => value => value.ToString("N2");
 
         #endregion
 
         #region Private methods
+        /// <summary>
+        /// Updates the visibility state of shift-related UI elements and adjusts the font size based on the current
+        /// follow-up document settings.
+        /// </summary>
+        /// <remarks>This method should be called whenever the follow-up document or its shift number
+        /// changes to ensure that the UI reflects the correct visibility and font size. It raises property change
+        /// notifications for the affected properties.</remarks>
         private void SetVisibility()
         {
             if (_followupDocument != null)
@@ -439,16 +511,16 @@ namespace ProdInfoSys.ViewModels.Nested
                 GetDifference();
             }
             if (
-                e.PropertyName == nameof(ManualFollowupDocument.Shift1KftOutput) ||
-                e.PropertyName == nameof(ManualFollowupDocument.Shift2KftOutput) ||
-                e.PropertyName == nameof(ManualFollowupDocument.Shift3KftOutput) ||
+                e.PropertyName == nameof(ManualFollowupDocument.Shift1Output) ||
+                e.PropertyName == nameof(ManualFollowupDocument.Shift2Output) ||
+                e.PropertyName == nameof(ManualFollowupDocument.Shift3Output) ||
                 e.PropertyName == nameof(ManualFollowupDocument.Shift1SubconOutput) ||
                 e.PropertyName == nameof(ManualFollowupDocument.Shift2SubconOutput) ||
                 e.PropertyName == nameof(ManualFollowupDocument.Shift3SubconOutput) ||
                 e.PropertyName == nameof(ManualFollowupDocument.SupplierReject) ||
-                e.PropertyName == nameof(ManualFollowupDocument.Shift1KftReject) ||
-                e.PropertyName == nameof(ManualFollowupDocument.Shift2KftReject) ||
-                e.PropertyName == nameof(ManualFollowupDocument.Shift3KftReject) ||
+                e.PropertyName == nameof(ManualFollowupDocument.Shift1Reject) ||
+                e.PropertyName == nameof(ManualFollowupDocument.Shift2Reject) ||
+                e.PropertyName == nameof(ManualFollowupDocument.Shift3Reject) ||
                 e.PropertyName == nameof(ManualFollowupDocument.Shift1SubconReject) ||
                 e.PropertyName == nameof(ManualFollowupDocument.Shift2SubconReject) ||
                 e.PropertyName == nameof(ManualFollowupDocument.Shift3SubconReject) ||
@@ -554,7 +626,7 @@ namespace ProdInfoSys.ViewModels.Nested
                     new ColumnSeries
                     {
                         Title = "Tény (KFT)",
-                        Values = new ChartValues<decimal> (_manualFollowupDocs.Select(x => x.ProductivityKft).ToList()),
+                        Values = new ChartValues<decimal> (_manualFollowupDocs.Select(x => x.Productivity).ToList()),
                         DataLabels = true,
                     },
 

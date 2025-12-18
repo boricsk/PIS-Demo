@@ -4,20 +4,11 @@ using ProdInfoSys.Classes;
 using ProdInfoSys.CommandRelay;
 using ProdInfoSys.DI;
 using ProdInfoSys.Enums;
-using ProdInfoSys.Models;
-using ProdInfoSys.Models.FollowupDocuments;
 using ProdInfoSys.Models.NonRelationalModels;
-using System;
-using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
-using System.Linq;
 using System.Runtime.CompilerServices;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows;
 using System.Windows.Input;
-//using MessageBox = Xceed.Wpf.Toolkit.MessageBox;
 
 namespace ProdInfoSys.ViewModels
 {
@@ -33,7 +24,22 @@ namespace ProdInfoSys.ViewModels
 
 
         #region PropChangedInterface
+        /// <summary>
+        /// Occurs when a property value changes.
+        /// </summary>
+        /// <remarks>This event is typically raised by calling the OnPropertyChanged method after a
+        /// property value is modified. Handlers attached to this event can respond to property changes, which is
+        /// commonly used for data binding scenarios in UI frameworks.</remarks>
         public event PropertyChangedEventHandler? PropertyChanged;
+
+        /// <summary>
+        /// Raises the PropertyChanged event to notify listeners that a property value has changed.
+        /// </summary>
+        /// <remarks>Call this method in a property's setter to notify subscribers that the property's
+        /// value has changed. This is commonly used to support data binding in applications that implement the
+        /// INotifyPropertyChanged interface.</remarks>
+        /// <param name="propertyName">The name of the property that changed. This value is optional and will be automatically set to the caller
+        /// member name if not specified.</param>
         protected void OnPropertyChanged([CallerMemberName] string? propertyName = null)
         {
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
@@ -97,6 +103,13 @@ namespace ProdInfoSys.ViewModels
 
         #region ICommand
         public ICommand? SaveDocument => new ProjectCommandRelay(_ => SavingDocument());
+        /// <summary>
+        /// Attempts to save all meeting minutes documents to the database and displays a notification indicating
+        /// whether the operation was successful or not.
+        /// </summary>
+        /// <remarks>This method provides user feedback through dialog messages based on the outcome of
+        /// the save operation. It does not return a value or throw exceptions for failure; instead, it communicates
+        /// success or error information directly to the user interface.</remarks>
         private void SavingDocument()
         {
             var ret = SaveAllDocumentToDatabase(_meetingMinutes);
@@ -113,9 +126,16 @@ namespace ProdInfoSys.ViewModels
         }
 
         public ICommand AddNewMemo => new ProjectCommandRelay(_ => AddingNewMemo());
+        /// <summary>
+        /// Adds a new meeting memo to the database and updates the in-memory collections with the new entry.
+        /// </summary>
+        /// <remarks>This method creates a new meeting memo using the current values from the new memo
+        /// input, persists it to the database, and updates relevant collections. After adding the memo, it resets the
+        /// input fields and notifies property changes to update any data bindings. This method is intended for internal
+        /// use within the class and is not thread-safe.</remarks>
         private void AddingNewMemo()
         {
-            
+
             ConnectionManagement conMgmnt = new ConnectionManagement();
             var databaseCollection = conMgmnt.GetCollection<MeetingMinutes>(conMgmnt.MeetingMemo);
             MongoDbOperations<MeetingMinutes> dbo = new MongoDbOperations<MeetingMinutes>(databaseCollection);
@@ -132,7 +152,7 @@ namespace ProdInfoSys.ViewModels
             dbo.AddNewDocument(_new);
             _meetingMinutes.Add(_new);
             _allMemos.Add(_new);
-           
+
             _newMemo.task = string.Empty;
             _newMemo.pic = string.Empty;
             _newMemo.comment = string.Empty;
@@ -143,10 +163,16 @@ namespace ProdInfoSys.ViewModels
         }
 
         public ICommand AddNoEvent => new ProjectCommandRelay(_ => AddingNoEvent());
+        /// <summary>
+        /// Initializes the NewMemo property with default values indicating that no noteworthy event has occurred.
+        /// </summary>
+        /// <remarks>This method sets standard placeholder values for the NewMemo object and updates its
+        /// properties to reflect the absence of any significant events. It also raises the PropertyChanged event for
+        /// data binding scenarios.</remarks>
         private void AddingNoEvent()
         {
-            _newMemo.date = DateTime.Today.AddHours(12);            
-            _newMemo.deadline = DateTime.Today.AddHours(1);            
+            _newMemo.date = DateTime.Today.AddHours(12);
+            _newMemo.deadline = DateTime.Today.AddHours(1);
             _newMemo.pic = "-";
             _newMemo.task = "Nem történt semmi említésre méltó esemény.";
             _newMemo.comment = "-";
@@ -155,11 +181,15 @@ namespace ProdInfoSys.ViewModels
         }
 
         public ICommand DeleteSelectedMemo => new ProjectCommandRelay(_ => DeletingSelectedMemo());
+        /// <summary>
+        /// Prompts the user to confirm deletion and deletes the currently selected memo if confirmed.
+        /// </summary>
+        /// <remarks>This method displays a confirmation dialog before deleting the selected memo. No
+        /// action is taken if no item is selected or if the user cancels the confirmation dialog.</remarks>
         private void DeletingSelectedMemo()
         {
             if (_selectedItem != null)
             {
-                //(MessageBox.Show($"Tényleg törölni szeretnéd a kijelölt dokumentumot? ", "Törlés", MessageBoxButton.YesNo, MessageBoxImage.Warning) == MessageBoxResult.Yes)
                 if (_dialogs.ShowConfirmation("Tényleg törölni szeretnéd a kijelölt dokumentumot? ", "Törlés"))
                 {
                     DeleteDocumentFromDatabase();
@@ -285,8 +315,6 @@ namespace ProdInfoSys.ViewModels
             }
             else
             {
-
-                //MessageBox.Show(search);
                 if (_allMemos != null)
                 {
                     var filtered = _allMemos.Where(

@@ -1,31 +1,50 @@
 ﻿using ProdInfoSys.Interfaces;
-using System;
-using System.Collections.Generic;
 using System.ComponentModel;
-using System.Linq;
 using System.Runtime.CompilerServices;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace ProdInfoSys.Models.FollowupDocuments
 {
+    /// <summary>
+    /// Represents a manual follow-up document containing production output, reject, and productivity data for multiple
+    /// shifts and workdays. Supports property change notification for data binding scenarios.
+    /// </summary>
+    /// <remarks>This class is typically used to track and aggregate production and quality metrics across
+    /// different shifts, including planned and actual outputs, reject quantities, and productivity figures. It
+    /// implements <see cref="INotifyPropertyChanged"/> to support UI data binding and notifies listeners when property
+    /// values change. Calculated properties provide convenient access to aggregated totals and ratios based on the
+    /// underlying shift-level data.</remarks>
     public class ManualFollowupDocument : INotifyPropertyChanged, IHasFieldFollowupDoc, IHasFieldManualFollowupDoc
     {
+        /// <summary>
+        /// Occurs when a property value changes.
+        /// </summary>
+        /// <remarks>This event is typically raised by the implementation of the INotifyPropertyChanged
+        /// interface to notify subscribers that a property value has changed. Handlers receive the name of the property
+        /// that changed in the event data.</remarks>
         public event PropertyChangedEventHandler? PropertyChanged;
+
+        /// <summary>
+        /// Raises the PropertyChanged event for the specified property to notify listeners of a property value change.
+        /// </summary>
+        /// <remarks>If the changed property affects calculated summary properties, this method also
+        /// raises PropertyChanged events for those dependent properties to ensure that data bindings are updated
+        /// appropriately.</remarks>
+        /// <param name="propertyName">The name of the property that changed. This value is optional and is automatically provided when called from
+        /// a property setter.</param>
         protected void OnPropertyChanged([CallerMemberName] string? propertyName = null)
         {
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
             // Ha ezen oszlopok értékei változnak
-            if (propertyName == nameof(Shift1KftOutput) ||
-                propertyName == nameof(Shift2KftOutput) ||
-                propertyName == nameof(Shift3KftOutput) ||
+            if (propertyName == nameof(Shift1Output) ||
+                propertyName == nameof(Shift2Output) ||
+                propertyName == nameof(Shift3Output) ||
                 propertyName == nameof(Shift1SubconOutput) ||
                 propertyName == nameof(Shift2SubconOutput) ||
                 propertyName == nameof(Shift3SubconOutput) ||
                 propertyName == nameof(SupplierReject) ||
-                propertyName == nameof(Shift1KftReject) ||
-                propertyName == nameof(Shift2KftReject) ||
-                propertyName == nameof(Shift3KftReject) ||
+                propertyName == nameof(Shift1Reject) ||
+                propertyName == nameof(Shift2Reject) ||
+                propertyName == nameof(Shift3Reject) ||
                 propertyName == nameof(Shift1SubconReject) ||
                 propertyName == nameof(Shift2SubconReject) ||
                 propertyName == nameof(Shift3SubconReject) ||
@@ -33,7 +52,7 @@ namespace ProdInfoSys.Models.FollowupDocuments
                 )
             {
                 // akkor frissítenie kéne az összegeket
-                PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(KftOtuputSum)));
+                PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(OtuputSum)));
                 PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(SubconOtuputSum)));
                 PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(OutputSum)));
                 PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(RejectSum)));
@@ -43,14 +62,14 @@ namespace ProdInfoSys.Models.FollowupDocuments
             }
         }
 
-        public int KftOtuputSum => Shift1KftOutput + Shift2KftOutput + Shift3KftOutput;
+        public int OtuputSum => Shift1Output + Shift2Output + Shift3Output;
         public int SubconOtuputSum => Shift1SubconOutput + Shift2SubconOutput + Shift3SubconOutput;
-        public int OutputSum => KftOtuputSum + SubconOtuputSum;
+        public int OutputSum => OtuputSum + SubconOtuputSum;
         public int OutputDifference => OutputSum - DailyPlan;
-        public int KftRejectSum => Shift1KftReject + Shift2KftReject + Shift3KftReject;
+        public int RejectSum => Shift1Reject + Shift2Reject + Shift3Reject;
         public int SubconRejectSum => Shift1SubconReject + Shift2SubconReject + Shift3SubconReject;
-        public int RejectSum => KftRejectSum + SubconRejectSum;
-        public double CalcRejectRatio => (OutputSum + RejectSum) == 0 ? 0 : (double)RejectSum / (OutputSum + RejectSum);
+        public int RejectSumSubconOwn => RejectSum + SubconRejectSum;
+        public double CalcRejectRatio => (OutputSum + RejectSumSubconOwn) == 0 ? 0 : (double)RejectSumSubconOwn / (OutputSum + RejectSumSubconOwn);
 
 
         private DateOnly _workday;
@@ -71,14 +90,14 @@ namespace ProdInfoSys.Models.FollowupDocuments
         private int _ttlOutput;
         public int TTLOutput { get => _ttlOutput; set { _ttlOutput = value; OnPropertyChanged(); } }
 
-        private int _shift1KftOutput;
-        public int Shift1KftOutput { get => _shift1KftOutput; set { _shift1KftOutput = value; OnPropertyChanged(); } }
+        private int _shift1Output;
+        public int Shift1Output { get => _shift1Output; set { _shift1Output = value; OnPropertyChanged(); } }
 
-        private int _shift2KftOutput;
-        public int Shift2KftOutput { get => _shift2KftOutput; set { _shift2KftOutput = value; OnPropertyChanged(); } }
+        private int _shift2Output;
+        public int Shift2Output { get => _shift2Output; set { _shift2Output = value; OnPropertyChanged(); } }
 
-        private int _shift3KftOutput;
-        public int Shift3KftOutput { get => _shift3KftOutput; set { _shift3KftOutput = value; OnPropertyChanged(); } }
+        private int _shift3Output;
+        public int Shift3Output { get => _shift3Output; set { _shift3Output = value; OnPropertyChanged(); } }
 
         private int _shift1SubconOutput;
         public int Shift1SubconOutput { get => _shift1SubconOutput; set { _shift1SubconOutput = value; OnPropertyChanged(); } }
@@ -95,14 +114,14 @@ namespace ProdInfoSys.Models.FollowupDocuments
         private decimal _rejectRatio;
         public decimal RejectRatio { get => _rejectRatio; set { _rejectRatio = value; OnPropertyChanged(); } }
 
-        private int _shift1KftReject;
-        public int Shift1KftReject { get => _shift1KftReject; set { _shift1KftReject = value; OnPropertyChanged(); } }
+        private int _shift1Reject;
+        public int Shift1Reject { get => _shift1Reject; set { _shift1Reject = value; OnPropertyChanged(); } }
 
-        private int _shift2KftReject;
-        public int Shift2KftReject { get => _shift2KftReject; set { _shift2KftReject = value; OnPropertyChanged(); } }
+        private int _shift2Reject;
+        public int Shift2Reject { get => _shift2Reject; set { _shift2Reject = value; OnPropertyChanged(); } }
 
-        private int _shift3KftReject;
-        public int Shift3KftReject { get => _shift3KftReject; set { _shift3KftReject = value; OnPropertyChanged(); } }
+        private int _shift3Reject;
+        public int Shift3Reject { get => _shift3Reject; set { _shift3Reject = value; OnPropertyChanged(); } }
 
         private int _shift1SubconReject;
         public int Shift1SubconReject { get => _shift1SubconReject; set { _shift1SubconReject = value; OnPropertyChanged(); } }
@@ -125,11 +144,11 @@ namespace ProdInfoSys.Models.FollowupDocuments
         private string _commentForRejects = string.Empty;
         public string CommentForRejects { get => _commentForRejects; set { _commentForRejects = value; OnPropertyChanged(); } }
 
-        private decimal _productivityKft;
-        public decimal ProductivityKft { get => _productivityKft; set { _productivityKft = value; OnPropertyChanged(); } }
+        private decimal _productivity;
+        public decimal Productivity { get => _productivity; set { _productivity = value; OnPropertyChanged(); } }
 
-        private string _prodCommentKft = string.Empty;
-        public string ProdCommentKft { get => _prodCommentKft; set { _prodCommentKft = value; OnPropertyChanged(); } }
+        private string _prodComment = string.Empty;
+        public string ProdComment { get => _prodComment; set { _prodComment = value; OnPropertyChanged(); } }
 
         private decimal _productivitySubcon;
         public decimal ProductivitySubcon { get => _productivitySubcon; set { _productivitySubcon = value; OnPropertyChanged(); } }

@@ -1,14 +1,14 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace ProdInfoSys.Models.ErpDataModels
+﻿namespace ProdInfoSys.Models.ErpDataModels
 {
+    /// <summary>
+    /// Represents an extended capacity ledger entry sourced from the ERP system.
+    /// </summary>
+    /// <remarks>
+    /// This model captures operational, timing, quantity, costing, and dimension
+    /// details for a single capacity ledger record used in reporting and analysis.
+    /// </remarks>
     public class ExtCapacityLedgerEntry
     {
-
         public int EntryNo { get; set; }
         public string Workcenter { get; set; }
         public DateTime? PostingDate { get; set; }

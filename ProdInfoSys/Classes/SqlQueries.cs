@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace ProdInfoSys.Classes
+﻿namespace ProdInfoSys.Classes
 {
     /// <summary>
     /// Provides predefined SQL query strings for retrieving data from various tables in the PIS database.
@@ -25,7 +19,7 @@ namespace ProdInfoSys.Classes
         /// 2024).</param>
         /// <returns>A SQL query string that selects turnover records from the database where the year and month match the
         /// specified value.</returns>
-        public static string QueryTurnover(string _yearmonth) =>        
+        public static string QueryTurnover(string _yearmonth) =>
         $@"
             SELECT [EntryNo]
                   ,[DocumentNo]
@@ -66,7 +60,7 @@ namespace ProdInfoSys.Classes
               FROM [PIS].[dbo].[Turnover]
             where [Order No_] <>'' and YearMonth ='{_yearmonth}'
         ";
-        
+
         /// <summary>
         /// Returns the SQL query string used to retrieve information about unblocked machine centers from the database.
         /// </summary>
@@ -100,7 +94,7 @@ namespace ProdInfoSys.Classes
               FROM [PIS].[dbo].[Machines]            
             where [Blocked] = 0
             ";
-        
+
         /// <summary>
         /// Returns the SQL query string used to retrieve all production plan names from the database.
         /// </summary>
@@ -111,7 +105,7 @@ namespace ProdInfoSys.Classes
                 [Plan_Name]      
             FROM [PIS].[dbo].[ProdPlan]
         ";
-        
+
         /// <summary>
         /// Generates a SQL query string to retrieve production plan details for the specified plan name and version 0.
         /// </summary>
@@ -122,7 +116,7 @@ namespace ProdInfoSys.Classes
         /// <param name="_planName">The name of the production plan to query. This value is used to filter the results by plan name. Cannot be
         /// null.</param>
         /// <returns>A SQL query string that selects all columns for the specified production plan name with version 0.</returns>
-        public static string QueryProductionPlan(string _planName) =>        
+        public static string QueryProductionPlan(string _planName) =>
         @$"
         SELECT  
             SELECT [EntryNo]
@@ -168,7 +162,7 @@ namespace ProdInfoSys.Classes
               FROM [PIS].[dbo].[ProdPlan]
             Where [Plan_Name] = '{_planName}' and [Plan_Version] = 0
         ";
-        
+
         /// <summary>
         /// Returns the SQL query string used to retrieve item numbers and their standard costs from the SEIBC20_LIVE
         /// database.

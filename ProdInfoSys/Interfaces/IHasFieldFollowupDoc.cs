@@ -1,15 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace ProdInfoSys.Interfaces
+﻿namespace ProdInfoSys.Interfaces
 {
     /// <summary>
-    /// A UserControlFunctions osztályban használt LINQ-k esetén meg kell adni, hogy mely mezőket
-    /// tartalmazza minden adatmodel, ami generikusként jön át a függvénybe. Ezt az intefészt azoknak az adatmodelleknek kell
-    /// megvalósítani, amelyekk mennek valamelyik UserControlFuncions-ban lévő metódusba (mivel ezek generikusokat fogadnak majd
+    /// Represents an object that provides a sum of output values for a field follow-up operation.
     /// </summary>
     public interface IHasFieldFollowupDoc
     {

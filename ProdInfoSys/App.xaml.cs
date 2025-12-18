@@ -7,8 +7,6 @@ using ProdInfoSys.ViewModels;
 using ProdInfoSys.ViewModels.Nested;
 using ProdInfoSys.Windows;
 using ProdInfoSys.Windows.Nested;
-using System.Configuration;
-using System.Data;
 using System.Windows;
 
 namespace ProdInfoSys

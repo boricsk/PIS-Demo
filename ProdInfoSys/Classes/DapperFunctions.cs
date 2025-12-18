@@ -2,15 +2,7 @@
 using Microsoft.Data.SqlClient;
 using ProdInfoSys.Models.ErpDataModels;
 using ProdInfoSys.Models.StatusReportModels;
-using ProdInfoSys.ViewModels;
-using ProdInfoSys.Windows;
-using System;
-using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows;
 
 namespace ProdInfoSys.Classes
 {

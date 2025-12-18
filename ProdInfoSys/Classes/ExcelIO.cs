@@ -1,17 +1,10 @@
 ﻿using ClosedXML.Excel;
-using DocumentFormat.OpenXml.Spreadsheet;
 using ProdInfoSys.Models.FollowupDocuments;
 using ProdInfoSys.Models.StatusReportModels;
-using System;
-using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.IO;
-using System.Linq;
 using System.Reflection;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows;
 
 namespace ProdInfoSys.Classes
 {
@@ -121,9 +114,9 @@ namespace ProdInfoSys.Classes
                 ws.Cell(i + 2, 4).Value = doc[i].ActualHC;
                 ws.Cell(i + 2, 5).Value = doc[i].Subcontactor;
                 ws.Cell(i + 2, 6).Value = doc[i].Others;
-                ws.Cell(i + 2, 7).Value = doc[i].FFCIndirect;
+                ws.Cell(i + 2, 7).Value = doc[i].Indirect;
                 ws.Cell(i + 2, 8).Value = doc[i].QAIndirect;
-                ws.Cell(i + 2, 9).Value = doc[i].FFCDirectPlusIndirect;
+                ws.Cell(i + 2, 9).Value = doc[i].DirectPlusIndirect;
                 ws.Cell(i + 2, 10).Value = doc[i].Holiday;
                 ws.Cell(i + 2, 11).Value = doc[i].AbsebseTotal;
                 ws.Cell(i + 2, 12).Value = doc[i].Diff;

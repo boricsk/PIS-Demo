@@ -1,9 +1,5 @@
-﻿using ClosedXML.Excel;
-using Dapper;
-using DocumentFormat.OpenXml.Drawing;
-using LiveCharts;
+﻿using LiveCharts;
 using LiveCharts.Wpf;
-using Microsoft.Data.SqlClient;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.Win32;
 using MongoDB.Driver;
@@ -14,23 +10,12 @@ using ProdInfoSys.DI;
 using ProdInfoSys.Enums;
 using ProdInfoSys.Models;
 using ProdInfoSys.Models.ErpDataModels;
-using ProdInfoSys.Models.FollowupDocuments;
 using ProdInfoSys.Models.NonRelationalModels;
 using ProdInfoSys.Models.StatusReportModels;
-using System;
-using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
-using System.IO;
-using System.Linq;
 using System.Runtime.CompilerServices;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows;
 using System.Windows.Input;
-using System.Windows.Media;
-using Xceed.Wpf.Toolkit;
-//using MessageBox = Xceed.Wpf.Toolkit.MessageBox;
 
 namespace ProdInfoSys.ViewModels
 {
@@ -39,6 +24,7 @@ namespace ProdInfoSys.ViewModels
         #region Dependency injection
         private IUserDialogService _dialogs;
         #endregion
+
         private MasterFollowupDocument _followupDocument;
         private ObservableCollection<PlanningMasterData> _plan;
         private ObservableCollection<Turnover> _turnover;
@@ -62,7 +48,22 @@ namespace ProdInfoSys.ViewModels
         private List<DailyPlan> _repackDailyPlannedQty = new List<DailyPlan>();
 
         #region PropChangedInterface
+        /// <summary>
+        /// Occurs when a property value changes.
+        /// </summary>
+        /// <remarks>This event is typically raised by the implementation of the INotifyPropertyChanged
+        /// interface to notify subscribers that a property value has changed. Handlers attached to this event receive
+        /// the name of the property that changed in the event data.</remarks>
         public event PropertyChangedEventHandler? PropertyChanged;
+
+        /// <summary>
+        /// Raises the PropertyChanged event to notify listeners that a property value has changed.
+        /// </summary>
+        /// <remarks>Call this method in a property's setter to notify subscribers that the property's
+        /// value has changed. This is commonly used to support data binding in applications that implement the
+        /// INotifyPropertyChanged interface.</remarks>
+        /// <param name="propertyName">The name of the property that changed. This value is optional and will be automatically set to the caller
+        /// member name if not specified.</param>
         protected void OnPropertyChanged([CallerMemberName] string? propertyName = null)
         {
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
@@ -224,16 +225,13 @@ namespace ProdInfoSys.ViewModels
 
         #region ICommand
         public ICommand SaveReportData => new ProjectCommandRelay(_ => SavingReportData());
+        /// <summary>
+        /// Attempts to save the current report data to the database if the report name is valid and not already used.
+        /// </summary>
+        /// <remarks>Displays informational or error dialogs to notify the user of the result of the save
+        /// operation. The method does not perform any action if the report name is empty or already exists.</remarks>
         private void SavingReportData()
         {
-            //if (_shipoutPlan.Count == 0)
-            //{
-            //    //MessageBox.Show($"Nincs importálva a kszállítási terv!", "SaveReport", MessageBoxButton.OK, MessageBoxImage.Error);
-            //    _dialogs.ShowErrorInfo($"Nincs importálva a kszállítási terv!", "SaveReport");
-            //    return;
-            //}
-            //else
-            //{
             if (!ReportName.IsNullOrEmpty())
             {
                 if (!_reportNames.Contains(ReportName))
@@ -242,29 +240,24 @@ namespace ProdInfoSys.ViewModels
 
                     if (isCompleted)
                     {
-                        //MessageBox.Show($"A mentés sikeres", "SaveReport", MessageBoxButton.OK, MessageBoxImage.Information);
                         _dialogs.ShowInfo($"A mentés sikeres", "SaveReport");
                         _reportNames.Add(ReportName);
                         MustSave = string.Empty;
                     }
                     else
                     {
-                        //MessageBox.Show($"Hiba történt a mentés alatt!: {message}", "SaveReport", MessageBoxButton.OK, MessageBoxImage.Error);
                         _dialogs.ShowErrorInfo($"Hiba történt a mentés alatt!: {message}", "SaveReport");
                     }
                 }
                 else
                 {
-                    //MessageBox.Show($"A megadott név már létezik!", "SaveReport", MessageBoxButton.OK, MessageBoxImage.Error);
                     _dialogs.ShowErrorInfo($"A megadott név már létezik!", "SaveReport");
                 }
             }
             else
             {
-                //MessageBox.Show($"Név megadása kötelező!", "SaveReport", MessageBoxButton.OK, MessageBoxImage.Error);
                 _dialogs.ShowErrorInfo($"Név megadása kötelező!", "SaveReport");
             }
-            //}
         }
 
         public ICommand ImportShipoutPlan => new ProjectCommandRelay(_ => ImportingShipoutPlan());
@@ -303,6 +296,12 @@ namespace ProdInfoSys.ViewModels
         #endregion
 
         #region Public methods
+        /// <summary>
+        /// Initializes the report by setting the parent name and loading related data.
+        /// </summary>
+        /// <remarks>Call this method before accessing report data to ensure all required information is
+        /// loaded and initialized.</remarks>
+        /// <param name="parentName">The name of the parent entity to associate with the report. Cannot be null.</param>
         public void Init(string parentName)
         {
             _parentName = parentName;
@@ -319,6 +318,14 @@ namespace ProdInfoSys.ViewModels
         #endregion
 
         #region Private methods
+        /// <summary>
+        /// Imports a shipout plan from the specified Excel file and updates the current shipout plan data.
+        /// </summary>
+        /// <remarks>After importing, the method updates related data and recalculates results based on
+        /// the imported shipout plan. If an error occurs during import, an error message is displayed to the
+        /// user.</remarks>
+        /// <param name="file">The path to the Excel file containing the shipout plan to import. The file must be accessible and in a
+        /// supported format.</param>
         private void ImportExcelShipoutPlan(string file)
         {
             try
@@ -343,6 +350,13 @@ namespace ProdInfoSys.ViewModels
                 _dialogs.ShowErrorInfo($"{ex.Message}", "Kiszállítási terv import");
             }
         }
+
+        /// <summary>
+        /// Loads planning, item, and turnover data from the database using Dapper and updates the corresponding fields.
+        /// </summary>
+        /// <remarks>This method retrieves planning master data, item distribution center costs, and
+        /// turnover information based on the current plan and period. If an error occurs during data retrieval, an
+        /// error dialog is displayed to the user.</remarks>
         private void LoadDataWithDapper()
         {
             try
@@ -361,6 +375,13 @@ namespace ProdInfoSys.ViewModels
                 _dialogs.ShowErrorInfo($"Hiba történt : {ex.Message}", "Termelési terv betöltés");
             }
         }
+
+        /// <summary>
+        /// Retrieves the follow-up document associated with the current parent name from the database and assigns it to
+        /// the internal field.
+        /// </summary>
+        /// <remarks>This method queries the database for a document matching the current parent name. If
+        /// no matching document is found, the internal field is set to null.</remarks>
         private void GetFollowupDocument()
         {
             ConnectionManagement conMgmnt = new ConnectionManagement();
@@ -385,7 +406,7 @@ namespace ProdInfoSys.ViewModels
                 sr.Workcenter = document.Workcenter;
                 sr.ComulatedOut = document.MachineFollowupDocuments.Select(s => s.TTLOutput).Sum();
                 sr.ComulatedPlan = document.MachineFollowupDocuments.Where(x => x.TTLOutput > 0).Select(x => x.ComulatedPlan).LastOrDefault();
-                sr.KftReject = document.MachineFollowupDocuments.Select(s => s.RejectSum).Sum();
+                sr.Reject = document.MachineFollowupDocuments.Select(s => s.RejectSum).Sum();
                 sr.SupplierReject = document.MachineFollowupDocuments.Select(s => s.SupplierReject).Sum();
                 sr.Output = document.MachineFollowupDocuments.Select(x => x.ComulatedOutput).ToList();
                 sr.ComulatedPlans = document.MachineFollowupDocuments.Select(x => x.ComulatedPlan).ToList();
@@ -397,7 +418,6 @@ namespace ProdInfoSys.ViewModels
                 if (document.MachineFollowupDocuments.Where(x => x.CalcRejectRatio > 0).Select(x => x.CalcRejectRatio).ToList().Count() != 0)
                 {
                     sr.AvgRejectRatio = document.MachineFollowupDocuments.Where(x => x.CalcRejectRatio > 0).Select(x => x.CalcRejectRatio).Average();
-                    //sr.AvgRejectRatio = document.MachineFollowupDocuments.Select(x => x.CalcRejectRatio).Average();
                 }
 
                 sr.ChartData = new SeriesCollection
@@ -423,7 +443,7 @@ namespace ProdInfoSys.ViewModels
                 sr.Workcenter = document.Workcenter;
                 sr.ComulatedOut = document.InspectionFollowupDocuments.Select(s => s.TTLOutput).Sum();
                 sr.ComulatedPlan = document.InspectionFollowupDocuments.Where(x => x.TTLOutput > 0).Select(x => x.ComulatedPlan).LastOrDefault();
-                sr.KftReject = document.InspectionFollowupDocuments.Select(s => s.RejectSum).Sum();
+                sr.Reject = document.InspectionFollowupDocuments.Select(s => s.RejectSum).Sum();
                 sr.SupplierReject = document.InspectionFollowupDocuments.Select(s => s.SupplierReject).Sum();
                 sr.Output = document.InspectionFollowupDocuments.Select(x => x.ComulatedOutput).ToList();
                 sr.ComulatedPlans = document.InspectionFollowupDocuments.Select(x => x.ComulatedPlan).ToList();
@@ -456,15 +476,15 @@ namespace ProdInfoSys.ViewModels
                 sr.Workcenter = document.Workcenter;
                 sr.ComulatedOut = document.MaualFollowupDocuments.Select(s => s.TTLOutput).Sum();
                 sr.ComulatedPlan = document.MaualFollowupDocuments.Where(x => x.TTLOutput > 0).Select(x => x.ComulatedPlan).LastOrDefault();
-                sr.KftReject = document.MaualFollowupDocuments.Select(s => s.RejectSum).Sum();
+                sr.Reject = document.MaualFollowupDocuments.Select(s => s.RejectSum).Sum();
                 sr.SupplierReject = document.MaualFollowupDocuments.Select(s => s.SupplierReject).Sum();
                 sr.Output = document.MaualFollowupDocuments.Select(x => x.ComulatedOutput).ToList();
                 sr.ComulatedPlans = document.MaualFollowupDocuments.Select(x => x.ComulatedPlan).ToList();
-                sr.Efficiency = document.MaualFollowupDocuments.Select(x => x.ProductivityKft).ToList();
+                sr.Efficiency = document.MaualFollowupDocuments.Select(x => x.Productivity).ToList();
                 sr.EfficiencySubcon = document.MaualFollowupDocuments.Select(x => x.ProductivitySubcon).ToList();
-                if (document.MaualFollowupDocuments.Where(x => x.ProductivityKft > 0).Select(x => x.ProductivityKft).ToList().Count() != 0)
+                if (document.MaualFollowupDocuments.Where(x => x.Productivity > 0).Select(x => x.Productivity).ToList().Count() != 0)
                 {
-                    sr.AvgEfficiency = document.MaualFollowupDocuments.Where(x => x.ProductivityKft > 0).Select(x => x.ProductivityKft).Average();
+                    sr.AvgEfficiency = document.MaualFollowupDocuments.Where(x => x.Productivity > 0).Select(x => x.Productivity).Average();
                 }
                 if (document.MaualFollowupDocuments.Where(x => x.ProductivitySubcon > 0).Select(x => x.ProductivitySubcon).ToList().Count() != 0)
                 {
@@ -473,7 +493,6 @@ namespace ProdInfoSys.ViewModels
                 if (document.MaualFollowupDocuments.Where(x => x.CalcRejectRatio > 0).Select(x => x.CalcRejectRatio).ToList().Count() != 0)
                 {
                     sr.AvgRejectRatio = document.MaualFollowupDocuments.Where(x => x.CalcRejectRatio > 0).Select(x => x.CalcRejectRatio).Average();
-                    //sr.AvgRejectRatio = document.MaualFollowupDocuments.Select(x => x.CalcRejectRatio).Average();
                 }
 
                 sr.ChartData = new SeriesCollection
@@ -640,6 +659,12 @@ namespace ProdInfoSys.ViewModels
                 .ToList();
         }
 
+        /// <summary>
+        /// Builds the complete report by processing all required data sections in sequence.
+        /// </summary>
+        /// <remarks>This method orchestrates the report generation process by invoking a series of data
+        /// processing steps in a specific order. It is intended for internal use within the report generation workflow
+        /// and should not be called directly by external code.</remarks>
         private void BuildReport()
         {
             //Order is important!!
@@ -650,6 +675,14 @@ namespace ProdInfoSys.ViewModels
             ResultCalculation();
         }
 
+        /// <summary>
+        /// Attempts to save the current document and its associated status report to the database.
+        /// </summary>
+        /// <remarks>If the save operation fails, the returned message provides details about the error.
+        /// The method updates the document's status reports before attempting to save. This method does not throw
+        /// exceptions; instead, it returns error information in the result tuple.</remarks>
+        /// <returns>A tuple containing a Boolean value that indicates whether the operation completed successfully, and a
+        /// message describing the result or any error encountered.</returns>
         private (bool isCompleted, string message) SaveDocumentToDatabase()
         {
             (bool isCompleted, string message) ret = (false, string.Empty);
@@ -664,11 +697,11 @@ namespace ProdInfoSys.ViewModels
                 Turnover = _turnover.ToList(),
                 ShipoutPlan = _shipoutPlan.ToList(),
                 ActualWorkday = _currentWorkday,
-                KftDailyPlans = _kftDailyPlannedQty,
+                DailyPlans = _kftDailyPlannedQty,
                 RepackDailyPlans = _repackDailyPlannedQty,
-                KftProdCompleteRatio = _kftProdCompleteRatio,
+                ProdCompleteRatio = _kftProdCompleteRatio,
                 RepackProdCompleteRatio = _repackProdCompleteRatio,
-                KftProdTimePropRatio = _kftTimePropRatio,
+                ProdTimePropRatio = _kftTimePropRatio,
                 RepackProdTimePropRatio = _repackTimePropRatio,
 
             };

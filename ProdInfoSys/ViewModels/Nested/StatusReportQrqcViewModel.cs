@@ -9,28 +9,30 @@ using ProdInfoSys.Models;
 using ProdInfoSys.Models.ErpDataModels;
 using ProdInfoSys.Models.NonRelationalModels;
 using ProdInfoSys.Models.StatusReportModels;
-using System;
-using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
-using System.Linq;
 using System.Runtime.CompilerServices;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Input;
-using System.Windows.Media;
 
 
 namespace ProdInfoSys.ViewModels.Nested
 {
+    /// <summary>
+    /// Represents the view model for the QRQC status report, providing properties, commands, and data structures for
+    /// displaying and exporting production, reject, and efficiency metrics in a WPF application.
+    /// </summary>
+    /// <remarks>This view model is designed for use in WPF applications that visualize and manage QRQC (Quick
+    /// Response Quality Control) status reports. It exposes collections and properties for binding to charts, tables,
+    /// and other UI elements, and implements the INotifyPropertyChanged interface to support dynamic updates. The class
+    /// includes commands for exporting report data to Excel and methods for initializing and preparing report data from
+    /// underlying data sources. Thread safety is not guaranteed; all members are intended to be accessed from the UI
+    /// thread.</remarks>
     public class StatusReportQrqcViewModel : INotifyPropertyChanged
     {
         private TreeNodeModel? _parent;
         private List<string> _xaxisWorkdays = new List<string>();
         private FollowupMetadata? _result = new FollowupMetadata();
         private string? _selectedReportName;
-        //private List<decimal>? _planValues = new();
-        //private List<decimal>? _salesValues = new();
         private List<double>? _kftRejectPercent = new();
         private List<int>? _kftRejects = new();
         private List<int>? _supplierRejects = new();
@@ -38,13 +40,24 @@ namespace ProdInfoSys.ViewModels.Nested
         private List<decimal>? _kftActualRejectRatios = new();
         private ObservableCollection<StatusReportQrqc>? _allStatusReport;
         private decimal _kftOut = 0;
-        //private ObservableCollection<ShipoutPlan> _allShipouts = new ObservableCollection<ShipoutPlan>();
-        //private readonly string _sampleItem = "07-2000-0002H";
-        //private readonly string _area = "FFC";
 
         #region PropChangedInterface
-
+        /// <summary>
+        /// Occurs when a property value changes.
+        /// </summary>
+        /// <remarks>This event is typically raised by the implementation of the INotifyPropertyChanged
+        /// interface to notify subscribers that a property value has changed. Handlers attached to this event receive
+        /// the name of the property that changed in the PropertyChangedEventArgs parameter.</remarks>
         public event PropertyChangedEventHandler? PropertyChanged;
+
+        /// <summary>
+        /// Raises the PropertyChanged event to notify listeners that a property value has changed.
+        /// </summary>
+        /// <remarks>Call this method in the setter of a property to notify subscribers that the
+        /// property's value has changed. This is commonly used to implement the INotifyPropertyChanged interface in
+        /// data-binding scenarios.</remarks>
+        /// <param name="propertyName">The name of the property that changed. This value is optional and is automatically provided when called from
+        /// a property setter.</param>
         protected void OnPropertyChanged([CallerMemberName] string? propertyName = null)
         {
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
@@ -312,6 +325,11 @@ namespace ProdInfoSys.ViewModels.Nested
 
         #region ICommand
         public ICommand? ExportPlanChanges => new ProjectCommandRelay(_ => ExportingPlanChanges());
+        /// <summary>
+        /// Exports the current plan change details to an Excel file.
+        /// </summary>
+        /// <remarks>If an error occurs during the export process, a message box is displayed with the
+        /// error details.</remarks>
         private void ExportingPlanChanges()
         {
             try
@@ -327,12 +345,16 @@ namespace ProdInfoSys.ViewModels.Nested
         }
 
         public ICommand? ExportKftStatus => new ProjectCommandRelay(_ => ExportingKftStatus());
+        /// <summary>
+        /// Exports the current KFT status data to an Excel file.
+        /// </summary>
+        /// <remarks>If an error occurs during the export process, a message box is displayed with the
+        /// error details. The export includes the daily planned quantity data for KFT.</remarks>
         private void ExportingKftStatus()
         {
             try
             {
                 ExcelIO e = new ExcelIO();
-                //e.ExportHeadcountFollowup(_headcountFollowupDocs);
                 e.ExcelExport(_kftDailyPlannedQty, $"KFT Status", $"KFT Status");
             }
             catch (Exception ex)
@@ -342,10 +364,12 @@ namespace ProdInfoSys.ViewModels.Nested
         }
 
         public ICommand? ExportRepackStatus => new ProjectCommandRelay(_ => ExportingRepackStatus());
+        /// <summary>
+        /// Exports the current repack daily planned quantity data to an Excel file named "Repack Status."
+        /// </summary>
         private void ExportingRepackStatus()
         {
             ExcelIO e = new ExcelIO();
-            //e.ExportHeadcountFollowup(_headcountFollowupDocs);
             e.ExcelExport(_repackDailyPlannedQty, $"Repack Status", $"Repack Status");
         }
         #endregion
@@ -359,6 +383,11 @@ namespace ProdInfoSys.ViewModels.Nested
         #endregion
 
         #region Public methods
+        /// <summary>
+        /// Initializes the current instance with the specified parent node and selected report name.
+        /// </summary>
+        /// <param name="parent">The parent <see cref="TreeNodeModel"/> to associate with this instance. Cannot be null.</param>
+        /// <param name="selectedReportName">The name of the report to select for this instance. Cannot be null or empty.</param>
         public void Init(TreeNodeModel parent, string selectedReportName)
         {
             _parent = parent;
@@ -367,7 +396,14 @@ namespace ProdInfoSys.ViewModels.Nested
             PrepareReportData();
         }
 
+        /// <summary>
+        /// Gets a function that formats Y-axis values as percentage strings with two decimal places.
+        /// </summary>
         public Func<double, string> YFormatter => value => value.ToString("P2");
+
+        /// <summary>
+        /// Gets a function that formats a numeric Y-axis value as a string with two decimal places.
+        /// </summary>
         public Func<double, string> YFormatterNum => value => value.ToString("N2");
         #endregion
 
@@ -458,12 +494,12 @@ namespace ProdInfoSys.ViewModels.Nested
                 }
 
                 var allMachineStatusReport = _result.AllStatusReportForQrqc.Select(s => s.MachineData).ToList();
-                var allKftDailyPlans = _result.AllStatusReportForQrqc.Select(s => s.KftDailyPlans).ToList();
+                var allKftDailyPlans = _result.AllStatusReportForQrqc.Select(s => s.DailyPlans).ToList();
 
                 foreach (var machine in allMachineStatusReport)
                 {
                     //Az előző reportokban lévő selejtek listája
-                    _kftRejects?.Add(machine.Select(s => s.KftReject).Sum());
+                    _kftRejects?.Add(machine.Select(s => s.Reject).Sum());
                     _supplierRejects?.Add(machine.Select(s => s.SupplierReject).Sum());
 
                     if (machine.Where(s => s.AvgRejectRatio > 0).Select(s => s.AvgRejectRatio).ToList().Count() != 0)
@@ -526,10 +562,10 @@ namespace ProdInfoSys.ViewModels.Nested
                         _workcenterNamesMachine.Add(workcenter.Workcenter);
                     }
 
-                    if (workcenter.KftReject != 0 || workcenter.SupplierReject != 0)
+                    if (workcenter.Reject != 0 || workcenter.SupplierReject != 0)
                     {
                         _workcenterNames.Add(workcenter.Workcenter);
-                        _workcenterKftRejects.Add(workcenter.KftReject);
+                        _workcenterKftRejects.Add(workcenter.Reject);
                         _workcenterSupplierRejects.Add(workcenter.SupplierReject);
                     }
                 }
@@ -675,8 +711,6 @@ namespace ProdInfoSys.ViewModels.Nested
                         {
                             Title = "Cumulated",
                             Values = new ChartValues<decimal>(_kftActualRejectRatios),
-                            //Stroke = new SolidColorBrush(Color.FromRgb(227,142,190)),
-                            //Fill = new SolidColorBrush(Color.FromRgb(227,142,190))
                         }
                 };
 
@@ -702,6 +736,7 @@ namespace ProdInfoSys.ViewModels.Nested
                         },
                 };
 
+                //TODO: Miért van itt?? Setupból megy.
                 if (_stopTimes != null)
                 {
                     StopTimeChart = new SeriesCollection();

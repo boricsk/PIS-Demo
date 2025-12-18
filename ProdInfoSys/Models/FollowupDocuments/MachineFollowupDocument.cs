@@ -1,18 +1,38 @@
 ﻿using ProdInfoSys.Interfaces;
-using System;
-using System.Collections.Generic;
 using System.ComponentModel;
-using System.Linq;
 using System.Runtime.CompilerServices;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace ProdInfoSys.Models.FollowupDocuments
 {
+    /// <summary>
+    /// Represents a machine follow-up document that tracks production, rejects, efficiency, and utilization metrics for
+    /// a specific workday and machine shifts.
+    /// </summary>
+    /// <remarks>This class provides properties for recording and aggregating production data across multiple
+    /// shifts, including output, rejects, and operational hours. It implements property change notification to support
+    /// data binding scenarios, such as in UI frameworks. Calculated properties, such as output sums and utilization,
+    /// are automatically updated when relevant underlying values change. This class is suitable for use in
+    /// manufacturing reporting, analytics, or monitoring applications where detailed shift-level and daily machine
+    /// performance data is required.</remarks>
     public class MachineFollowupDocument : INotifyPropertyChanged, IHasFieldFollowupDoc, IHasFieldMachineFollowupDoc
     {
+        /// <summary>
+        /// Occurs when a property value changes.
+        /// </summary>
+        /// <remarks>Subscribe to this event to receive notifications when a property on the object has
+        /// changed. This event is typically used to support data binding scenarios, such as updating user interface
+        /// elements when underlying data changes.</remarks>
         public event PropertyChangedEventHandler? PropertyChanged;
 
+        /// <summary>
+        /// Raises the PropertyChanged event to notify listeners that a property value has changed.
+        /// </summary>
+        /// <remarks>Call this method in a property setter to notify subscribers that the property value
+        /// has changed. If the changed property is one of several key properties, this method also raises
+        /// PropertyChanged for related calculated properties to ensure that data bindings are updated
+        /// appropriately.</remarks>
+        /// <param name="propertyName">The name of the property that changed. This value is optional and is automatically provided by the compiler
+        /// when called from a property setter.</param>
         protected void OnPropertyChanged([CallerMemberName] string? propertyName = null)
         {
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
@@ -45,6 +65,7 @@ namespace ProdInfoSys.Models.FollowupDocuments
         public int OutputSum => Shift1Output + Shift2Output + Shift3Output;
         public int RejectSum => Shift1Reject + Shift2Reject + Shift3Reject;
         public int OutputDifference => (Shift1Output + Shift2Output + Shift3Output) - DailyPlan;
+
         //Mivel int / int ezért nulla lesz a végeredmény, mert az osztás után konvertál double-ra.
         //Az egyik poerandusnak double-nak kell lenni.
         public double CalcRejectRatio => (OutputSum + RejectSum) == 0 ? 0 : (double)RejectSum / (OutputSum + RejectSum);
@@ -60,17 +81,17 @@ namespace ProdInfoSys.Models.FollowupDocuments
         public int DailyPlan { get => _dailyPlan; set { _dailyPlan = value; OnPropertyChanged(); } }
 
         private int _comulatedPlan;
-        public int ComulatedPlan 
-        { 
-            get => _comulatedPlan; 
-            set 
+        public int ComulatedPlan
+        {
+            get => _comulatedPlan;
+            set
             {
                 if (_comulatedPlan != value)
-                { 
+                {
                     _comulatedPlan = value; OnPropertyChanged();
                 }
-                 
-            } 
+
+            }
         }
 
         private int _comulatedOutput;

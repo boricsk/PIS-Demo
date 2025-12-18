@@ -1,11 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace ProdInfoSys.Enums
+﻿namespace ProdInfoSys.Enums
 {
+    /// <summary>
+    /// Specifies the type of caller entity for an operation.
+    /// </summary>
     public enum EnumCallerEntity
     {
         PROD = 0,

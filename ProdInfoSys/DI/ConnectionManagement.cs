@@ -1,38 +1,42 @@
 ﻿using MongoDB.Bson;
 using MongoDB.Driver;
 using ProdInfoSys.Classes;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
 
 namespace ProdInfoSys.DI
 {
     /// <summary>
-    /// Connection management class
+    /// Provides methods and properties for managing MongoDB database connections and accessing collections within the
+    /// application.
     /// </summary>
-    public class ConnectionManagement: IConnectionManagement
+    /// <remarks>This class encapsulates connection management for multiple MongoDB databases used by the
+    /// application. It exposes properties for commonly used database names and provides methods to establish
+    /// connections, verify connection strings, and retrieve collections. The class is not thread-safe; concurrent
+    /// access should be managed externally if used in multi-threaded scenarios.</remarks>
+    public class ConnectionManagement : IConnectionManagement
     {
         private IMongoDatabase _database;
-        
+
         private string _MongoConStringLocal = string.Empty;
         public bool conStatus { get; private set; }
-        public string DbName { get; private set; }  = "ProductionFollowupDemo";
-        public string TrWorkdaysDbName { get; private set; }  = "TransferredWorkdaysDemo";
-        public string MeetingMemo { get; private set; }  = "MeetingMemoDemo";
-        public string PisSetupDbName { get; private set; }  = "PisSetupDemo";
-        
+        public string DbName { get; private set; } = "ProductionFollowupDemo";
+        public string TrWorkdaysDbName { get; private set; } = "TransferredWorkdaysDemo";
+        public string MeetingMemo { get; private set; } = "MeetingMemoDemo";
+        public string PisSetupDbName { get; private set; } = "PisSetupDemo";
+
         public ConnectionManagement()
-        {            
+        {
             conStatus = ConnectToDatabase();
         }
 
         /// <summary>
-        /// Database connection
+        /// Attempts to establish a connection to the configured MongoDB database.
         /// </summary>
-        /// <returns></returns>
+        /// <remarks>If the MongoDB connection string is not set in the registry, a default value is
+        /// written and used. If the connection attempt fails, an error message is displayed to the user. This method
+        /// does not throw exceptions for connection failures; instead, it returns false and shows a message
+        /// box.</remarks>
+        /// <returns>true if the connection to the MongoDB database is successful; otherwise, false.</returns>
         public bool ConnectToDatabase()
         {
             bool ret = true;
@@ -62,30 +66,38 @@ namespace ProdInfoSys.DI
         }
 
         /// <summary>
-        /// Get connected collection
+        /// Gets a collection from the database with the specified name and document type.
         /// </summary>
-        /// <typeparam name="T"></typeparam>
-        /// <param name="collName"></param>
-        /// <returns></returns>
+        /// <remarks>If the collection does not exist, it is created implicitly when a document is first
+        /// inserted. The returned collection instance can be used to perform CRUD operations for documents of type
+        /// <typeparamref name="T"/>.</remarks>
+        /// <typeparam name="T">The type of the documents stored in the collection.</typeparam>
+        /// <param name="collName">The name of the collection to retrieve. Cannot be null or empty.</param>
+        /// <returns>An <see cref="IMongoCollection{T}"/> representing the specified collection.</returns>
         public IMongoCollection<T> GetCollection<T>(string collName)
         {
             return _database.GetCollection<T>(collName);
         }
 
         /// <summary>
-        /// Get connected database
+        /// Gets the current MongoDB database instance associated with this context.
         /// </summary>
-        /// <returns></returns>
+        /// <returns>An <see cref="IMongoDatabase"/> representing the current database, or <see langword="null"/> if no database
+        /// is configured.</returns>
         public IMongoDatabase? GetDatabase()
         {
             return _database;
         }
 
         /// <summary>
-        /// Check validity of connection string
+        /// Attempts to establish a connection to a MongoDB server using the specified connection string and checks if
+        /// the server is reachable.
         /// </summary>
-        /// <param name="conString"></param>
-        /// <returns></returns>
+        /// <remarks>This method sends a ping command to the MongoDB server to verify connectivity. It
+        /// does not throw exceptions; instead, it returns false if the connection attempt fails for any
+        /// reason.</remarks>
+        /// <param name="conString">The connection string used to connect to the MongoDB server. Cannot be null or empty.</param>
+        /// <returns>true if the connection to the MongoDB server is successful; otherwise, false.</returns>
         public bool PingConnection(string conString)
         {
             try

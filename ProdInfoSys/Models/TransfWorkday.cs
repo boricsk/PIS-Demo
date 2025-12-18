@@ -1,12 +1,8 @@
-﻿using MongoDB.Bson.Serialization.Attributes;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace ProdInfoSys.Models
+﻿namespace ProdInfoSys.Models
 {
+    /// <summary>
+    /// Represents a range of workdays with a specified start and end date.
+    /// </summary>
     public class TransfWorkday
     {
         public DateTime FromDay { get; set; }

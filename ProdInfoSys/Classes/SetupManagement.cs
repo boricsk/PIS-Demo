@@ -1,15 +1,7 @@
 ﻿using CalendarManagement;
 using MongoDB.Driver;
 using ProdInfoSys.DI;
-using ProdInfoSys.Models;
 using ProdInfoSys.Models.NonRelationalModels;
-using System;
-using System.Collections.Generic;
-using System.Collections.ObjectModel;
-using System.Linq;
-using System.Security;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace ProdInfoSys.Classes
 {
@@ -39,7 +31,7 @@ namespace ProdInfoSys.Classes
             var databaseCollection = conMgmnt.GetCollection<TrWorkday>(conMgmnt.TrWorkdaysDbName);
 
             var allDocuments = databaseCollection.Find(FilterDefinition<TrWorkday>.Empty).ToList();
-            
+
             foreach (var document in allDocuments)
             {
                 if (document.TransferredWorkdays != null)
@@ -64,7 +56,7 @@ namespace ProdInfoSys.Classes
         /// <returns>A <see cref="PisSetup"/> object containing the setup configuration if found; otherwise, <see
         /// langword="null"/>.</returns>
         public static PisSetup LoadSetupData()
-        { 
+        {
             ConnectionManagement conMgmnt = new ConnectionManagement();
             var databaseCollection = conMgmnt.GetCollection<PisSetup>(conMgmnt.PisSetupDbName);
             return databaseCollection.Find(FilterDefinition<PisSetup>.Empty).FirstOrDefault();
@@ -122,7 +114,7 @@ namespace ProdInfoSys.Classes
         /// with caution, as any previously stored setup information will be lost.</remarks>
         /// <param name="pisSetup">The setup data to be saved. Cannot be null.</param>
         public static void SaveSetupData(PisSetup pisSetup)
-        {            
+        {
             ConnectionManagement conMgmnt = new ConnectionManagement();
             var databaseCollection = conMgmnt.GetCollection<PisSetup>(conMgmnt.PisSetupDbName);
             MongoDbOperations<PisSetup> db = new MongoDbOperations<PisSetup>(databaseCollection);
@@ -137,7 +129,7 @@ namespace ProdInfoSys.Classes
         /// ensure that the returned password is handled securely in memory and not logged or exposed.</remarks>
         /// <returns>A string containing the decrypted SMTP password. Returns an empty string if the password is not set.</returns>
         public static string GetSmtpPassword() => DpApiStorage.Decrypt(RegistryManagement.ReadStringRegistryKey("EmailPw"));
-        
+
         /// <summary>
         /// Retrieves the decrypted ERP user password from the system registry.
         /// </summary>
@@ -146,7 +138,7 @@ namespace ProdInfoSys.Classes
         /// password.</remarks>
         /// <returns>A string containing the ERP user password, or null if the password is not set in the registry.</returns>
         public static string GetErpUserPassword() => DpApiStorage.Decrypt(RegistryManagement.ReadStringRegistryKey("ErpUserPw"));
-        
+
         /// <summary>
         /// Retrieves the decrypted ERP connection string from the system registry.
         /// </summary>

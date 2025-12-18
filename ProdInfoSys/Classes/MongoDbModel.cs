@@ -5,11 +5,6 @@ using ProdInfoSys.Models;
 using ProdInfoSys.Models.ErpDataModels;
 using ProdInfoSys.Models.FollowupDocuments;
 using ProdInfoSys.Models.NonRelationalModels;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
 
 namespace ProdInfoSys.Classes
@@ -30,7 +25,7 @@ namespace ProdInfoSys.Classes
         {
             _newFollowupDocument = NewFollowupDocument;
         }
-        
+
         /// <summary>
         /// Creates and saves a new master follow-up document using the specified list of ERP machine centers and the
         /// current follow-up data. If a document with the same name already exists, the operation is canceled and an

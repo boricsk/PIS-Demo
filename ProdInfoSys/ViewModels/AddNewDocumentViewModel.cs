@@ -1,29 +1,27 @@
 ﻿using CalendarManagement;
-using Dapper;
-using Microsoft.Data.SqlClient;
-using MongoDB.Bson;
 using ProdInfoSys.Classes;
 using ProdInfoSys.CommandRelay;
 using ProdInfoSys.DI;
-using ProdInfoSys.Enums;
 using ProdInfoSys.Models;
 using ProdInfoSys.Models.ErpDataModels;
-using ProdInfoSys.Models.FollowupDocuments;
-using ProdInfoSys.Models.NonRelationalModels;
-using System;
-using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
-using System.Linq;
 using System.Runtime.CompilerServices;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows;
 using System.Windows.Input;
 
 
 namespace ProdInfoSys.ViewModels
 {
+    /// <summary>
+    /// Represents the view model for adding a new document, providing properties and commands for managing document
+    /// creation, additional workdays, and related data in a WPF application.
+    /// </summary>
+    /// <remarks>This view model implements the INotifyPropertyChanged interface to support data binding in
+    /// WPF. It exposes collections for ERP machine centers, production plan names, and additional workdays, as well as
+    /// commands for adding and removing dates and creating new documents. The view model interacts with dialog services
+    /// to display user feedback and relies on dependency injection for dialog handling. It is intended to be used as
+    /// the data context for views that facilitate the creation of new documents and the management of associated
+    /// scheduling information.</remarks>
     public class AddNewDocumentViewModel : INotifyPropertyChanged
     {
         #region Dependency injection
@@ -31,8 +29,23 @@ namespace ProdInfoSys.ViewModels
         #endregion
 
         #region PropChangedInterface
-
+        /// <summary>
+        /// Occurs when a property value changes.
+        /// </summary>
+        /// <remarks>This event is typically raised by classes that implement the INotifyPropertyChanged
+        /// interface to notify subscribers that a property value has changed. Handlers attached to this event receive
+        /// information about which property was changed. This event is commonly used in data binding scenarios to
+        /// update UI elements when underlying data changes.</remarks>
         public event PropertyChangedEventHandler? PropertyChanged;
+
+        /// <summary>
+        /// Raises the PropertyChanged event to notify listeners that a property value has changed.
+        /// </summary>
+        /// <remarks>Call this method in a property's setter to notify subscribers that the property's
+        /// value has changed. This is commonly used to support data binding in applications that implement the
+        /// INotifyPropertyChanged interface.</remarks>
+        /// <param name="propertyName">The name of the property that changed. This value is optional and is automatically provided when called from
+        /// a property setter.</param>
         protected void OnPropertyChanged([CallerMemberName] string? propertyName = null)
         {
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
@@ -94,6 +107,15 @@ namespace ProdInfoSys.ViewModels
 
         #region ICommand
         public ICommand AddNewDocument => new ProjectCommandRelay(_ => AddingNewDocument());
+        /// <summary>
+        /// Validates and processes the creation of a new follow-up document, including date range and machine center
+        /// selection, and initializes related data models. Displays error messages if required information is missing
+        /// or invalid.
+        /// </summary>
+        /// <remarks>This method checks for required fields such as the document name, valid date range,
+        /// and selected machine centers before proceeding. If any validation fails, an error dialog is shown and the
+        /// operation is aborted. The method is intended to be called as part of the document creation workflow in the
+        /// view model.</remarks>
         private void AddingNewDocument()
         {
             try
@@ -205,11 +227,17 @@ namespace ProdInfoSys.ViewModels
             finally
             {
 
-            }            
+            }
         }
         #endregion
 
         #region Private methods
+        /// <summary>
+        /// Initializes the properties of the new follow-up document and related fields to their default values.
+        /// </summary>
+        /// <remarks>This method resets the state of the new follow-up document to a standard set of
+        /// defaults, including dates and shift parameters. It is intended to be called when preparing to create a new
+        /// follow-up document or when resetting the form to its initial state.</remarks>
         private void SetDefaults()
         {
             _selectedPickerDate = DateTime.Now;

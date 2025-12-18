@@ -1,12 +1,6 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
 using ProdInfoSys.Interfaces;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
-using System.Windows.Controls;
 
 namespace ProdInfoSys.Classes
 {
@@ -16,7 +10,7 @@ namespace ProdInfoSys.Classes
     /// <remarks>This class is typically used to instantiate window types that require services to be injected
     /// via the application's service provider. It abstracts the creation logic and ensures that dependencies are
     /// resolved according to the application's configuration.</remarks>
-    public class WindowFactory: IWindowFactory
+    public class WindowFactory : IWindowFactory
     {
         private readonly IServiceProvider _sp;
         public WindowFactory(IServiceProvider sp) => _sp = sp;

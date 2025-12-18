@@ -1,12 +1,15 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations.Schema;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.ComponentModel.DataAnnotations.Schema;
 
 namespace ProdInfoSys.Models.ErpDataModels
 {
+    /// <summary>
+    /// Represents the master data for a production or sales planning record, including quantities, pricing, scheduling,
+    /// and related metadata.
+    /// </summary>
+    /// <remarks>This class is typically used to encapsulate all relevant information for a single planning
+    /// entry, such as planned and finished quantities, pricing details, time estimates, and customer or item
+    /// references. Property names correspond to planning data fields and may map directly to database columns in data
+    /// access scenarios.</remarks>
     public class PlanningMasterData
     {
         public string Plan_Name { get; set; }

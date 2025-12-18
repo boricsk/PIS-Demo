@@ -1,47 +1,68 @@
 ﻿using LiveCharts;
 using LiveCharts.Wpf;
 using MongoDB.Driver;
-using MongoDB.Driver.Core.Servers;
 using ProdInfoSys.Classes;
 using ProdInfoSys.CommandRelay;
 using ProdInfoSys.DI;
 using ProdInfoSys.Models;
 using ProdInfoSys.Models.FollowupDocuments;
 using ProdInfoSys.Models.NonRelationalModels;
-using ProdInfoSys.Windows;
-using System;
-using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
-using System.Linq;
 using System.Runtime.CompilerServices;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows;
 using System.Windows.Input;
-using System.Windows.Threading;
 
 namespace ProdInfoSys.ViewModels.Nested
 {
+    /// <summary>
+    /// Represents the view model for managing and displaying headcount follow-up data, including charting, document
+    /// operations, and user interactions within a WPF application.
+    /// </summary>
+    /// <remarks>The HeadcountViewModel provides properties and commands to support headcount tracking
+    /// scenarios, such as adding or deleting workdays, saving and exporting documents, and visualizing data through
+    /// charts. It implements INotifyPropertyChanged to support data binding in WPF and interacts with various services
+    /// for dialog display, user control functions, and database connections. This view model is intended to be used as
+    /// the data context for headcount-related views, enabling responsive UI updates and user-driven
+    /// operations.</remarks>
     public class HeadcountViewModel : INotifyPropertyChanged
     {
         private TreeNodeModel? _parent;
         private MasterFollowupDocument? _followupDocument;
-        public Action? ForceCommit {get; set;}
+
+        /// <summary>
+        /// Gets or sets an optional action to force a commit operation.
+        /// </summary>
+        /// <remarks>If set, this action is invoked to explicitly trigger a commit. If null, no forced
+        /// commit action is performed. Assign a delegate to customize commit behavior as needed.</remarks>
+        public Action? ForceCommit { get; set; }
 
         #region Dependency injection
         private IUserDialogService _dialogs;
         private IUserControlFunctions _userControlFunctions;
         private IConnectionManagement _connectionManagement;
         #endregion
-      
+
         #region Charts
         public List<string>? Labels { get; set; }
         #endregion
 
         #region PropChangedInterface
-
+        /// <summary>
+        /// Occurs when a property value changes.
+        /// </summary>
+        /// <remarks>This event is typically raised by calling the OnPropertyChanged method after a
+        /// property value is modified. Subscribers can use this event to respond to changes in property values, such as
+        /// updating user interface elements in data-binding scenarios.</remarks>
         public event PropertyChangedEventHandler? PropertyChanged;
+
+        /// <summary>
+        /// Raises the PropertyChanged event to notify listeners that a property value has changed.
+        /// </summary>
+        /// <remarks>Call this method in the setter of a property to notify subscribers that the property
+        /// value has changed. This is commonly used to implement the INotifyPropertyChanged interface in data-binding
+        /// scenarios.</remarks>
+        /// <param name="propertyName">The name of the property that changed. This value is optional and is automatically provided when called from
+        /// a property setter.</param>
         protected void OnPropertyChanged([CallerMemberName] string? propertyName = null)
         {
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
@@ -109,6 +130,9 @@ namespace ProdInfoSys.ViewModels.Nested
         #endregion
 
         #region ICommand
+        /// <summary>
+        /// Gets a command that adds an extra workday to the current project or schedule.
+        /// </summary>
         public ICommand AddExtraWorkday => new ProjectCommandRelay(_ => AddingExtraWorkday());
         private void AddingExtraWorkday()
         {
@@ -128,7 +152,9 @@ namespace ProdInfoSys.ViewModels.Nested
             }
         }
 
-
+        /// <summary>
+        /// Gets the command that deletes the currently selected items.
+        /// </summary>
         public ICommand? DeleteSelected => new ProjectCommandRelay(_ => DeletingSelected());
         private void DeletingSelected()
         {
@@ -143,11 +169,17 @@ namespace ProdInfoSys.ViewModels.Nested
             }
         }
 
+        /// <summary>
+        /// Gets the command that saves the current document.
+        /// </summary>
+        /// <remarks>Use this command to initiate the save operation for the active document. The command
+        /// can be bound to UI elements, such as buttons or menu items, to allow users to trigger saving. The command is
+        /// always available and does not perform validation before saving.</remarks>
         public ICommand? SaveDocument => new ProjectCommandRelay(_ => SavingDocument());
         private void SavingDocument(bool isConfirm = true)
         {
             if (_followupDocument != null)
-            {                
+            {
                 OnPropertyChanged(nameof(HeadCountFollowupDocuments));
                 ForceCommit?.Invoke();
                 var ret = _userControlFunctions.SaveDocumentToDatabase(_connectionManagement, _followupDocument);
@@ -167,6 +199,12 @@ namespace ProdInfoSys.ViewModels.Nested
             }
         }
 
+        /// <summary>
+        /// Gets the command that exports the current data to an Excel file.
+        /// </summary>
+        /// <remarks>Use this command to initiate exporting data to Excel, typically in response to a user
+        /// action such as clicking an 'Export' button. The command is intended for use in data binding scenarios within
+        /// UI frameworks that support the ICommand interface.</remarks>
         public ICommand? ExportExcel => new ProjectCommandRelay(_ => ExportingExcel());
         private void ExportingExcel()
         {
@@ -190,7 +228,7 @@ namespace ProdInfoSys.ViewModels.Nested
         {
             _dialogs = dialogs;
             _userControlFunctions = userControlFunctions;
-            _connectionManagement = connectionManagement;            
+            _connectionManagement = connectionManagement;
             _extraWorkday = DateTime.Now;
             _fontSize = (double)RegistryManagement.ReadIntRegistryKey("FontSize");
             //_mustSave = "Nem mentett dokumentum";
@@ -214,6 +252,10 @@ namespace ProdInfoSys.ViewModels.Nested
         #endregion
 
         #region Private methods
+        /// <summary>
+        /// Updates the headcount information in the main follow-up document using the current headcount follow-up
+        /// documents.
+        /// </summary>
         private void UpdateMainDocument()
         {
             if (_followupDocument != null && HeadCountFollowupDocuments != null)
@@ -258,19 +300,19 @@ namespace ProdInfoSys.ViewModels.Nested
         }
 
         /// <summary>
-        /// Erre van feliratkozva a dokumentum összes property-je. Itt kell definiálni melyik property változást akarjuk figyelni
+        /// Handles the PropertyChanged event for a headcount item and updates the save state when relevant properties change.
         /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
+        /// <param name="sender">The source of the event, typically a headcount item whose property has changed.</param>
+        /// <param name="e">A PropertyChangedEventArgs object that contains the name of the property that changed.</param>
         private void HeadcountItem_PropertyChanged(object? sender, PropertyChangedEventArgs e)
         {
             if (
                 e.PropertyName == nameof(HeadCountFollowupDocument.ActualHC) ||
-                e.PropertyName == nameof(HeadCountFollowupDocument.FFCIndirect) ||
+                e.PropertyName == nameof(HeadCountFollowupDocument.Indirect) ||
                 e.PropertyName == nameof(HeadCountFollowupDocument.NettoHCPlan) ||
                 e.PropertyName == nameof(HeadCountFollowupDocument.HCPlan) ||
                 e.PropertyName == nameof(HeadCountFollowupDocument.Subcontactor) ||
-                e.PropertyName == nameof(HeadCountFollowupDocument.FFCIndirect) ||
+                e.PropertyName == nameof(HeadCountFollowupDocument.Indirect) ||
                 e.PropertyName == nameof(HeadCountFollowupDocument.QAIndirect) ||
                 e.PropertyName == nameof(HeadCountFollowupDocument.Holiday) ||
                 e.PropertyName == nameof(HeadCountFollowupDocument.Others) ||
@@ -278,7 +320,7 @@ namespace ProdInfoSys.ViewModels.Nested
 
                 )
             {
-                
+
                 _mustSave = "Nem mentett dokumentum";
                 OnPropertyChanged(nameof(MustSave));
                 //SetChart();
@@ -329,7 +371,7 @@ namespace ProdInfoSys.ViewModels.Nested
                     new LineSeries
                     {
                         Title = "FFC direct+indirect",
-                        Values = new ChartValues<int>(_headcountFollowupDocs.Select(x => x.FFCDirectPlusIndirect).ToList())
+                        Values = new ChartValues<int>(_headcountFollowupDocs.Select(x => x.DirectPlusIndirect).ToList())
                     },
                 };
 

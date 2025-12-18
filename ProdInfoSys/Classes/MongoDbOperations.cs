@@ -1,10 +1,4 @@
 ﻿using MongoDB.Driver;
-using ProdInfoSys.Models.NonRelationalModels;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace ProdInfoSys.Classes
 {
@@ -40,7 +34,7 @@ namespace ProdInfoSys.Classes
         /// This operation cannot be undone.</remarks>
         /// <returns>A task that represents the asynchronous delete operation.</returns>
         public async Task DeleteAll()
-        { 
+        {
             await _collection.DeleteManyAsync(FilterDefinition<TDocument>.Empty);
         }
 

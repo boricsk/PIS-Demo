@@ -4,20 +4,12 @@ using ProdInfoSys.Classes;
 using ProdInfoSys.CommandRelay;
 using ProdInfoSys.DI;
 using ProdInfoSys.Models;
-using ProdInfoSys.Models.ErpDataModels;
 using ProdInfoSys.Models.NonRelationalModels;
-using System;
-using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
-using System.Linq;
 using System.Net;
 using System.Net.Mail;
 using System.Runtime.CompilerServices;
-using System.Security;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows;
 using System.Windows.Input;
 
 namespace ProdInfoSys.ViewModels
@@ -32,8 +24,23 @@ namespace ProdInfoSys.ViewModels
         private PisSetup? _setupData = new PisSetup();
 
         #region PropChangedInterface
-
+        /// <summary>
+        /// Occurs when a property value changes.
+        /// </summary>
+        /// <remarks>This event is typically raised by implementations of the INotifyPropertyChanged
+        /// interface to notify subscribers that a property value has changed. Handlers attached to this event receive
+        /// information about which property changed via the PropertyChangedEventArgs parameter. This event is commonly
+        /// used in data binding scenarios to update UI elements when underlying data changes.</remarks>
         public event PropertyChangedEventHandler? PropertyChanged;
+
+        /// <summary>
+        /// Raises the PropertyChanged event to notify listeners that a property value has changed.
+        /// </summary>
+        /// <remarks>Call this method in the setter of a property to notify subscribers that the
+        /// property's value has changed. This is commonly used to implement the INotifyPropertyChanged interface in
+        /// data-binding scenarios.</remarks>
+        /// <param name="propertyName">The name of the property that changed. This value is optional and is automatically provided when called from
+        /// a property setter.</param>
         protected void OnPropertyChanged([CallerMemberName] string? propertyName = null)
         {
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
@@ -297,6 +304,12 @@ namespace ProdInfoSys.ViewModels
 
         #region ICommand
         public ICommand AddDate => new ProjectCommandRelay(_ => AddingDate());
+        /// <summary>
+        /// Adds a new transferred workday to the collection using the current values of the source workday.
+        /// </summary>
+        /// <remarks>This method creates a new instance of the transferred workday with dates converted to
+        /// the DateOnly type and appends it to the TransferredWorkdays collection. Intended for internal use within the
+        /// class to manage transferred workday records.</remarks>
         private void AddingDate()
         {
             var d = new TransferredWorkday()
@@ -309,6 +322,11 @@ namespace ProdInfoSys.ViewModels
         }
 
         public ICommand SaveDate => new ProjectCommandRelay(_ => SavingDate());
+        /// <summary>
+        /// Saves the current set of transferred workdays to the database, replacing any existing records.
+        /// </summary>
+        /// <remarks>This method deletes all existing workday records before saving the current set. Use
+        /// with caution, as this operation will remove all previous data in the workday collection.</remarks>
         private void SavingDate()
         {
             ConnectionManagement conMgmnt = new ConnectionManagement();
@@ -325,6 +343,14 @@ namespace ProdInfoSys.ViewModels
         }
 
         public ICommand SaveConnections => new ProjectCommandRelay(_ => SavingConnections());
+        /// <summary>
+        /// Validates and saves the current ERP and MongoDB connection settings to the registry, displaying appropriate
+        /// user feedback based on the outcome.
+        /// </summary>
+        /// <remarks>This method checks that all required connection fields are populated and verifies the
+        /// MongoDB connection before saving the settings. If validation fails or the connection cannot be established,
+        /// an error message is displayed to the user. This method is intended for internal use within the setup
+        /// workflow and does not return a value.</remarks>
         private void SavingConnections()
         {
 
@@ -352,6 +378,13 @@ namespace ProdInfoSys.ViewModels
         }
 
         public ICommand SaveOAuth => new ProjectCommandRelay(_ => SaveingOAuth());
+        /// <summary>
+        /// Saves the current OAuth-related configuration values to the registry after validating that all required
+        /// fields are populated.
+        /// </summary>
+        /// <remarks>If any required configuration field is missing or empty, an error message is
+        /// displayed and no values are saved. On successful save, an informational message is shown to the
+        /// user.</remarks>
         private void SaveingOAuth()
         {
             if (_erpUser.IsNullOrEmpty() ||
@@ -376,6 +409,9 @@ namespace ProdInfoSys.ViewModels
             }
         }
         public ICommand SaveView => new ProjectCommandRelay(_ => SavingView());
+        /// <summary>
+        /// Saves the current view settings to the registry and displays a confirmation message to the user.
+        /// </summary>
         private void SavingView()
         {
             RegistryManagement.WriteBoolRegistryKey("SubconView", _isSubconView);
@@ -383,6 +419,11 @@ namespace ProdInfoSys.ViewModels
             _dialogs.ShowInfo("A mentés sikeres!", "SetupViewModel");
         }
         public ICommand SaveCurrentDocument => new ProjectCommandRelay(_ => SavingCurrentDocument());
+        /// <summary>
+        /// Saves the currently selected document and displays a notification indicating the result of the operation.
+        /// </summary>
+        /// <remarks>If an error occurs during the save process, an error message is displayed to the
+        /// user. This method updates the setup data to reflect the current document selection before saving.</remarks>
         private void SavingCurrentDocument()
         {
             try
@@ -398,6 +439,13 @@ namespace ProdInfoSys.ViewModels
         }
 
         public ICommand SaveAvgDocument => new ProjectCommandRelay(_ => SavingAvgDocument());
+        /// <summary>
+        /// Saves the current average manual workcenter data and displays a notification indicating the result of the
+        /// operation.
+        /// </summary>
+        /// <remarks>If an error occurs during the save process, an error message is displayed to the
+        /// user. This method is intended to be used within the view model to persist setup data and inform the user of
+        /// success or failure.</remarks>
         private void SavingAvgDocument()
         {
             try
@@ -413,6 +461,11 @@ namespace ProdInfoSys.ViewModels
         }
 
         public ICommand SaveEmailList => new ProjectCommandRelay(_ => SavingEmailList());
+        /// <summary>
+        /// Saves the current list of email addresses to the setup data and notifies the user of the result.
+        /// </summary>
+        /// <remarks>Displays an informational dialog if the save operation succeeds, or an error dialog
+        /// if an exception occurs during the save process.</remarks>
         private void SavingEmailList()
         {
             try
@@ -428,6 +481,12 @@ namespace ProdInfoSys.ViewModels
         }
 
         public ICommand SaveLeaderEmailList => new ProjectCommandRelay(_ => SavingLeaderEmailList());
+        /// <summary>
+        /// Saves the current list of leader email addresses to the setup data and displays a notification indicating
+        /// the result.
+        /// </summary>
+        /// <remarks>If the save operation fails, an error message is displayed to the user. This method
+        /// updates the setup data with the latest leader email list before saving.</remarks>
         private void SavingLeaderEmailList()
         {
             try
@@ -443,6 +502,10 @@ namespace ProdInfoSys.ViewModels
         }
 
         public ICommand SaveProdMeetingWorkcenters => new ProjectCommandRelay(_ => SavingProdMeetingWorkcenters());
+        /// <summary>
+        /// Saves the current list of production meeting workcenters to the setup data and displays a confirmation
+        /// message to the user.
+        /// </summary>
         private void SavingProdMeetingWorkcenters()
         {
             _setupData.ProdMeetingWorkcenters = new ObservableCollection<string>(_prodMeetingWorkcenters);
@@ -451,6 +514,12 @@ namespace ProdInfoSys.ViewModels
         }
 
         public ICommand SaveEmailConfig => new ProjectCommandRelay(_ => SavingEmailConfig());
+        /// <summary>
+        /// Saves the current email configuration settings to persistent storage after validating required fields.
+        /// </summary>
+        /// <remarks>Displays an error message if any required email configuration fields are missing or
+        /// if the SMTP port is invalid. On successful validation, updates the email configuration and stores the
+        /// settings securely. This method is intended for internal use within the setup workflow.</remarks>
         private void SavingEmailConfig()
         {
             if (string.IsNullOrEmpty(_smtpPassw) || _smtpPort.IsNullOrEmpty() || _smtpServer.IsNullOrEmpty())
@@ -475,6 +544,11 @@ namespace ProdInfoSys.ViewModels
         }
 
         public ICommand DeleteSelectedDate => new ProjectCommandRelay(_ => DeletingSelectedDate());
+        /// <summary>
+        /// Removes the currently selected transferred workday from the collection, if one is selected.
+        /// </summary>
+        /// <remarks>If no transferred workday is selected, the method performs no action. This method is
+        /// typically used to support user-driven deletion scenarios in UI workflows.</remarks>
         private void DeletingSelectedDate()
         {
             if (SelectedTransferredWorkdays != null)
@@ -484,6 +558,9 @@ namespace ProdInfoSys.ViewModels
         }
 
         public ICommand AddNewEmail => new ProjectCommandRelay(_ => AddingNewEmail());
+        /// <summary>
+        /// Adds the new email address to the email list if it is not already present.
+        /// </summary>
         private void AddingNewEmail()
         {
             if (_newEmail != null)
@@ -498,6 +575,13 @@ namespace ProdInfoSys.ViewModels
         }
 
         public ICommand AddNewLeaderEmail => new ProjectCommandRelay(_ => AddingNewLeaderEmail());
+        /// <summary>
+        /// Adds the current new leader email to the leader email list if it is not already present and resets the new
+        /// leader email value.
+        /// </summary>
+        /// <remarks>This method is typically called after a user enters a new leader email address to
+        /// ensure it is added to the collection only once. After adding, the new leader email input is cleared and
+        /// property change notification is raised for data binding scenarios.</remarks>
         private void AddingNewLeaderEmail()
         {
             if (_newLeaderEmail != null)
@@ -512,6 +596,12 @@ namespace ProdInfoSys.ViewModels
         }
 
         public ICommand AddNewWorkcenter => new ProjectCommandRelay(_ => AddingNewWorkcenter());
+        /// <summary>
+        /// Adds the selected workcenter to the production meeting workcenters collection if it is not already present.
+        /// </summary>
+        /// <remarks>This method updates the collection of production meeting workcenters and raises a
+        /// property changed notification for data binding scenarios. No action is taken if the selected workcenter is
+        /// null or already exists in the collection.</remarks>
         private void AddingNewWorkcenter()
         {
             if (_selectedNewWorkcenter != null)
@@ -526,6 +616,12 @@ namespace ProdInfoSys.ViewModels
         }
 
         public ICommand ProjAddNewWorkcenter => new ProjectCommandRelay(_ => AddingProjectorNewWorkcenter());
+        /// <summary>
+        /// Adds the currently selected new projector workcenter to the collection if it is not already present.
+        /// </summary>
+        /// <remarks>This method updates the collection of projector workcenters and raises a property
+        /// change notification for data binding scenarios. No action is taken if the selected workcenter is null or
+        /// already exists in the collection.</remarks>
         private void AddingProjectorNewWorkcenter()
         {
             if (_cbSelectedNewProjWorkcenter != null)
@@ -539,6 +635,9 @@ namespace ProdInfoSys.ViewModels
         }
 
         public ICommand ProjRemoveWorkcenter => new ProjectCommandRelay(_ => ProjRemovingWorkcenter());
+        /// <summary>
+        /// Removes the currently selected workcenter from the project workcenters collection, if one is selected.
+        /// </summary>
         private void ProjRemovingWorkcenter()
         {
             if (_projSelectedWorkcenter != null)
@@ -548,6 +647,12 @@ namespace ProdInfoSys.ViewModels
         }
 
         public ICommand SaveProjDocument => new ProjectCommandRelay(_ => SavingProjDocument());
+        /// <summary>
+        /// Saves the current projector workcenter configuration and displays a confirmation message to the user.
+        /// </summary>
+        /// <remarks>This method updates the setup data with the current list of projector workcenters and
+        /// persists the changes. After saving, it notifies the user that the operation was successful. This method is
+        /// intended for internal use within the view model and does not return a value.</remarks>
         private void SavingProjDocument()
         {
             _setupData.ProjectorWorkcenters = new ObservableCollection<string>(_projWorkcenters);
@@ -556,6 +661,12 @@ namespace ProdInfoSys.ViewModels
         }
 
         public ICommand AvgAddNewWorkcenter => new ProjectCommandRelay(_ => AvgAddingNewWorkcenter());
+        /// <summary>
+        /// Adds the currently selected new average workcenter to the collection if it is not already present.
+        /// </summary>
+        /// <remarks>Raises a property change notification for the average workcenters collection when a
+        /// new workcenter is added. This method has no effect if the selected workcenter is null or already exists in
+        /// the collection.</remarks>
         private void AvgAddingNewWorkcenter()
         {
             if (_cbSelectedNewAvgWorkcenter != null)
@@ -570,6 +681,9 @@ namespace ProdInfoSys.ViewModels
         }
 
         public ICommand RemoveEmail => new ProjectCommandRelay(_ => RemovingEmail());
+        /// <summary>
+        /// Removes the currently selected email from the email list, if one is selected.
+        /// </summary>
         private void RemovingEmail()
         {
             if (_selectedEmail != null)
@@ -579,6 +693,9 @@ namespace ProdInfoSys.ViewModels
         }
 
         public ICommand RemoveLeaderEmail => new ProjectCommandRelay(_ => RemovingLeaderEmail());
+        /// <summary>
+        /// Removes the currently selected leader email from the leader email list, if one is selected.
+        /// </summary>
         private void RemovingLeaderEmail()
         {
             if (_selectedLeaderEmail != null)
@@ -588,6 +705,10 @@ namespace ProdInfoSys.ViewModels
         }
 
         public ICommand RemoveWorkcenter => new ProjectCommandRelay(_ => RemovingWorkcenter());
+        /// <summary>
+        /// Removes the currently selected workcenter from the collection of production meeting workcenters, if one is
+        /// selected.
+        /// </summary>
         private void RemovingWorkcenter()
         {
             if (_selectedWorkcenter != null)
@@ -597,6 +718,9 @@ namespace ProdInfoSys.ViewModels
         }
 
         public ICommand AvgRemoveWorkcenter => new ProjectCommandRelay(_ => AvgRemovingWorkcenter());
+        /// <summary>
+        /// Removes the currently selected workcenter from the collection of workcenters, if one is selected.
+        /// </summary>
         private void AvgRemovingWorkcenter()
         {
             if (_avgSelectedNewWorkcenter != null)
@@ -606,6 +730,13 @@ namespace ProdInfoSys.ViewModels
         }
 
         public ICommand SendTestMail => new ProjectCommandRelay(_ => SendingTestMail());
+        /// <summary>
+        /// Sends a test email to the configured test email address to verify SMTP settings and email delivery
+        /// functionality.
+        /// </summary>
+        /// <remarks>This method displays a success or error message to the user based on the outcome of
+        /// the email sending operation. It is intended for use in scenarios where validating email configuration is
+        /// required, such as during application setup or diagnostics.</remarks>
         private void SendingTestMail()
         {
             try
@@ -644,6 +775,12 @@ namespace ProdInfoSys.ViewModels
         #endregion
 
         #region Private methods
+        /// <summary>
+        /// Initializes or resets the object's properties and related data collections to their default values.
+        /// </summary>
+        /// <remarks>This method loads configuration values from the registry and other sources, sets up
+        /// internal collections, and ensures that dependent properties are updated to reflect the default state. It
+        /// should be called to ensure the object is in a consistent, initialized state before use.</remarks>
         private void SetDefaults()
         {
             TransferredWorkdays = new ObservableCollection<TransferredWorkday>();
@@ -727,6 +864,13 @@ namespace ProdInfoSys.ViewModels
             OnPropertyChanged();
             LoadDataWithDapper();
         }
+
+        /// <summary>
+        /// Loads the list of available work centers from the ERP system using Dapper and updates the
+        /// AvailWorkcenterList property.
+        /// </summary>
+        /// <remarks>If an error occurs while retrieving data, an error dialog is displayed to inform the
+        /// user. This method is intended for internal use and does not return a value.</remarks>
         private void LoadDataWithDapper()
         {
             try
@@ -739,6 +883,13 @@ namespace ProdInfoSys.ViewModels
                 _dialogs.ShowErrorInfo($"Hiba történt : {ex.Message}", "Gépcsoportlista betöltés");
             }
         }
+
+        /// <summary>
+        /// Loads all transferred workday records from the database and adds them to the current collection.
+        /// </summary>
+        /// <remarks>This method retrieves all documents from the transferred workdays collection in the
+        /// database. For each document, it adds any associated transferred workday entries to the in-memory collection.
+        /// This method is intended for internal use and does not return a value.</remarks>
         private void LoadTrWorkdays()
         {
             var workday = new TransferredWorkday();

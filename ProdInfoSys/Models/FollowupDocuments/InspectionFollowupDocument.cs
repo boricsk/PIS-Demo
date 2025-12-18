@@ -1,19 +1,45 @@
 ﻿using ProdInfoSys.Interfaces;
-using System;
-using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.ComponentModel;
-using System.Linq;
 using System.Runtime.CompilerServices;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace ProdInfoSys.Models.FollowupDocuments
 {
+    /// <summary>
+    /// Represents a follow-up document for an inspection, containing production, rejection, and utilization data for
+    /// multiple work shifts and related summary calculations.
+    /// </summary>
+    /// <remarks>This class provides properties for tracking daily and cumulative production metrics,
+    /// rejection quantities, shift-based outputs, and utilization rates. It implements property change notification to
+    /// support data binding scenarios. The class is suitable for use in applications that require monitoring and
+    /// reporting of manufacturing or inspection processes across multiple shifts. Thread safety is not guaranteed; if
+    /// used in multi-threaded environments, external synchronization may be required.</remarks>
     public class InspectionFollowupDocument : INotifyPropertyChanged, IHasFieldFollowupDoc, IHasFieldMachineFollowupDoc
     {
+        /// <summary>
+        /// Occurs when a property value changes.
+        /// </summary>
+        /// <remarks>This event is typically raised by calling the OnPropertyChanged method after a
+        /// property value is modified. Subscribers can use this event to respond to changes in property values, such as
+        /// updating user interface elements in data-binding scenarios.</remarks>
         public event PropertyChangedEventHandler? PropertyChanged;
+
+        /// <summary>
+        /// Occurs when the collection changes, such as when items are added, removed, or the entire list is refreshed.
+        /// </summary>
+        /// <remarks>Subscribe to this event to receive notifications when the contents of the collection
+        /// are modified. The event provides information about the type of change and the affected items. This event is
+        /// typically used to update user interfaces or synchronize data when the collection changes.</remarks>
         public event NotifyCollectionChangedEventHandler? CollectionChanged;
+
+        /// <summary>
+        /// Raises the PropertyChanged event to notify listeners that a property value has changed.
+        /// </summary>
+        /// <remarks>If the changed property is one of several key properties, this method also raises
+        /// PropertyChanged events for related calculated properties to ensure that data bindings are updated
+        /// appropriately.</remarks>
+        /// <param name="propertyName">The name of the property that changed. This value is optional and is automatically provided by the compiler
+        /// if not specified.</param>
         protected void OnPropertyChanged([CallerMemberName] string? propertyName = null)
         {
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
@@ -57,7 +83,7 @@ namespace ProdInfoSys.Models.FollowupDocuments
 
         private int _dailyPlan;
         public int DailyPlan { get => _dailyPlan; set { _dailyPlan = value; OnPropertyChanged(); } }
-        
+
         private int _comulatedPlan;
         public int ComulatedPlan
         {

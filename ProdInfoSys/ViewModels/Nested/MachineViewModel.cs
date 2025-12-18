@@ -7,22 +7,23 @@ using ProdInfoSys.DI;
 using ProdInfoSys.Models;
 using ProdInfoSys.Models.FollowupDocuments;
 using ProdInfoSys.Models.NonRelationalModels;
-using System;
-using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
-using System.Linq;
-using System.Reflection.PortableExecutable;
 using System.Runtime.CompilerServices;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows;
 using System.Windows.Input;
-using System.Windows.Threading;
-//using MessageBox = Xceed.Wpf.Toolkit.MessageBox;
 
 namespace ProdInfoSys.ViewModels.Nested
 {
+    /// <summary>
+    /// Represents the view model for managing machine follow-up data, charts, and related operations in a production or
+    /// manufacturing context.
+    /// </summary>
+    /// <remarks>The MachineViewModel coordinates data binding, user commands, and chart visualization for
+    /// machine follow-up documents within a WPF application. It provides properties for displaying and editing machine
+    /// data, exposes commands for importing, saving, and exporting documents, and manages chart data for output,
+    /// efficiency, and reject rates. The class implements INotifyPropertyChanged to support property change
+    /// notifications for UI updates. Thread safety is not guaranteed; interactions should occur on the UI thread as
+    /// required by WPF data binding.</remarks>
     public class MachineViewModel : INotifyPropertyChanged
     {
         #region Dependency injection
@@ -42,8 +43,22 @@ namespace ProdInfoSys.ViewModels.Nested
         #endregion
 
         #region PropChangedInterface
-
+        /// <summary>
+        /// Occurs when a property value changes.
+        /// </summary>
+        /// <remarks>This event is typically raised by calling the OnPropertyChanged method in property
+        /// setters to notify listeners that a property value has changed. It is commonly used to support data binding
+        /// scenarios in applications such as WPF, UWP, or Xamarin.Forms.</remarks>
         public event PropertyChangedEventHandler? PropertyChanged;
+
+        /// <summary>
+        /// Raises the PropertyChanged event to notify listeners that a property value has changed.
+        /// </summary>
+        /// <remarks>Call this method in the setter of a property to notify subscribers that the
+        /// property's value has changed. This is commonly used to implement the INotifyPropertyChanged interface in
+        /// data-binding scenarios.</remarks>
+        /// <param name="propertyName">The name of the property that changed. This value is optional and is automatically provided when called from
+        /// a property setter.</param>
         protected void OnPropertyChanged([CallerMemberName] string? propertyName = null)
         {
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
@@ -186,6 +201,14 @@ namespace ProdInfoSys.ViewModels.Nested
 
         #region ICommand
         public ICommand ImportFromErp => new ProjectCommandRelay(async _ => await ImportingFromErp());
+        /// <summary>
+        /// Imports production and capacity data from the ERP system and updates the selected machine follow-up document
+        /// with the retrieved values.
+        /// </summary>
+        /// <remarks>This method updates shift outputs, rejects, and other production metrics for the
+        /// selected document based on data retrieved from the ERP system. The method does not perform any action if no
+        /// document is selected.</remarks>
+        /// <returns>A task that represents the asynchronous import operation.</returns>
         private async Task ImportingFromErp()
         {
             if (_selectedDocument != null)
@@ -221,6 +244,13 @@ namespace ProdInfoSys.ViewModels.Nested
             }
         }
         public ICommand AddExtraWorkday => new ProjectCommandRelay(_ => AddingExtraWorkday());
+        /// <summary>
+        /// Updates the collection of machine follow-up documents to include an additional workday and refreshes related
+        /// state.
+        /// </summary>
+        /// <remarks>This method recalculates the machine follow-up documents by adding an extra workday,
+        /// reorders the collection, and updates property change notifications. It should be called when an extra
+        /// workday needs to be reflected in the machine follow-up data.</remarks>
         private void AddingExtraWorkday()
         {
             if (_machineFollowupDocs != null && MachineFollowupDocs != null)
@@ -238,6 +268,14 @@ namespace ProdInfoSys.ViewModels.Nested
         }
 
         public ICommand? SaveDocument => new ProjectCommandRelay(_ => SavingDocument());
+        /// <summary>
+        /// Saves the current follow-up document to the database and updates related state. Optionally displays a
+        /// confirmation dialog indicating the result of the save operation.
+        /// </summary>
+        /// <remarks>This method updates related properties and triggers UI notifications after saving the
+        /// document. If no follow-up document is present, the method performs no action.</remarks>
+        /// <param name="isConfirm">true to display a confirmation dialog after attempting to save the document; otherwise, false. The default
+        /// is true.</param>
         private void SavingDocument(bool isConfirm = true)
         {
             if (_followupDocument != null)
@@ -265,6 +303,12 @@ namespace ProdInfoSys.ViewModels.Nested
         }
 
         public ICommand? DeleteSelected => new ProjectCommandRelay(_ => DeletingSelected());
+        /// <summary>
+        /// Deletes the currently selected document after user confirmation.
+        /// </summary>
+        /// <remarks>This method prompts the user for confirmation before removing the selected document
+        /// from the collection. If the user confirms, the document is deleted and related updates are performed. No
+        /// action is taken if no document is selected.</remarks>
         private void DeletingSelected()
         {
             if (_selectedDocument != null && MachineFollowupDocs != null && SelectedDocument != null)
@@ -279,6 +323,12 @@ namespace ProdInfoSys.ViewModels.Nested
         }
 
         public ICommand? ExportExcel => new ProjectCommandRelay(_ => ExportingExcel());
+        /// <summary>
+        /// Exports the current machine follow-up documents to an Excel file using the selected workcenter as the file
+        /// name and worksheet name.
+        /// </summary>
+        /// <remarks>If an error occurs during the export process, an error dialog is displayed with
+        /// details about the failure.</remarks>
         private void ExportingExcel()
         {
             try
@@ -308,6 +358,11 @@ namespace ProdInfoSys.ViewModels.Nested
         #endregion
 
         #region Public methods
+        /// <summary>
+        /// Initializes the current node with the specified parent node and workcenter identifier.
+        /// </summary>
+        /// <param name="parent">The parent node to associate with the current node. Cannot be null.</param>
+        /// <param name="workcenter">The identifier of the workcenter to assign to the current node. Cannot be null or empty.</param>
         public void Init(TreeNodeModel parent, string workcenter)
         {
             _parent = parent;
@@ -321,12 +376,26 @@ namespace ProdInfoSys.ViewModels.Nested
             SetVisibility();
         }
 
+        /// <summary>
+        /// Gets a function that formats a numeric value for display on a gauge.
+        /// </summary>
         public Func<double, string> GaugeFormatter => val => val.ToString("N2");
+
+        /// <summary>
+        /// Gets a function that formats Y-axis values as percentage strings with two decimal places.
+        /// </summary>
         public Func<double, string> YFormatter => value => value.ToString("P2");
 
         #endregion
 
         #region Private methods
+        /// <summary>
+        /// Updates the visibility state of shift-related UI elements and font size based on the current follow-up
+        /// document.
+        /// </summary>
+        /// <remarks>This method should be called whenever the follow-up document changes to ensure that
+        /// the UI reflects the correct shift visibility and font size settings. It raises property change notifications
+        /// for the affected properties.</remarks>
         private void SetVisibility()
         {
             if (_followupDocument != null)

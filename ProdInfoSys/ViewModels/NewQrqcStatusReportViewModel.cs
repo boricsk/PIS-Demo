@@ -1,10 +1,6 @@
-﻿using ClosedXML.Excel;
-using Dapper;
-using LiveCharts;
+﻿using LiveCharts;
 using LiveCharts.Wpf;
-using Microsoft.Data.SqlClient;
 using Microsoft.IdentityModel.Tokens;
-using Microsoft.Win32;
 using MongoDB.Driver;
 using ProdInfoSys.Classes;
 using ProdInfoSys.CommandRelay;
@@ -14,18 +10,10 @@ using ProdInfoSys.Models;
 using ProdInfoSys.Models.ErpDataModels;
 using ProdInfoSys.Models.NonRelationalModels;
 using ProdInfoSys.Models.StatusReportModels;
-using System;
-using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
-using System.Globalization;
-using System.Linq;
 using System.Runtime.CompilerServices;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows;
 using System.Windows.Input;
-//using MessageBox = Xceed.Wpf.Toolkit.MessageBox;
 
 
 namespace ProdInfoSys.ViewModels
@@ -40,8 +28,6 @@ namespace ProdInfoSys.ViewModels
         private ObservableCollection<PlanningMasterData> _plan;
         private ObservableCollection<ExtCapacityLedgerEntry> _stopTimes = new ObservableCollection<ExtCapacityLedgerEntry>();
         private List<StopTime> grouppedStopTimes = new List<StopTime>();
-        //private ObservableCollection<Turnover> _turnover;
-        //private ObservableCollection<ItemDcCost> _itemDcCost;
         private StatusReportPlanData _planData = new();
         private List<string> _reportNames = new List<string>();
         private readonly string _sampleItem = "07-2000-0002H";
@@ -60,7 +46,22 @@ namespace ProdInfoSys.ViewModels
         private List<DailyPlan> _repackDailyPlannedQty = new List<DailyPlan>();
 
         #region PropChangedInterface
+        /// <summary>
+        /// Occurs when a property value changes.
+        /// </summary>
+        /// <remarks>This event is typically raised by implementations of the INotifyPropertyChanged
+        /// interface to notify subscribers that a property value has changed. Handlers attached to this event receive
+        /// information about which property changed via the PropertyChangedEventArgs parameter.</remarks>
         public event PropertyChangedEventHandler? PropertyChanged;
+
+        /// <summary>
+        /// Raises the PropertyChanged event to notify listeners that a property value has changed.
+        /// </summary>
+        /// <remarks>Call this method in the setter of a property to notify subscribers that the property
+        /// value has changed. This is commonly used to implement the INotifyPropertyChanged interface in data-binding
+        /// scenarios.</remarks>
+        /// <param name="propertyName">The name of the property that changed. This value is optional and is automatically provided when called from
+        /// a property setter.</param>
         protected void OnPropertyChanged([CallerMemberName] string? propertyName = null)
         {
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
@@ -214,6 +215,14 @@ namespace ProdInfoSys.ViewModels
 
         #region ICommand
         public ICommand SaveReportData => new ProjectCommandRelay(_ => SavingReportData());
+        /// <summary>
+        /// Attempts to save the current report data to the database, providing user feedback on success or failure.
+        /// </summary>
+        /// <remarks>This method checks whether a report name has been provided and whether it is unique
+        /// before attempting to save. If the save operation is successful, the report name is added to the list of
+        /// saved reports and the user is notified. If the operation fails or the report name is invalid or already
+        /// exists, an appropriate error message is displayed to the user. This method is intended to be called in
+        /// response to a user action, such as clicking a save button.</remarks>
         private void SavingReportData()
         {
             if (!ReportName.IsNullOrEmpty())
@@ -224,26 +233,22 @@ namespace ProdInfoSys.ViewModels
 
                     if (isCompleted)
                     {
-                        //MessageBox.Show($"A mentés sikeres", "SaveReport", MessageBoxButton.OK, MessageBoxImage.Information);
                         _dialogs.ShowInfo($"A mentés sikeres", "SaveReport");
                         _reportNames.Add(ReportName);
                         MustSave = string.Empty;
                     }
                     else
                     {
-                        //MessageBox.Show($"Hiba történt a mentés alatt!: {message}", "SaveReport", MessageBoxButton.OK, MessageBoxImage.Error);
                         _dialogs.ShowErrorInfo($"Hiba történt a mentés alatt!: {message}", "SaveReport");
                     }
                 }
                 else
                 {
-                    //MessageBox.Show($"A megadott név már létezik!", "SaveReport", MessageBoxButton.OK, MessageBoxImage.Error);
                     _dialogs.ShowErrorInfo($"A megadott név már létezik!", "SaveReport");
                 }
             }
             else
             {
-                //MessageBox.Show($"Név megadása kötelező!", "SaveReport", MessageBoxButton.OK, MessageBoxImage.Error);
                 _dialogs.ShowErrorInfo($"Név megadása kötelező!", "SaveReport");
             }
         }
@@ -299,6 +304,12 @@ namespace ProdInfoSys.ViewModels
         #endregion
 
         #region Private methods
+        /// <summary>
+        /// Loads planning master data using Dapper and updates internal state with the retrieved information.
+        /// </summary>
+        /// <remarks>This method retrieves planning data based on the current follow-up document and
+        /// updates related fields accordingly. If an error occurs during data retrieval, an error dialog is displayed
+        /// to inform the user.</remarks>
         private void LoadDataWithDapper()
         {
             try
@@ -337,7 +348,7 @@ namespace ProdInfoSys.ViewModels
                 sr.Workcenter = document.Workcenter;
                 sr.ComulatedOut = document.MachineFollowupDocuments.Select(s => s.TTLOutput).Sum();
                 sr.ComulatedPlan = document.MachineFollowupDocuments.Where(x => x.TTLOutput > 0).Select(x => x.ComulatedPlan).LastOrDefault();
-                sr.KftReject = document.MachineFollowupDocuments.Select(s => s.RejectSum).Sum();
+                sr.Reject = document.MachineFollowupDocuments.Select(s => s.RejectSum).Sum();
                 sr.SupplierReject = document.MachineFollowupDocuments.Select(s => s.SupplierReject).Sum();
                 sr.Output = document.MachineFollowupDocuments.Select(x => x.ComulatedOutput).ToList();
                 sr.ComulatedPlans = document.MachineFollowupDocuments.Select(x => x.ComulatedPlan).ToList();
@@ -349,7 +360,6 @@ namespace ProdInfoSys.ViewModels
                 if (document.MachineFollowupDocuments.Where(x => x.CalcRejectRatio > 0).Select(x => x.CalcRejectRatio).ToList().Count() != 0)
                 {
                     sr.AvgRejectRatio = document.MachineFollowupDocuments.Where(x => x.CalcRejectRatio > 0).Select(x => x.CalcRejectRatio).Average();
-                    //sr.AvgRejectRatio = document.MachineFollowupDocuments.Select(x => x.CalcRejectRatio).Average();
                 }
 
                 sr.ChartData = new SeriesCollection
@@ -375,14 +385,13 @@ namespace ProdInfoSys.ViewModels
                 sr.Workcenter = document.Workcenter;
                 sr.ComulatedOut = document.InspectionFollowupDocuments.Select(s => s.TTLOutput).Sum();
                 sr.ComulatedPlan = document.InspectionFollowupDocuments.Where(x => x.TTLOutput > 0).Select(x => x.ComulatedPlan).LastOrDefault();
-                sr.KftReject = document.InspectionFollowupDocuments.Select(s => s.RejectSum).Sum();
+                sr.Reject = document.InspectionFollowupDocuments.Select(s => s.RejectSum).Sum();
                 sr.SupplierReject = document.InspectionFollowupDocuments.Select(s => s.SupplierReject).Sum();
                 sr.Output = document.InspectionFollowupDocuments.Select(x => x.ComulatedOutput).ToList();
                 sr.ComulatedPlans = document.InspectionFollowupDocuments.Select(x => x.ComulatedPlan).ToList();
                 if (document.InspectionFollowupDocuments.Where(x => x.CalcRejectRatio > 0).Select(x => x.CalcRejectRatio).ToList().Count() != 0)
                 {
                     sr.AvgRejectRatio = document.InspectionFollowupDocuments.Where(x => x.CalcRejectRatio > 0).Select(x => x.CalcRejectRatio).Average();
-                    //sr.AvgRejectRatio = document.InspectionFollowupDocuments.Select(x => x.CalcRejectRatio).Average();
                 }
                 sr.ChartData = new SeriesCollection
                 {
@@ -408,15 +417,15 @@ namespace ProdInfoSys.ViewModels
                 sr.Workcenter = document.Workcenter;
                 sr.ComulatedOut = document.MaualFollowupDocuments.Select(s => s.TTLOutput).Sum();
                 sr.ComulatedPlan = document.MaualFollowupDocuments.Where(x => x.TTLOutput > 0).Select(x => x.ComulatedPlan).LastOrDefault();
-                sr.KftReject = document.MaualFollowupDocuments.Select(s => s.RejectSum).Sum();
+                sr.Reject = document.MaualFollowupDocuments.Select(s => s.RejectSum).Sum();
                 sr.SupplierReject = document.MaualFollowupDocuments.Select(s => s.SupplierReject).Sum();
                 sr.Output = document.MaualFollowupDocuments.Select(x => x.ComulatedOutput).ToList();
                 sr.ComulatedPlans = document.MaualFollowupDocuments.Select(x => x.ComulatedPlan).ToList();
-                sr.Efficiency = document.MaualFollowupDocuments.Select(x => x.ProductivityKft).ToList();
+                sr.Efficiency = document.MaualFollowupDocuments.Select(x => x.Productivity).ToList();
                 sr.EfficiencySubcon = document.MaualFollowupDocuments.Select(x => x.ProductivitySubcon).ToList();
-                if (document.MaualFollowupDocuments.Where(x => x.ProductivityKft > 0).Select(x => x.ProductivityKft).ToList().Count() != 0)
+                if (document.MaualFollowupDocuments.Where(x => x.Productivity > 0).Select(x => x.Productivity).ToList().Count() != 0)
                 {
-                    sr.AvgEfficiency = document.MaualFollowupDocuments.Where(x => x.ProductivityKft > 0).Select(x => x.ProductivityKft).Average();
+                    sr.AvgEfficiency = document.MaualFollowupDocuments.Where(x => x.Productivity > 0).Select(x => x.Productivity).Average();
                 }
                 if (document.MaualFollowupDocuments.Where(x => x.ProductivitySubcon > 0).Select(x => x.ProductivitySubcon).ToList().Count() != 0)
                 {
@@ -425,7 +434,6 @@ namespace ProdInfoSys.ViewModels
                 if (document.MaualFollowupDocuments.Where(x => x.CalcRejectRatio > 0).Select(x => x.CalcRejectRatio).ToList().Count() != 0)
                 {
                     sr.AvgRejectRatio = document.MaualFollowupDocuments.Where(x => x.CalcRejectRatio > 0).Select(x => x.CalcRejectRatio).Average();
-                    //sr.AvgRejectRatio = document.MaualFollowupDocuments.Select(x => x.CalcRejectRatio).Average();
                 }
 
                 sr.ChartData = new SeriesCollection
@@ -568,6 +576,13 @@ namespace ProdInfoSys.ViewModels
 
         }
 
+        /// <summary>
+        /// Builds the report by processing work center data, planning data, and calculating results in the required
+        /// order.
+        /// </summary>
+        /// <remarks>Call this method to generate or update the report with the latest available data. The
+        /// method must be called after all necessary input data has been prepared. The processing order is significant
+        /// and should not be altered, as each step depends on the results of the previous one.</remarks>
         private void BuildReport()
         {
             //Order is important!!
@@ -575,6 +590,7 @@ namespace ProdInfoSys.ViewModels
             PlanningDataProcess();
             ResultCalculation();
         }
+
         /// <summary>
         /// Saves the current document to the database.
         /// </summary>
@@ -601,11 +617,9 @@ namespace ProdInfoSys.ViewModels
                 KftProdTimePropRatio = _kftTimePropRatio,
                 RepackProdTimePropRatio = _repackTimePropRatio,
                 ActualWorkday = _currentWorkday,
-                KftDailyPlans = _kftDailyPlannedQty,
+                DailyPlans = _kftDailyPlannedQty,
                 RepackDailyPlans = _repackDailyPlannedQty,
                 StopTimes = grouppedStopTimes,
-                //Turnover = _turnover.ToList(),
-                //ShipoutPlan = _shipoutPlan.ToList(),
             };
             if (_followupDocument.StatusReportsQRQC == null)
             {

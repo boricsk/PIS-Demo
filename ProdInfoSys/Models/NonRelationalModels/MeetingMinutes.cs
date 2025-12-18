@@ -1,14 +1,15 @@
 ﻿using MongoDB.Bson;
 using MongoDB.Bson.Serialization.Attributes;
-using ProdInfoSys.Enums;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace ProdInfoSys.Models.NonRelationalModels
 {
+    /// <summary>
+    /// Represents the minutes of a meeting, including details such as the date, assigned tasks, responsible person,
+    /// deadlines, comments, and status.
+    /// </summary>
+    /// <remarks>This class is typically used to store and retrieve meeting minutes information from a data
+    /// store, such as a MongoDB collection. Each instance corresponds to a single meeting record and includes
+    /// properties for tracking action items and their progress.</remarks>
     public class MeetingMinutes
     {
         [BsonId]

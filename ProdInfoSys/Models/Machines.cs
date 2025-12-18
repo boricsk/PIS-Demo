@@ -1,10 +1,4 @@
 ﻿using ProdInfoSys.Models.FollowupDocuments;
-using ProdInfoSys.Models.NonRelationalModels;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace ProdInfoSys.Models
 {
@@ -16,7 +10,7 @@ namespace ProdInfoSys.Models
     /// manufacturing or operational context.</remarks>
     public class Machines
     {
-        public string Workcenter {get; set;}
-        public List<MachineFollowupDocument> MachineFollowupDocuments {get; set;}
+        public string Workcenter { get; set; }
+        public List<MachineFollowupDocument> MachineFollowupDocuments { get; set; }
     }
 }

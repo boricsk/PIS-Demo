@@ -1,13 +1,11 @@
 ﻿using MongoDB.Bson;
 using MongoDB.Bson.Serialization.Attributes;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace ProdInfoSys.Models.NonRelationalModels
 {
+    /// <summary>
+    /// Represents a workday record that includes an identifier and a collection of transferred workday entries.
+    /// </summary>
     public class TrWorkday
     {
         [BsonId]

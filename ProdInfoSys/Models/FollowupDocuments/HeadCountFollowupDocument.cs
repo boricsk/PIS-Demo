@@ -1,53 +1,75 @@
-﻿using MongoDB.Bson;
-using MongoDB.Bson.Serialization.Attributes;
-using ProdInfoSys.Interfaces;
-using System;
-using System.Collections.Generic;
+﻿using ProdInfoSys.Interfaces;
 using System.Collections.Specialized;
 using System.ComponentModel;
-using System.Linq;
 using System.Runtime.CompilerServices;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace ProdInfoSys.Models.FollowupDocuments
 {
     /// <summary>
-    /// A WPF-ben történt változásokat figyelégéhez implementálni kell a INotifyCollectionChanged-t és a propertyket így kell deklarálni.
+    /// Represents a headcount follow-up document that tracks planned and actual workforce data, including attendance,
+    /// absences, and shift information for a specific workday. Supports property and collection change notifications
+    /// for data binding scenarios.
     /// </summary>
+    /// <remarks>This class is typically used in workforce planning or reporting applications to monitor and
+    /// compare planned versus actual headcount and working hours. It implements both INotifyPropertyChanged and
+    /// collection change notifications, making it suitable for use with data-bound UI frameworks such as WPF or
+    /// Xamarin.Forms. Changes to key properties automatically trigger updates to related calculated properties,
+    /// ensuring that dependent values remain consistent.</remarks>
     public class HeadCountFollowupDocument : INotifyPropertyChanged, IHasFieldHCFollowupDoc
     {
+        /// <summary>
+        /// Occurs when a property value changes.
+        /// </summary>
+        /// <remarks>This event is typically raised by calling the OnPropertyChanged method after a
+        /// property value is modified. Subscribers can use this event to respond to changes in property values, such as
+        /// updating user interface elements in data-binding scenarios.</remarks>
         public event PropertyChangedEventHandler? PropertyChanged;
+
+        /// <summary>
+        /// Occurs when the collection changes, such as when items are added, removed, or the entire list is refreshed.
+        /// </summary>
+        /// <remarks>Subscribers are notified whenever the collection is modified. The event provides
+        /// information about the type of change and the affected items. This event is typically used to update user
+        /// interfaces or synchronize data when the underlying collection changes.</remarks>
         public event NotifyCollectionChangedEventHandler? CollectionChanged;
 
+        /// <summary>
+        /// Raises the PropertyChanged event to notify listeners that a property value has changed.
+        /// </summary>
+        /// <remarks>Call this method in a property setter to notify subscribers that the property value
+        /// has changed. If the changed property is one of ActualHC, Indirect, NettoHCPlan, Subcontactor, HCPlan,
+        /// QAIndirect, Holiday, Others, or Sick, this method also raises PropertyChanged for related calculated
+        /// properties to ensure that dependent bindings are updated.</remarks>
+        /// <param name="propertyName">The name of the property that changed. This value is optional and is automatically supplied by the compiler
+        /// when called from a property setter.</param>
         protected void OnPropertyChanged([CallerMemberName] string? propertyName = null)
         {
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
             // Ha ezen oszlopok értékei változnak
-            if (propertyName == nameof(ActualHC) || 
-                propertyName == nameof(FFCIndirect) ||
-                propertyName == nameof(NettoHCPlan) ||              
-                propertyName == nameof(Subcontactor) ||              
-                propertyName == nameof(HCPlan) ||              
-                propertyName == nameof(QAIndirect) ||              
-                propertyName == nameof(Holiday) ||              
-                propertyName == nameof(Others) ||              
-                propertyName == nameof(Sick)              
-                ) 
-                {
-                    // akkor frissítenie kéne az összegeket
-                    PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(FFCDirectPlusIndirect)));
-                    PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(Diff)));
-                    PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(CalcActualSH)));
-                    PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(CalcPlannedSH)));
-                    PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(AbsebseTotal)));
-                }
+            if (propertyName == nameof(ActualHC) ||
+                propertyName == nameof(Indirect) ||
+                propertyName == nameof(NettoHCPlan) ||
+                propertyName == nameof(Subcontactor) ||
+                propertyName == nameof(HCPlan) ||
+                propertyName == nameof(QAIndirect) ||
+                propertyName == nameof(Holiday) ||
+                propertyName == nameof(Others) ||
+                propertyName == nameof(Sick)
+                )
+            {
+                // akkor frissítenie kéne az összegeket
+                PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(DirectPlusIndirect)));
+                PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(Diff)));
+                PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(CalcActualSH)));
+                PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(CalcPlannedSH)));
+                PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(AbsebseTotal)));
+            }
         }
-        public int FFCDirectPlusIndirect => FFCIndirect + ActualHC;
+        public int DirectPlusIndirect => Indirect + ActualHC;
         public int Diff => ActualHC - NettoHCPlan;
         public int AbsebseTotal => Sick + Holiday;
         public double CalcActualSH => (double)ActualHC * (double)ShiftNum * (double)ShiftLen;
-        public double CalcPlannedSH => (double)NettoHCPlan * (double)ShiftNum * (double)ShiftLen;        
+        public double CalcPlannedSH => (double)NettoHCPlan * (double)ShiftNum * (double)ShiftLen;
 
         private DateOnly _workday;
         public DateOnly Workday
@@ -106,16 +128,16 @@ namespace ProdInfoSys.Models.FollowupDocuments
             {
                 if (_actualHC != value)
                 {
-                    _actualHC = value; OnPropertyChanged(); 
+                    _actualHC = value; OnPropertyChanged();
                 }
             }
         }
 
-        private int _ffcIndirect;
-        public int FFCIndirect
+        private int _Indirect;
+        public int Indirect
         {
-            get => _ffcIndirect;
-            set { _ffcIndirect = value; OnPropertyChanged(); }
+            get => _Indirect;
+            set { _Indirect = value; OnPropertyChanged(); }
         }
 
         private int _qaIndirect;
@@ -125,11 +147,11 @@ namespace ProdInfoSys.Models.FollowupDocuments
             set { _qaIndirect = value; OnPropertyChanged(); }
         }
 
-        private int _ffcDirectIndirect;
-        public int FFCDirectIndirect
+        private int _DirectIndirect;
+        public int DirectIndirect
         {
-            get => _ffcDirectIndirect;
-            set { _ffcDirectIndirect = value; OnPropertyChanged(); }
+            get => _DirectIndirect;
+            set { _DirectIndirect = value; OnPropertyChanged(); }
         }
 
         private int _actualHCComulated;
@@ -217,43 +239,3 @@ namespace ProdInfoSys.Models.FollowupDocuments
 
     }
 }
-/*
- 
-     public class HeadCountFollowupDocument
-    {       
-        public DateOnly Workday { get; set; }
-
-        public int NumberOfWorkdays { get; set; }
-
-        public int NettoHCPlan { get; set; }
-
-        public int ComulatedHCPlanNet { get; set; }
-
-        public int HCPlan { get; set; }
-
-        public int Subcontactor { get; set; }
-
-        public int ActualHC { get; set; }
-
-        public int FFCIndirect { get; set; }
-
-        public int QAIndirect { get; set; }
-
-        public int FFCDirectIndirect { get; set; }
-
-        public int ActualHCComulated { get; set; }
-
-        public int ActualHCDaily { get; set; }
-
-        public int DailyHCPlanAvg { get; set; }
-        
-        public int Holiday { get; set; }
-
-        public int Sick { get; set; }
-
-        public int Difference { get; set; }
-
-        public decimal AvailWorkingHour { get; set; }
-
-    }
- */

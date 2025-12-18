@@ -1,14 +1,16 @@
 ﻿using MongoDB.Bson;
 using MongoDB.Bson.Serialization.Attributes;
-using System;
-using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace ProdInfoSys.Models.NonRelationalModels
 {
+    /// <summary>
+    /// Represents the configuration settings for a Production Information System (PIS) setup, including email lists and
+    /// workcenter groupings.
+    /// </summary>
+    /// <remarks>This class is typically used to store and retrieve PIS setup data from a MongoDB database.
+    /// Each property corresponds to a specific aspect of the PIS configuration, such as notification recipients and
+    /// categorized workcenters.</remarks>
     public class PisSetup
     {
         [BsonId]
@@ -20,7 +22,7 @@ namespace ProdInfoSys.Models.NonRelationalModels
 
         [BsonElement("Leader Email list")]
         public ObservableCollection<string> LeaderEmailList { get; set; }
-        
+
         [BsonElement("Production meeting workcenters")]
         public ObservableCollection<string> ProdMeetingWorkcenters { get; set; }
 
