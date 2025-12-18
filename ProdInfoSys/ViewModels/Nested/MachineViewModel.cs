@@ -35,7 +35,7 @@ namespace ProdInfoSys.ViewModels.Nested
         private string _selectedWorkcenter = string.Empty;
         private MasterFollowupDocument? _followupDocument;
         private List<string> _notInvolvedScrapCodes = new() { "E", "TST" };
-        public Action? ForceCommit {get; set;}
+        public Action? ForceCommit { get; set; }
 
         #region Charts
         public List<string>? Labels { get; set; }
@@ -209,7 +209,7 @@ namespace ProdInfoSys.ViewModels.Nested
                     actualDocument.NK = (int)capacity.Where(s => s.ScrapCode == "NK").Sum(s => s.ScrapQuantity * 1000);
                     actualDocument.SetupReject = (int)capacity.Where(s => s.ScrapCode == "BS").Sum(s => s.ScrapQuantity * 1000);
                     actualDocument.OperatingHour = (double)capacity.Sum(s => s.RunTime);
-                    
+
                     if (capacity.Where(s => s.Perf != 0).Count() != 0)
                     {
                         actualDocument.Efficiency = capacity.Where(s => s.Perf != 0).Average(s => s.Perf);
@@ -248,18 +248,18 @@ namespace ProdInfoSys.ViewModels.Nested
                 UpdateMainDocument();
                 var ret = _userControlFunctions.SaveDocumentToDatabase(_connectionManagement, _followupDocument);
                 if (ret.isCompleted)
-                {                    
+                {
                     SetChart();
                     GetComulatedOut();
                     GetDifference();
                     _mustSave = string.Empty;
                     OnPropertyChanged(nameof(MustSave));
-                    if (isConfirm) {_dialogs.ShowInfo($"A(z) {_followupDocument.DocumentName} nevű dokumentum mentése sikeres!", "InspectionViewModel"); }
+                    if (isConfirm) { _dialogs.ShowInfo($"A(z) {_followupDocument.DocumentName} nevű dokumentum mentése sikeres!", "InspectionViewModel"); }
 
                 }
                 else
                 {
-                    if (isConfirm) {_dialogs.ShowInfo($"A(z) {_followupDocument.DocumentName} nevű dokumentum mentése sikertelen a következő hiba miatt : {ret.message}", "InspectionViewModel"); }
+                    if (isConfirm) { _dialogs.ShowInfo($"A(z) {_followupDocument.DocumentName} nevű dokumentum mentése sikertelen a következő hiba miatt : {ret.message}", "InspectionViewModel"); }
                 }
             }
         }
@@ -281,21 +281,28 @@ namespace ProdInfoSys.ViewModels.Nested
         public ICommand? ExportExcel => new ProjectCommandRelay(_ => ExportingExcel());
         private void ExportingExcel()
         {
-            ExcelIO e = new ExcelIO();            
-            e.ExcelExport(_machineFollowupDocs, $"{_selectedWorkcenter} followup", $"{_selectedWorkcenter} followup");
+            try
+            {
+                ExcelIO e = new ExcelIO();
+                e.ExcelExport(_machineFollowupDocs, $"{_selectedWorkcenter} followup", $"{_selectedWorkcenter} followup");
+            }
+            catch (Exception ex)
+            {
+                _dialogs.ShowErrorInfo($"{ex.Message}", "Excel export");
+            }
         }
 
         #endregion
 
         #region Constructor
-        public MachineViewModel(IUserDialogService dialogs, 
+        public MachineViewModel(IUserDialogService dialogs,
             IUserControlFunctions userControlFunctions,
             IConnectionManagement connectionManagement
             )
         {
             _dialogs = dialogs;
             _userControlFunctions = userControlFunctions;
-            _connectionManagement = connectionManagement;            
+            _connectionManagement = connectionManagement;
             _extraWorkday = DateTime.Now;
         }
         #endregion
@@ -456,7 +463,7 @@ namespace ProdInfoSys.ViewModels.Nested
                 e.PropertyName == nameof(MachineFollowupDocument.NK) ||
                 e.PropertyName == nameof(MachineFollowupDocument.CommentForRejects)
                 )
-            {                
+            {
                 _mustSave = "Nem mentett dokumentum";
                 OnPropertyChanged(nameof(MustSave));
                 GetComulatedOut();

@@ -6,8 +6,25 @@ using System.Threading.Tasks;
 
 namespace ProdInfoSys.Classes
 {
+    /// <summary>
+    /// Provides predefined SQL query strings for retrieving data from various tables in the PIS database.
+    /// </summary>
+    /// <remarks>This static class contains commonly used SQL queries as string-returning methods for use in
+    /// data access operations. The queries are intended for internal application use and may require parameterization
+    /// to prevent SQL injection when used with user-supplied input. All queries are specific to the database schema and
+    /// may need to be updated if the underlying tables or columns change.</remarks>
     public static class SqlQueries
     {
+        /// <summary>
+        /// Generates a SQL query string to retrieve turnover records for a specified year and month.
+        /// </summary>
+        /// <remarks>The returned query filters records where the [Order No_] field is not empty and the
+        /// YearMonth column matches the provided value. The caller is responsible for executing the query and handling
+        /// any database interactions.</remarks>
+        /// <param name="_yearmonth">The year and month to filter turnover records by, formatted as a string (for example, "202406" for June
+        /// 2024).</param>
+        /// <returns>A SQL query string that selects turnover records from the database where the year and month match the
+        /// specified value.</returns>
         public static string QueryTurnover(string _yearmonth) =>        
         $@"
             SELECT [EntryNo]
@@ -50,6 +67,13 @@ namespace ProdInfoSys.Classes
             where [Order No_] <>'' and YearMonth ='{_yearmonth}'
         ";
         
+        /// <summary>
+        /// Returns the SQL query string used to retrieve information about unblocked machine centers from the database.
+        /// </summary>
+        /// <remarks>The returned query includes columns such as Workcenter, Name, Area, cost and capacity
+        /// metrics, and other machine center attributes. Only machine centers that are not blocked are included in the
+        /// result set.</remarks>
+        /// <returns>A SQL query string that selects details for all machine centers where the Blocked flag is set to 0.</returns>
         public static string QueryMachineCenters() =>
         @"
             SELECT [Workcenter]
@@ -77,7 +101,10 @@ namespace ProdInfoSys.Classes
             where [Blocked] = 0
             ";
         
-
+        /// <summary>
+        /// Returns the SQL query string used to retrieve all production plan names from the database.
+        /// </summary>
+        /// <returns>A SQL query string that selects the Plan_Name column from the ProdPlan table.</returns>
         public static string QueryAllProductionPlan() =>
         @"
         SELECT  
@@ -85,6 +112,16 @@ namespace ProdInfoSys.Classes
             FROM [PIS].[dbo].[ProdPlan]
         ";
         
+        /// <summary>
+        /// Generates a SQL query string to retrieve production plan details for the specified plan name and version 0.
+        /// </summary>
+        /// <remarks>The returned SQL query is intended for use with the [PIS].[dbo].[ProdPlan] table. The
+        /// query filters results to only include records where the plan name matches the specified value and the plan
+        /// version is 0. Ensure that the input is properly sanitized to prevent SQL injection if used in a dynamic
+        /// context.</remarks>
+        /// <param name="_planName">The name of the production plan to query. This value is used to filter the results by plan name. Cannot be
+        /// null.</param>
+        /// <returns>A SQL query string that selects all columns for the specified production plan name with version 0.</returns>
         public static string QueryProductionPlan(string _planName) =>        
         @$"
         SELECT  
@@ -132,31 +169,12 @@ namespace ProdInfoSys.Classes
             Where [Plan_Name] = '{_planName}' and [Plan_Version] = 0
         ";
         
+        /// <summary>
+        /// Returns the SQL query string used to retrieve item numbers and their standard costs from the SEIBC20_LIVE
+        /// database.
+        /// </summary>
+        /// <returns>A SQL query string that selects item numbers and standard costs for items whose numbers start with '07'.</returns>
         public static string QueryStdCost() => @"SELECT [No_] as Item, [Standard Cost] as StdCost FROM [SEIBC20_LIVE].[dbo].[SEI Interconnect ÉLES-ne haszn$Item$437dbf0e-84ff-417a-965d-ed2bb9650972] where No_ like '07%'";
 
-        //public static string QueryCapacityLedger(string _workcenter, string _documentDate) =>
-        //    @$"
-        //    SELECT 
-        //          [No_] as Workcenter
-        //          ,[Posting Date] as PostingDate
-        //          ,[Quantity]
-        //          ,[Setup Time] as SetupTime
-        //          ,[Run Time] as RunTime
-        //          ,[Stop Time] as StopTime
-        //          ,[Output Quantity] as OutputQty
-        //          ,[Scrap Quantity]	as ScrapQty  
-        //          ,[Global Dimension 1 Code] as Division
-        //          ,[Global Dimension 2 Code] as Division2	  
-        //          ,[Routing No_] as Routing
-        //          ,[Item No_] as Item
-        //          ,[Unit of Measure Code] as UnitCode
-        //          ,[Document Date] as DocumentDate
-        //          ,[Stop Code] as StopCode
-        //          ,[Scrap Code] as ScrapCode
-        //          ,[Work Shift Code] as ShiftCode
-        //      FROM [SEIBC20_LIVE].[dbo].[SEI Interconnect ÉLES-ne haszn$Capacity Ledger Entry$437dbf0e-84ff-417a-965d-ed2bb9650972]
-        //      where [Document Date] = '{_documentDate.ToString()}'
-        //      and No_ = '{_workcenter}'
-        //    ";
     }
 }

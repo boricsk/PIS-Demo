@@ -34,7 +34,6 @@
 		<None Remove="img\icons8-xls-export-25.png" />
 		<None Remove="img\icons8-xls-import-60.png" />
 		<None Remove="img\info_icon.ico" />
-		<None Remove="img\SEI.png" />
 	</ItemGroup>
 
 	<ItemGroup>
@@ -119,9 +118,12 @@
 		<Resource Include="img\info_icon.ico">
 			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 		</Resource>
-		<Resource Include="img\SEI.png">
-			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-		</Resource>
+	</ItemGroup>
+
+	<ItemGroup>
+	  <None Update="img\logo_small.png">
+	    <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+	  </None>
 	</ItemGroup>
 
 </Project>

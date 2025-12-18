@@ -37,7 +37,7 @@ namespace ProdInfoSys.ViewModels.Nested
         private List<decimal>? _kftOutputs = new();
         private List<decimal>? _kftActualRejectRatios = new();
         private ObservableCollection<StatusReportQrqc>? _allStatusReport;
-        private decimal _kftOut = 0;       
+        private decimal _kftOut = 0;
         //private ObservableCollection<ShipoutPlan> _allShipouts = new ObservableCollection<ShipoutPlan>();
         //private readonly string _sampleItem = "07-2000-0002H";
         //private readonly string _area = "FFC";
@@ -314,17 +314,31 @@ namespace ProdInfoSys.ViewModels.Nested
         public ICommand? ExportPlanChanges => new ProjectCommandRelay(_ => ExportingPlanChanges());
         private void ExportingPlanChanges()
         {
-            ExcelIO e = new ExcelIO();
-            //e.ExportHeadcountFollowup(_headcountFollowupDocs);
-            e.ExcelExport(_planChangeDetails, $"Plan changes", $"Plan changes");
+            try
+            {
+                ExcelIO e = new ExcelIO();
+                //e.ExportHeadcountFollowup(_headcountFollowupDocs);
+                e.ExcelExport(_planChangeDetails, $"Plan changes", $"Plan changes");
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message, "Excel export", System.Windows.MessageBoxButton.OK, System.Windows.MessageBoxImage.Error);
+            }
         }
 
         public ICommand? ExportKftStatus => new ProjectCommandRelay(_ => ExportingKftStatus());
         private void ExportingKftStatus()
         {
-            ExcelIO e = new ExcelIO();
-            //e.ExportHeadcountFollowup(_headcountFollowupDocs);
-            e.ExcelExport(_kftDailyPlannedQty, $"KFT Status", $"KFT Status");
+            try
+            {
+                ExcelIO e = new ExcelIO();
+                //e.ExportHeadcountFollowup(_headcountFollowupDocs);
+                e.ExcelExport(_kftDailyPlannedQty, $"KFT Status", $"KFT Status");
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message, "Excel export", System.Windows.MessageBoxButton.OK, System.Windows.MessageBoxImage.Error);
+            }
         }
 
         public ICommand? ExportRepackStatus => new ProjectCommandRelay(_ => ExportingRepackStatus());
@@ -340,7 +354,7 @@ namespace ProdInfoSys.ViewModels.Nested
         public StatusReportQrqcViewModel()
         {
             RepackDailyPlannedQty = new();
-            KftDailyPlannedQty = new();           
+            KftDailyPlannedQty = new();
         }
         #endregion
 
@@ -367,39 +381,46 @@ namespace ProdInfoSys.ViewModels.Nested
         /// parent entity and the selected report name are not null.</remarks>
         private void GetFollowupDocument()
         {
-            if (_parent != null && _selectedReportName != null)
+            try
             {
-                ConnectionManagement conMgmnt = new ConnectionManagement();
-                var databaseCollection = conMgmnt.GetCollection<MasterFollowupDocument>(conMgmnt.DbName);
-                var doc = databaseCollection.Find(x => x.DocumentName == _parent.Name).FirstOrDefault();
-                _xaxisWorkdays = doc.Headcount.Select(w => w.Workday.Day.ToString()).ToList();                
-                FollowupDocManagement dm = new FollowupDocManagement(doc, _selectedReportName, EnumCallerEntity.QRQC);
-                _result = dm.GetDataForNestedReportViews();
+                if (_parent != null && _selectedReportName != null)
+                {
+                    ConnectionManagement conMgmnt = new ConnectionManagement();
+                    var databaseCollection = conMgmnt.GetCollection<MasterFollowupDocument>(conMgmnt.DbName);
+                    var doc = databaseCollection.Find(x => x.DocumentName == _parent.Name).FirstOrDefault();
+                    _xaxisWorkdays = doc.Headcount.Select(w => w.Workday.Day.ToString()).ToList();
+                    FollowupDocManagement dm = new FollowupDocManagement(doc, _selectedReportName, EnumCallerEntity.QRQC);
+                    _result = dm.GetDataForNestedReportViews();
 
-                _allStatusReport = _result.AllStatusReportForQrqc;
-                StatusReport = _result.SelectedStatusReportQrqc;
+                    _allStatusReport = _result.AllStatusReportForQrqc;
+                    StatusReport = _result.SelectedStatusReportQrqc;
 
-                StatusReportMahines = _result.AffectedMachineStatusReportsForQrqcMeeting;
+                    StatusReportMahines = _result.AffectedMachineStatusReportsForQrqcMeeting;
 
-                PlanChangeDetails = _result.PlanChangeDetails;
-                WorkcenterData = _result.WorkcenterFollowupData;
-                SamplePrice = _result.PlannedSamplePrice;
-                PlanPrice = _result.ProdPlanPrice;
-                PlanDcPrice = _result.ProdPlanDcPrice;
-                MaterialCost = _result.ProdPlanMaterialPrice;
-                TtlPlan = _result.ProdPlanTotalPrice;               
+                    PlanChangeDetails = _result.PlanChangeDetails;
+                    WorkcenterData = _result.WorkcenterFollowupData;
+                    SamplePrice = _result.PlannedSamplePrice;
+                    PlanPrice = _result.ProdPlanPrice;
+                    PlanDcPrice = _result.ProdPlanDcPrice;
+                    MaterialCost = _result.ProdPlanMaterialPrice;
+                    TtlPlan = _result.ProdPlanTotalPrice;
 
-                ReportName = $"Név : {StatusReport?.ReportName ?? string.Empty}";
-                ReportIssueDate = $"Dátum : {StatusReport?.IssueDate}";
-                CurrentWorkday = $"A report a(z) {StatusReport?.ActualWorkday} munkanapon készült.";
-                KftProdCompleteRatio = $"{StatusReport?.KftProdCompleteRatio}"; 
-                KftTimePropRatio = $"{StatusReport?.KftProdTimePropRatio}";
-                RepackProdCompleteRatio = $"{StatusReport?.RepackProdCompleteRatio}";
-                RepackTimePropRatio = $"{StatusReport?.RepackProdTimePropRatio}";
+                    ReportName = $"Név : {StatusReport?.ReportName ?? string.Empty}";
+                    ReportIssueDate = $"Dátum : {StatusReport?.IssueDate}";
+                    CurrentWorkday = $"A report a(z) {StatusReport?.ActualWorkday} munkanapon készült.";
+                    KftProdCompleteRatio = $"{StatusReport?.KftProdCompleteRatio}";
+                    KftTimePropRatio = $"{StatusReport?.KftProdTimePropRatio}";
+                    RepackProdCompleteRatio = $"{StatusReport?.RepackProdCompleteRatio}";
+                    RepackTimePropRatio = $"{StatusReport?.RepackProdTimePropRatio}";
 
-                RepackDailyPlannedQty = _result.RepackDailyPlannedQty;
-                KftDailyPlannedQty = _result.KftDailyPlannedQty;
-                StopTimes = _result.StopTimes;
+                    RepackDailyPlannedQty = _result.RepackDailyPlannedQty;
+                    KftDailyPlannedQty = _result.KftDailyPlannedQty;
+                    StopTimes = _result.StopTimes;
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message, "Followup betöltés", System.Windows.MessageBoxButton.OK, System.Windows.MessageBoxImage.Error);
             }
         }
         /// <summary>
@@ -551,7 +572,7 @@ namespace ProdInfoSys.ViewModels.Nested
                     }
                 };
 
-                _kftOut = KftDailyPlannedQty.Select(s => s.ActualQty * 1000).Sum();                
+                _kftOut = KftDailyPlannedQty.Select(s => s.ActualQty * 1000).Sum();
                 _ttlReject = $"{(_kftRejectSum / _kftOut).ToString("P2")}";
                 OnPropertyChanged(nameof(TtlReject));
                 KftCumulativeRejectSumChart = new SeriesCollection

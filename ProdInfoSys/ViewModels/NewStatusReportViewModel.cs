@@ -234,36 +234,36 @@ namespace ProdInfoSys.ViewModels
             //}
             //else
             //{
-                if (!ReportName.IsNullOrEmpty())
+            if (!ReportName.IsNullOrEmpty())
+            {
+                if (!_reportNames.Contains(ReportName))
                 {
-                    if (!_reportNames.Contains(ReportName))
-                    {
-                        (bool isCompleted, string message) = SaveDocumentToDatabase();
+                    (bool isCompleted, string message) = SaveDocumentToDatabase();
 
-                        if (isCompleted)
-                        {
-                            //MessageBox.Show($"A mentés sikeres", "SaveReport", MessageBoxButton.OK, MessageBoxImage.Information);
-                            _dialogs.ShowInfo($"A mentés sikeres", "SaveReport");
-                            _reportNames.Add(ReportName);
-                            MustSave = string.Empty;
-                        }
-                        else
-                        {
-                            //MessageBox.Show($"Hiba történt a mentés alatt!: {message}", "SaveReport", MessageBoxButton.OK, MessageBoxImage.Error);
-                            _dialogs.ShowErrorInfo($"Hiba történt a mentés alatt!: {message}", "SaveReport");
-                        }
+                    if (isCompleted)
+                    {
+                        //MessageBox.Show($"A mentés sikeres", "SaveReport", MessageBoxButton.OK, MessageBoxImage.Information);
+                        _dialogs.ShowInfo($"A mentés sikeres", "SaveReport");
+                        _reportNames.Add(ReportName);
+                        MustSave = string.Empty;
                     }
                     else
                     {
-                        //MessageBox.Show($"A megadott név már létezik!", "SaveReport", MessageBoxButton.OK, MessageBoxImage.Error);
-                        _dialogs.ShowErrorInfo($"A megadott név már létezik!", "SaveReport");
+                        //MessageBox.Show($"Hiba történt a mentés alatt!: {message}", "SaveReport", MessageBoxButton.OK, MessageBoxImage.Error);
+                        _dialogs.ShowErrorInfo($"Hiba történt a mentés alatt!: {message}", "SaveReport");
                     }
                 }
                 else
                 {
-                    //MessageBox.Show($"Név megadása kötelező!", "SaveReport", MessageBoxButton.OK, MessageBoxImage.Error);
-                    _dialogs.ShowErrorInfo($"Név megadása kötelező!", "SaveReport");
+                    //MessageBox.Show($"A megadott név már létezik!", "SaveReport", MessageBoxButton.OK, MessageBoxImage.Error);
+                    _dialogs.ShowErrorInfo($"A megadott név már létezik!", "SaveReport");
                 }
+            }
+            else
+            {
+                //MessageBox.Show($"Név megadása kötelező!", "SaveReport", MessageBoxButton.OK, MessageBoxImage.Error);
+                _dialogs.ShowErrorInfo($"Név megadása kötelező!", "SaveReport");
+            }
             //}
         }
 
@@ -321,30 +321,44 @@ namespace ProdInfoSys.ViewModels
         #region Private methods
         private void ImportExcelShipoutPlan(string file)
         {
-            ExcelIO e = new ExcelIO();
-            _shipoutPlan = e.ImportShipoutPlan(file);            
-            
-            foreach (var plan in _shipoutPlan)
+            try
             {
-                var match = _itemDcCost.FirstOrDefault(c => c.Item == plan.Szam);
-                plan.ShipOutStd = match.StdCost * plan.NyitottMennyiseg;
+                ExcelIO e = new ExcelIO();
+                _shipoutPlan = e.ImportShipoutPlan(file);
+
+                foreach (var plan in _shipoutPlan)
+                {
+                    var match = _itemDcCost.FirstOrDefault(c => c.Item == plan.Szam);
+                    plan.ShipOutStd = match.StdCost * plan.NyitottMennyiseg;
+                }
+
+                OnPropertyChanged(nameof(ShipoutPlan));
+
+                TurnoverDataProcess();
+                ShipoutDataProcess();
+                ResultCalculation();
             }
-
-            OnPropertyChanged(nameof(ShipoutPlan));
-
-            TurnoverDataProcess();
-            ShipoutDataProcess();
-            ResultCalculation();
+            catch (Exception ex)
+            {
+                _dialogs.ShowErrorInfo($"{ex.Message}", "Kiszállítási terv import");
+            }
         }
         private void LoadDataWithDapper()
         {
-            DapperFunctions df = new DapperFunctions();
-            _plan = df.GetPlanningMasterData(_followupDocument.PlanName);
-            _yearMonth = $"{_plan.Select(p => p.Plan_StartPeriod).FirstOrDefault().Year.ToString()}{_plan.Select(p => p.Plan_StartPeriod).FirstOrDefault().Month.ToString("D2")}";
-            _itemDcCost = df.GetItemDc();
-            if (!_yearMonth.IsNullOrEmpty())
+            try
             {
-                _turnover = df.GetTurnover(_yearMonth);
+                DapperFunctions df = new DapperFunctions();
+                _plan = df.GetPlanningMasterData(_followupDocument.PlanName);
+                _yearMonth = $"{_plan.Select(p => p.Plan_StartPeriod).FirstOrDefault().Year.ToString()}{_plan.Select(p => p.Plan_StartPeriod).FirstOrDefault().Month.ToString("D2")}";
+                _itemDcCost = df.GetItemDc();
+                if (!_yearMonth.IsNullOrEmpty())
+                {
+                    _turnover = df.GetTurnover(_yearMonth);
+                }
+            }
+            catch (Exception ex)
+            {
+                _dialogs.ShowErrorInfo($"Hiba történt : {ex.Message}", "Termelési terv betöltés");
             }
         }
         private void GetFollowupDocument()
@@ -597,7 +611,7 @@ namespace ProdInfoSys.ViewModels
             _repackProdCompleteRatio = (_completeRepackProduction / _ttlPlanRepackProduction).ToString("P2");
 
             var _repackDailyPlan = _ttlPlanRepackProduction / _followupDocument.Workdays;
-            
+
             _repackTimePropRatio = (_completeRepackProduction / (_repackDailyPlan * _currentWorkday)).ToString("P2");
 
             var _kftDailyPlan = _ttlPlanKftProduction / _followupDocument.Workdays;
@@ -656,7 +670,7 @@ namespace ProdInfoSys.ViewModels
                 RepackProdCompleteRatio = _repackProdCompleteRatio,
                 KftProdTimePropRatio = _kftTimePropRatio,
                 RepackProdTimePropRatio = _repackTimePropRatio,
-               
+
             };
             if (_followupDocument.StatusReports == null)
             {

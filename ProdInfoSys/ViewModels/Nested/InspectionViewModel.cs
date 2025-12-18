@@ -19,7 +19,6 @@ using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Input;
 using System.Windows.Threading;
-using MessageBox = Xceed.Wpf.Toolkit.MessageBox;
 
 namespace ProdInfoSys.ViewModels.Nested
 {
@@ -35,7 +34,7 @@ namespace ProdInfoSys.ViewModels.Nested
         private string _selectedWorkcenter = string.Empty;
         private MasterFollowupDocument? _followupDocument;
         private List<string> _notInvolvedScrapCodes = new() { "E", "TST" };
-        public Action? ForceCommit {get; set;}
+        public Action? ForceCommit { get; set; }
 
         #region Charts
         public List<string>? Labels { get; set; }
@@ -60,7 +59,7 @@ namespace ProdInfoSys.ViewModels.Nested
 
         private bool _is2ShiftVisible;
         public bool Is2ShiftVisible
-        { 
+        {
             get => _is2ShiftVisible;
             set { _is2ShiftVisible = value; OnPropertyChanged(); }
         }
@@ -177,7 +176,7 @@ namespace ProdInfoSys.ViewModels.Nested
 
         #region ICommand
 
-        public ICommand ImportFromErp => new ProjectCommandRelay( async _ => await ImportingFromErp());
+        public ICommand ImportFromErp => new ProjectCommandRelay(async _ => await ImportingFromErp());
         private async Task ImportingFromErp()
         {
             if (_selectedDocument != null)
@@ -244,7 +243,7 @@ namespace ProdInfoSys.ViewModels.Nested
                 OnPropertyChanged(nameof(InspectionFollowupDocuments));
                 ForceCommit?.Invoke();
                 UpdateComulatedData();
-                UpdateMainDocument();                 
+                UpdateMainDocument();
                 var ret = _userControlFunctions.SaveDocumentToDatabase(_connectionManagement, _followupDocument);
                 if (ret.isCompleted)
                 {
@@ -270,9 +269,15 @@ namespace ProdInfoSys.ViewModels.Nested
         public ICommand? ExportExcel => new ProjectCommandRelay(_ => ExportingExcel());
         private void ExportingExcel()
         {
-            ExcelIO e = new ExcelIO();
-            //e.ExportHeadcountFollowup(_headcountFollowupDocs);
-            e.ExcelExport(_inspectionFollowupDocs, $"{_selectedWorkcenter} followup", $"{_selectedWorkcenter} followup");
+            try
+            {
+                ExcelIO e = new ExcelIO();
+                e.ExcelExport(_inspectionFollowupDocs, $"{_selectedWorkcenter} followup", $"{_selectedWorkcenter} followup");
+            }
+            catch (Exception ex)
+            {
+                _dialogs.ShowErrorInfo($"{ex.Message}", "Excel export");
+            }
         }
 
         #endregion
@@ -285,8 +290,8 @@ namespace ProdInfoSys.ViewModels.Nested
         {
             _dialogs = dialogs;
             _userControlFunctions = userControlFunctions;
-            _connectionManagement = connectionManagement;            
-            _extraWorkday = DateTime.Now;           
+            _connectionManagement = connectionManagement;
+            _extraWorkday = DateTime.Now;
         }
         #endregion
 
@@ -311,7 +316,7 @@ namespace ProdInfoSys.ViewModels.Nested
         private void SetVisibility()
         {
             if (_followupDocument != null)
-            {                
+            {
                 switch (_followupDocument.ShiftNumMachine)
                 {
                     case 2: _is2ShiftVisible = true; _is3ShiftVisible = false; break;
@@ -446,7 +451,7 @@ namespace ProdInfoSys.ViewModels.Nested
                 e.PropertyName == nameof(InspectionFollowupDocument.SupplierReject) ||
                 e.PropertyName == nameof(InspectionFollowupDocument.CommentForRejects)
                 )
-            {                
+            {
                 _mustSave = "Nem mentett dokumentum";
                 OnPropertyChanged(nameof(MustSave));
                 GetComulatedOut();

@@ -96,54 +96,61 @@ namespace ProdInfoSys.ViewModels
         public ICommand AddNewDocument => new ProjectCommandRelay(_ => AddingNewDocument());
         private void AddingNewDocument()
         {
-            if (string.IsNullOrEmpty(NewFollowupDocument.DocumentName))
+            try
             {
-                //MessageBox.Show($"Nincs név adva a dokumentumnak!", "AddNewDocumentViewModel", MessageBoxButton.OK, MessageBoxImage.Error);
-                _dialogs.ShowErrorInfo($"Nincs név adva a dokumentumnak!", "AddNewDocumentViewModel");
-                return;
-            }
-            CalendarMgmnt calendar = new CalendarMgmnt(additionalWorkdays: AdditionalWorkdays.ToList(), movedWorkDays: SetupManagement.LoadTrWorkdays());
-            (int workDay, int holiday) workayNumbers = (0, 0);
-            if (NewFollowupDocument is not null && _erpMachineCenters is not null)
-            {
-                if (NewFollowupDocument.StartDate != NewFollowupDocument.FinishDate && NewFollowupDocument.FinishDate > NewFollowupDocument.StartDate)
+                if (string.IsNullOrEmpty(NewFollowupDocument.DocumentName))
                 {
-                    workayNumbers = calendar.CountDays(
-                        DateOnly.FromDateTime(NewFollowupDocument.StartDate),
-                        DateOnly.FromDateTime(NewFollowupDocument.FinishDate));
-                    NewFollowupDocument.Workdays = workayNumbers.workDay;
+                    //MessageBox.Show($"Nincs név adva a dokumentumnak!", "AddNewDocumentViewModel", MessageBoxButton.OK, MessageBoxImage.Error);
+                    _dialogs.ShowErrorInfo($"Nincs név adva a dokumentumnak!", "AddNewDocumentViewModel");
+                    return;
+                }
+                CalendarMgmnt calendar = new CalendarMgmnt(additionalWorkdays: AdditionalWorkdays.ToList(), movedWorkDays: SetupManagement.LoadTrWorkdays());
+                (int workDay, int holiday) workayNumbers = (0, 0);
+                if (NewFollowupDocument is not null && _erpMachineCenters is not null)
+                {
+                    if (NewFollowupDocument.StartDate != NewFollowupDocument.FinishDate && NewFollowupDocument.FinishDate > NewFollowupDocument.StartDate)
+                    {
+                        workayNumbers = calendar.CountDays(
+                            DateOnly.FromDateTime(NewFollowupDocument.StartDate),
+                            DateOnly.FromDateTime(NewFollowupDocument.FinishDate));
+                        NewFollowupDocument.Workdays = workayNumbers.workDay;
 
-                    NewFollowupDocument.WorkdayList = calendar.GetWorkdays(
-                        DateOnly.FromDateTime(NewFollowupDocument.StartDate),
-                        DateOnly.FromDateTime(NewFollowupDocument.FinishDate));
+                        NewFollowupDocument.WorkdayList = calendar.GetWorkdays(
+                            DateOnly.FromDateTime(NewFollowupDocument.StartDate),
+                            DateOnly.FromDateTime(NewFollowupDocument.FinishDate));
+                    }
+                    else
+                    {
+                        //MessageBox.Show($"A dátumtartomány hibásan van megadva!", "AddNewDocumentViewModel", MessageBoxButton.OK, MessageBoxImage.Error);
+                        _dialogs.ShowErrorInfo($"A dátumtartomány hibásan van megadva!", "AddNewDocumentViewModel");
+                        return;
+                    }
+
+                    var affectedMachineCenters = GetCheckedItems();
+
+                    if (affectedMachineCenters.Count != 0)
+                    {
+                        NewFollowupDocument.MachineCenters = affectedMachineCenters;
+                    }
+                    else
+                    {
+                        //MessageBox.Show($"Nincsennek gépcsoportok kiválasztva!", "AddNewDocumentViewModel", MessageBoxButton.OK, MessageBoxImage.Error);
+                        _dialogs.ShowErrorInfo($"Nincsennek gépcsoportok kiválasztva!", "AddNewDocumentViewModel");
+                        return;
+                    }
+
+                    MongoDbModel mdb = new MongoDbModel(NewFollowupDocument);
+                    mdb.MakeDataModell(_erpMachineCenters.ToList());
                 }
                 else
                 {
-                    //MessageBox.Show($"A dátumtartomány hibásan van megadva!", "AddNewDocumentViewModel", MessageBoxButton.OK, MessageBoxImage.Error);
-                    _dialogs.ShowErrorInfo($"A dátumtartomány hibásan van megadva!", "AddNewDocumentViewModel");
-                    return;
+                    //MessageBox.Show($"Adatbetöltési hiba az ErpMachineCenters vagy a NewFollowupDocument esetén!", "AddNewDocumentViewModel", MessageBoxButton.OK, MessageBoxImage.Error);
+                    _dialogs.ShowErrorInfo($"Adatbetöltési hiba az ErpMachineCenters vagy a NewFollowupDocument esetén!", "AddNewDocumentViewModel");
                 }
-
-                var affectedMachineCenters = GetCheckedItems();
-
-                if (affectedMachineCenters.Count != 0)
-                {
-                    NewFollowupDocument.MachineCenters = affectedMachineCenters;
-                }
-                else
-                {
-                    //MessageBox.Show($"Nincsennek gépcsoportok kiválasztva!", "AddNewDocumentViewModel", MessageBoxButton.OK, MessageBoxImage.Error);
-                    _dialogs.ShowErrorInfo($"Nincsennek gépcsoportok kiválasztva!", "AddNewDocumentViewModel");
-                    return;
-                }
-
-                MongoDbModel mdb = new MongoDbModel(NewFollowupDocument);
-                mdb.MakeDataModell(_erpMachineCenters.ToList());
             }
-            else
+            catch (Exception ex)
             {
-                //MessageBox.Show($"Adatbetöltési hiba az ErpMachineCenters vagy a NewFollowupDocument esetén!", "AddNewDocumentViewModel", MessageBoxButton.OK, MessageBoxImage.Error);
-                _dialogs.ShowErrorInfo($"Adatbetöltési hiba az ErpMachineCenters vagy a NewFollowupDocument esetén!", "AddNewDocumentViewModel");
+                _dialogs.ShowErrorInfo($"", "Followup betöltés");
             }
         }
 
@@ -227,16 +234,26 @@ namespace ProdInfoSys.ViewModels
         private async Task LoadDataWithDapper()
         {
             _isLoading = true;
-            await Task.Run(() =>
+            try
             {
-                DapperFunctions df = new DapperFunctions();
-                _erpMachineCenters = df.GetErpMachineCenters();
-                var plans = df.GetProductionPlan();
-                _nameOfPlans = new ObservableCollection<string>(plans.Select(p => p.Plan_Name).Distinct().ToList());
-                OnPropertyChanged(nameof(ErpMachineCenters));
-                OnPropertyChanged(nameof(NameOfPlans));
-            });
-            IsLoading = false;
+                await Task.Run(() =>
+                {
+                    DapperFunctions df = new DapperFunctions();
+                    _erpMachineCenters = df.GetErpMachineCenters();
+                    var plans = df.GetProductionPlan();
+                    _nameOfPlans = new ObservableCollection<string>(plans.Select(p => p.Plan_Name).Distinct().ToList());
+                    OnPropertyChanged(nameof(ErpMachineCenters));
+                    OnPropertyChanged(nameof(NameOfPlans));
+                });
+            }
+            catch (Exception ex)
+            {
+                _dialogs.ShowErrorInfo($"Hiba történt : {ex.Message}", "Termelési terv betöltés");
+            }
+            finally
+            {
+                IsLoading = false;
+            }
         }
         /// <summary>
         /// Retrieves a collection of machine centers that are marked as selected.

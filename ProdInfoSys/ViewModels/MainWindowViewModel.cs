@@ -149,7 +149,6 @@ namespace ProdInfoSys.ViewModels
             else
             {
                 _dialogs.ShowErrorInfo($"Nincs kiválasztva dokumentum!", "MainWindowViewModel");
-                //MessageBox.Show($"Nincs kiválasztva dokumentum!", "MainWindowViewModel", MessageBoxButton.OK, MessageBoxImage.Error);
             }
         }
 
@@ -169,14 +168,12 @@ namespace ProdInfoSys.ViewModels
             else
             {
                 _dialogs.ShowErrorInfo($"Nincs kiválasztva dokumentum!", "MainWindowViewModel");
-                //MessageBox.Show($"Nincs kiválasztva dokumentum!", "MainWindowViewModel", MessageBoxButton.OK, MessageBoxImage.Error);
             }
         }
 
         public ICommand? ShowNewDocument => new ProjectCommandRelay(_ => ShowingNewDocument());
         private void ShowingNewDocument()
         {
-            //AddNewDocument window = new AddNewDocument();
             var window = _windowFactory.Create<AddNewDocument>();
             window.ShowDialog();
             LoadTree();
@@ -184,45 +181,30 @@ namespace ProdInfoSys.ViewModels
         public ICommand? ShowMeetingMemoWindow => new ProjectCommandRelay(_ => ShowingMeetingMemoWindow());
         private void ShowingMeetingMemoWindow()
         {
-            //MeetingMemoWindow window = new MeetingMemoWindow();
             var window = _windowFactory.Create<MeetingMemoWindow>();
             window.ShowDialog();
         }
         public ICommand? ShowSetupWindow => new ProjectCommandRelay(_ => ShowingSetupWindow());
         private void ShowingSetupWindow()
         {
-            //SetupWindow window = new SetupWindow();
             var window = _windowFactory.Create<SetupWindow>();
             window.ShowDialog();
         }
         public ICommand? DeleteDocument => new ProjectCommandRelay(_ => DeletingDocument());
         private void DeletingDocument()
         {
-            //DeleteWindow d = new DeleteWindow();
             var window = _windowFactory.Create<DeleteWindow>();
             window.ShowDialog();
             LoadTree();
         }
 
-        //public ICommand? StartProjection => new ProjectCommandRelay(_ => StartingProjection());
-        //private void StartingProjection()
-        //{
-        //    var vm = new ProjectorViewModel();
-        //    ProjectorWindow p = new ProjectorWindow();
-        //    vm.Init(_rootName);
-        //    p.DataContext = vm;
-        //    p.Show();            
-        //}
-
         public ICommand? SendMemo => new ProjectCommandRelay(_ => SendingMemo());
         private void SendingMemo()
         {
-            //(MessageBox.Show($"Biztosan küldeni szeretné a meeting memo-t?", "Email küldés", MessageBoxButton.YesNo, MessageBoxImage.Question) == MessageBoxResult.Yes)
             if (_dialogs.ShowConfirmation("Biztosan küldeni szeretné a meeting memo-t?", "Email küldés"))
             {
                 try
                 {
-                    //ConnectionManagement conMgmnt = new ConnectionManagement();
                     var databaseCollection = _connectionManagement.GetCollection<MeetingMinutes>(_connectionManagement.MeetingMemo);
                     var allDocuments = databaseCollection.Find(FilterDefinition<MeetingMinutes>.Empty).ToList();
                     BuildEmail email = new BuildEmail(allDocuments.Where(i => i.status == "Nyitott").OrderBy(i => i.pic).ToList());
@@ -248,7 +230,6 @@ namespace ProdInfoSys.ViewModels
                 catch (Exception ex)
                 {
                     _dialogs.ShowErrorInfo($"Küldés sikertelen a következő hiba miatt : {ex.Message}", "MainWindowViewModel");
-                    //MessageBox.Show($"Küldés sikertelen a következő hiba miatt : {ex.Message}", "MainWindowViewModel", MessageBoxButton.OK, MessageBoxImage.Error);
                 }
             }
         }
@@ -399,8 +380,15 @@ namespace ProdInfoSys.ViewModels
 
         private void LoadDataWithDapper()
         {
-            DapperFunctions df = new DapperFunctions();
-            _erpMachineCenters = df.GetErpMachineCenters();
+            try
+            {
+                DapperFunctions df = new DapperFunctions();
+                _erpMachineCenters = df.GetErpMachineCenters();
+            }
+            catch (Exception ex)
+            {
+                _dialogs.ShowErrorInfo($"Hiba történt : {ex.Message}", "Gépcsoportlista betöltés");
+            }
         }
         private void SetParents(TreeNodeModel parent)
         {

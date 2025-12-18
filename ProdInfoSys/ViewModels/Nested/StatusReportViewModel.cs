@@ -369,7 +369,7 @@ namespace ProdInfoSys.ViewModels.Nested
                     var databaseCollection = _connectionManagement.GetCollection<MeetingMinutes>(_connectionManagement.MeetingMemo);
                     var allDocuments = databaseCollection.Find(FilterDefinition<MeetingMinutes>.Empty).ToList();
                     BuildEmail email = new BuildEmail(
-                        SamplePrice, PlanPrice, PlanDcPrice, MaterialCost,RepackMaterialCost, KftMaterialCost ,TtlPlan, SalesPlan, SalesPlanDc, DcMovement
+                        SamplePrice, PlanPrice, PlanDcPrice, MaterialCost, RepackMaterialCost, KftMaterialCost, TtlPlan, SalesPlan, SalesPlanDc, DcMovement
                         );
 
                     MailMessage mail = new MailMessage();
@@ -401,30 +401,45 @@ namespace ProdInfoSys.ViewModels.Nested
         public ICommand? ExportShipoutPlan => new ProjectCommandRelay(_ => ExportingShipoutPlan());
         private void ExportingShipoutPlan()
         {
-
-            ExcelIO e = new ExcelIO();
-            //e.ExportHeadcountFollowup(_headcountFollowupDocs);
-            e.ExcelExport(_shipOutPlanDetails, $"Shipout plan", $"Shipout plan");
-
+            try
+            {
+                ExcelIO e = new ExcelIO();
+                //e.ExportHeadcountFollowup(_headcountFollowupDocs);
+                e.ExcelExport(_shipOutPlanDetails, $"Shipout plan", $"Shipout plan");
+            }
+            catch (Exception ex)
+            {
+                _dialogs.ShowErrorInfo($"{ex.Message}", "Excel export");
+            }
         }
 
         public ICommand? ExportPlanChanges => new ProjectCommandRelay(_ => ExportingPlanChanges());
         private void ExportingPlanChanges()
         {
-
-            ExcelIO e = new ExcelIO();
-            //e.ExportHeadcountFollowup(_headcountFollowupDocs);
-            e.ExcelExport(_planChangeDetails, $"Plan changes", $"Plan changes");
+            try
+            {
+                ExcelIO e = new ExcelIO();
+                e.ExcelExport(_planChangeDetails, $"Plan changes", $"Plan changes");
+            }
+            catch (Exception ex)
+            {
+                _dialogs.ShowErrorInfo($"{ex.Message}", "Excel export");
+            }
 
         }
 
         public ICommand? ExportKftStatus => new ProjectCommandRelay(_ => ExportingKftStatus());
         private void ExportingKftStatus()
         {
-
-            ExcelIO e = new ExcelIO();
-            //e.ExportHeadcountFollowup(_headcountFollowupDocs);
-            e.ExcelExport(_kftDailyPlannedQty, $"KFT Status", $"KFT Status");
+            try
+            {
+                ExcelIO e = new ExcelIO();
+                e.ExcelExport(_kftDailyPlannedQty, $"KFT Status", $"KFT Status");
+            }
+            catch (Exception ex)
+            {
+                _dialogs.ShowErrorInfo($"{ex.Message}", "Excel export");
+            }
 
         }
 
@@ -433,7 +448,6 @@ namespace ProdInfoSys.ViewModels.Nested
         {
 
             ExcelIO e = new ExcelIO();
-            //e.ExportHeadcountFollowup(_headcountFollowupDocs);
             e.ExcelExport(_repackDailyPlannedQty, $"Repack Status", $"Repack Status");
 
         }

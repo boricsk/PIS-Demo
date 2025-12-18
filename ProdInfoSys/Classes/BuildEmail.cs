@@ -7,6 +7,14 @@ using System.Threading.Tasks;
 
 namespace ProdInfoSys.Classes
 {
+    /// <summary>
+    /// Provides methods for generating formatted HTML email messages for meeting minutes, leader summaries, and test
+    /// notifications.
+    /// </summary>
+    /// <remarks>The BuildEmail class supports creating different types of email content, including tables of
+    /// open tasks and summary reports, by accepting relevant data through its constructors. Use the appropriate
+    /// constructor based on the type of email to be generated. The generated HTML is intended for use in email clients
+    /// that support HTML formatting.</remarks>
     public class BuildEmail
     {
         private string _emailHead = @"
@@ -183,15 +191,37 @@ namespace ProdInfoSys.Classes
         private string _DcMovement;
         private string _testEmailAddr;
 
-
+        /// <summary>
+        /// Initializes a new instance of the BuildEmail class using the specified collection of meeting minutes.
+        /// </summary>
+        /// <param name="meetingMinutes">A list of MeetingMinutes objects to include in the email build process. Cannot be null.</param>
         public BuildEmail(List<MeetingMinutes> meetingMinutes)
         {
             _memos = meetingMinutes;
         }
+
+        /// <summary>
+        /// Initializes a new instance of the BuildEmail class with the specified test email address.
+        /// </summary>
+        /// <param name="testEmailAddr">The email address to use for testing purposes. Cannot be null or empty.</param>
         public BuildEmail(string testEmailAddr)
         {
             _testEmailAddr = testEmailAddr;
         }
+
+        /// <summary>
+        /// Initializes a new instance of the BuildEmail class with the specified pricing, cost, and sales plan details.
+        /// </summary>
+        /// <param name="SamplePrice">The sample price value to include in the email content.</param>
+        /// <param name="PlanPrice">The plan price value to include in the email content.</param>
+        /// <param name="PlanDCPrice">The plan distribution center price value to include in the email content.</param>
+        /// <param name="MaterialCost">The material cost value to include in the email content.</param>
+        /// <param name="MaterialCostRepack">The material cost for repackaging to include in the email content.</param>
+        /// <param name="MaterialCostKft">The material cost per thousand feet to include in the email content.</param>
+        /// <param name="TtlPaln">The total plan value to include in the email content.</param>
+        /// <param name="SalesPlan">The sales plan value to include in the email content.</param>
+        /// <param name="SalesPlanDC">The sales plan distribution center value to include in the email content.</param>
+        /// <param name="DcMovement">The distribution center movement value to include in the email content.</param>
         public BuildEmail(
             string SamplePrice,
             string PlanPrice,
@@ -216,6 +246,14 @@ namespace ProdInfoSys.Classes
             _SalesPlanDC = SalesPlanDC;
             _DcMovement = DcMovement;
         }
+
+        /// <summary>
+        /// Builds and returns an HTML-formatted email message containing a table of memo items.
+        /// </summary>
+        /// <remarks>The returned HTML message includes a table where each row represents a memo item with
+        /// its associated details. Ensure that the resulting HTML is properly embedded in an email body to display the
+        /// table correctly in email clients.</remarks>
+        /// <returns>A string containing the complete HTML email message with all memo items formatted as table rows.</returns>
         public string BuidEmailMessage()
         {
             StringBuilder message = new StringBuilder();
@@ -235,6 +273,13 @@ namespace ProdInfoSys.Classes
             return message.ToString();
         }
 
+        /// <summary>
+        /// Builds the HTML-formatted email message containing pricing and cost details for the leader report.
+        /// </summary>
+        /// <remarks>The returned HTML message includes several rows with labels and corresponding values
+        /// for sample price, plan prices, material costs, sales plans, and DC movement. The structure and content of
+        /// the message depend on the values of the underlying fields at the time of the method call.</remarks>
+        /// <returns>A string containing the complete HTML email message with pricing and cost information formatted as a table.</returns>
         public string BuidLeaderEmailMessage()
         {
             StringBuilder message = new StringBuilder();
@@ -295,6 +340,10 @@ namespace ProdInfoSys.Classes
             return message.ToString();
         }
 
+        /// <summary>
+        /// Builds and returns the HTML content of a test email message for the configured test recipient.
+        /// </summary>
+        /// <returns>A string containing the HTML body of the test email message.</returns>
         public string BuildTestEmail()
         {
             StringBuilder message_test = new StringBuilder();

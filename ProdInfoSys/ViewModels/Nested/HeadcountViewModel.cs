@@ -20,7 +20,6 @@ using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Input;
 using System.Windows.Threading;
-using MessageBox = Xceed.Wpf.Toolkit.MessageBox;
 
 namespace ProdInfoSys.ViewModels.Nested
 {
@@ -171,9 +170,15 @@ namespace ProdInfoSys.ViewModels.Nested
         public ICommand? ExportExcel => new ProjectCommandRelay(_ => ExportingExcel());
         private void ExportingExcel()
         {
-            ExcelIO e = new ExcelIO();
-            //e.ExportHeadcountFollowup(_headcountFollowupDocs);
-            e.ExcelExport(_headcountFollowupDocs, "Headcount followup", "Headcount followup");
+            try
+            {
+                ExcelIO e = new ExcelIO();
+                e.ExcelExport(_headcountFollowupDocs, "Headcount followup", "Headcount followup");
+            }
+            catch (Exception ex)
+            {
+                _dialogs.ShowErrorInfo($"{ex.Message}", "Excel export");
+            }
         }
         #endregion
 

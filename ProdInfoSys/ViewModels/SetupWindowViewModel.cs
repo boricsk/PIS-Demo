@@ -19,7 +19,6 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Input;
-using MessageBox = Xceed.Wpf.Toolkit.MessageBox;
 
 namespace ProdInfoSys.ViewModels
 {
@@ -31,8 +30,6 @@ namespace ProdInfoSys.ViewModels
         #endregion
 
         private PisSetup? _setupData = new PisSetup();
-
-        //ConnectionManagement conMgmnt = new ConnectionManagement();
 
         #region PropChangedInterface
 
@@ -333,9 +330,7 @@ namespace ProdInfoSys.ViewModels
 
             if (_erpConnection.IsNullOrEmpty() || _mongoConnection.IsNullOrEmpty())
             {
-                //MessageBox.Show("Nincs kitöltve mindn szükséges mező!", "SetupViewModel", MessageBoxButton.OK, MessageBoxImage.Error);
                 _dialogs.ShowErrorInfo("Nincs kitöltve mindn szükséges mező!", "SetupViewModel");
-
             }
             else
             {
@@ -346,13 +341,11 @@ namespace ProdInfoSys.ViewModels
                     RegistryManagement.WriteStringRegistryKey("UpdateLocation", _updateLocation);
                     RegistryManagement.WriteStringRegistryKey("InstallLocation", _installLocation);
 
-                    //MessageBox.Show("A mentés sikeres!", "SetupViewModel", MessageBoxButton.OK, MessageBoxImage.Information);
                     _dialogs.ShowInfo("A mentés sikeres!", "SetupViewModel");
 
                 }
                 else
                 {
-                    //MessageBox.Show("A megadott kapcsolat nem létezik!", "SetupViewModel", MessageBoxButton.OK, MessageBoxImage.Error);
                     _dialogs.ShowErrorInfo("A megadott kapcsolat nem létezik!", "SetupViewModel");
                 }
             }
@@ -368,7 +361,6 @@ namespace ProdInfoSys.ViewModels
                 _erpEnv.IsNullOrEmpty()
                 )
             {
-                //MessageBox.Show("Nincs kitöltve mindn szükséges mező!", "SetupViewModel", MessageBoxButton.OK, MessageBoxImage.Error);
                 _dialogs.ShowErrorInfo("Nincs kitöltve mindn szükséges mező!", "SetupViewModel");
 
             }
@@ -380,7 +372,6 @@ namespace ProdInfoSys.ViewModels
                 RegistryManagement.WriteStringRegistryKey("ErpCompany", _erpCompany);
                 RegistryManagement.WriteStringRegistryKey("ErpEnv", _erpEnv);
 
-                //MessageBox.Show("A mentés sikeres!", "SetupViewModel", MessageBoxButton.OK, MessageBoxImage.Information);
                 _dialogs.ShowInfo("A mentés sikeres!", "SetupViewModel");
             }
         }
@@ -394,37 +385,61 @@ namespace ProdInfoSys.ViewModels
         public ICommand SaveCurrentDocument => new ProjectCommandRelay(_ => SavingCurrentDocument());
         private void SavingCurrentDocument()
         {
-            _setupData.ActualFollowup = SelectedDocument;
-            SetupManagement.SaveSetupData(_setupData);
-            //MessageBox.Show("A mentés sikeres!", "SetupViewModel", MessageBoxButton.OK, MessageBoxImage.Information);
-            _dialogs.ShowInfo("A mentés sikeres!", "SetupViewModel");
+            try
+            {
+                _setupData.ActualFollowup = SelectedDocument;
+                SetupManagement.SaveSetupData(_setupData);
+                _dialogs.ShowInfo("A mentés sikeres!", "SetupViewModel");
+            }
+            catch (Exception ex)
+            {
+                _dialogs.ShowErrorInfo($"{ex.Message}", "Dokumentum mentés");
+            }
         }
 
         public ICommand SaveAvgDocument => new ProjectCommandRelay(_ => SavingAvgDocument());
         private void SavingAvgDocument()
         {
-            _setupData.AvgManualWorkcenters = new ObservableCollection<string>(_avgWorkcenters);
-            SetupManagement.SaveSetupData(_setupData);
-            //MessageBox.Show("A mentés sikeres!", "SetupViewModel", MessageBoxButton.OK, MessageBoxImage.Information);
-            _dialogs.ShowInfo("A mentés sikeres!", "SetupViewModel");
+            try
+            {
+                _setupData.AvgManualWorkcenters = new ObservableCollection<string>(_avgWorkcenters);
+                SetupManagement.SaveSetupData(_setupData);
+                _dialogs.ShowInfo("A mentés sikeres!", "SetupViewModel");
+            }
+            catch (Exception ex)
+            {
+                _dialogs.ShowErrorInfo($"{ex.Message}", "Gépcsoport átlag");
+            }
         }
 
         public ICommand SaveEmailList => new ProjectCommandRelay(_ => SavingEmailList());
         private void SavingEmailList()
         {
-            _setupData.EmailList = new ObservableCollection<string>(_emailList);
-            SetupManagement.SaveSetupData(_setupData);
-            //MessageBox.Show("A mentés sikeres!", "SetupViewModel", MessageBoxButton.OK, MessageBoxImage.Information);
-            _dialogs.ShowInfo("A mentés sikeres!", "SetupViewModel");
+            try
+            {
+                _setupData.EmailList = new ObservableCollection<string>(_emailList);
+                SetupManagement.SaveSetupData(_setupData);
+                _dialogs.ShowInfo("A mentés sikeres!", "SetupViewModel");
+            }
+            catch (Exception ex)
+            {
+                _dialogs.ShowErrorInfo($"{ex.Message}", "Email lista mentés");
+            }
         }
 
         public ICommand SaveLeaderEmailList => new ProjectCommandRelay(_ => SavingLeaderEmailList());
         private void SavingLeaderEmailList()
         {
-            _setupData.LeaderEmailList = new ObservableCollection<string>(_leaderEmailList);
-            SetupManagement.SaveSetupData(_setupData);
-            //MessageBox.Show("A mentés sikeres!", "SetupViewModel", MessageBoxButton.OK, MessageBoxImage.Information);
-            _dialogs.ShowInfo("A mentés sikeres!", "SetupViewModel");
+            try
+            {
+                _setupData.LeaderEmailList = new ObservableCollection<string>(_leaderEmailList);
+                SetupManagement.SaveSetupData(_setupData);
+                _dialogs.ShowInfo("A mentés sikeres!", "SetupViewModel");
+            }
+            catch (Exception ex)
+            {
+                _dialogs.ShowErrorInfo($"{ex.Message}", "Vezetői email lista mentés");
+            }
         }
 
         public ICommand SaveProdMeetingWorkcenters => new ProjectCommandRelay(_ => SavingProdMeetingWorkcenters());
@@ -432,7 +447,6 @@ namespace ProdInfoSys.ViewModels
         {
             _setupData.ProdMeetingWorkcenters = new ObservableCollection<string>(_prodMeetingWorkcenters);
             SetupManagement.SaveSetupData(_setupData);
-            //MessageBox.Show("A mentés sikeres!", "SetupViewModel", MessageBoxButton.OK, MessageBoxImage.Information);
             _dialogs.ShowInfo("A mentés sikeres!", "SetupViewModel");
         }
 
@@ -441,14 +455,12 @@ namespace ProdInfoSys.ViewModels
         {
             if (string.IsNullOrEmpty(_smtpPassw) || _smtpPort.IsNullOrEmpty() || _smtpServer.IsNullOrEmpty())
             {
-                //MessageBox.Show("Nincs kitöltve mindn szükséges mező!", "SetupViewModel", MessageBoxButton.OK, MessageBoxImage.Error);
                 _dialogs.ShowErrorInfo("Nincs kitöltve mindn szükséges mező!", "SetupViewModel");
             }
             else
             {
                 if (!int.TryParse(_smtpPort, out int port))
                 {
-                    //MessageBox.Show("A portszám hibásan van megadva!", "SetupViewModel", MessageBoxButton.OK, MessageBoxImage.Error);
                     _dialogs.ShowErrorInfo("A portszám hibásan van megadva!", "SetupViewModel");
                     return;
                 }
@@ -458,8 +470,6 @@ namespace ProdInfoSys.ViewModels
                 RegistryManagement.WriteStringRegistryKey("SMTPServer", _smtpServer);
                 RegistryManagement.WriteStringRegistryKey("SMTPPort", _smtpPort);
                 RegistryManagement.WriteStringRegistryKey("SMTPUser", _smtpServerUser);
-                //SetupManagement.SaveSetupData(_setupData);
-                //MessageBox.Show("A mentés sikeres!", "SetupViewModel", MessageBoxButton.OK, MessageBoxImage.Information);
                 _dialogs.ShowInfo("A mentés sikeres!", "SetupViewModel");
             }
         }
@@ -521,7 +531,7 @@ namespace ProdInfoSys.ViewModels
             if (_cbSelectedNewProjWorkcenter != null)
             {
                 if (!_projWorkcenters.Contains(_cbSelectedNewProjWorkcenter))
-                { 
+                {
                     _projWorkcenters.Add(_cbSelectedNewProjWorkcenter);
                     OnPropertyChanged(nameof(ProjWorkcenters));
                 }
@@ -542,7 +552,6 @@ namespace ProdInfoSys.ViewModels
         {
             _setupData.ProjectorWorkcenters = new ObservableCollection<string>(_projWorkcenters);
             SetupManagement.SaveSetupData(_setupData);
-            //MessageBox.Show("A mentés sikeres!", "SetupViewModel", MessageBoxButton.OK, MessageBoxImage.Information);
             _dialogs.ShowInfo("A mentés sikeres!", "SetupViewModel");
         }
 
@@ -621,7 +630,6 @@ namespace ProdInfoSys.ViewModels
             catch (Exception ex)
             {
                 _dialogs.ShowErrorInfo($"Küldés sikertelen a következő hiba miatt : {ex.Message}", "SetupWindowViewModel");
-                //MessageBox.Show($"Küldés sikertelen a következő hiba miatt : {ex.Message}", "MainWindowViewModel", MessageBoxButton.OK, MessageBoxImage.Error);
             }
         }
         #endregion
@@ -690,39 +698,46 @@ namespace ProdInfoSys.ViewModels
 
             _setupData = SetupManagement.LoadSetupData();
 
-                if (_setupData.EmailList != null)
-                {
-                    _emailList = new ObservableCollection<string>(_setupData.EmailList);
-                }
-                if (_setupData.LeaderEmailList != null)
-                {
-                    _leaderEmailList = new ObservableCollection<string>(_setupData.LeaderEmailList);
-                }
-                if (_setupData.ProdMeetingWorkcenters != null)
-                {
-                    _prodMeetingWorkcenters = new ObservableCollection<string>(_setupData.ProdMeetingWorkcenters);
-                }
-                if (_setupData.AvgManualWorkcenters != null)
-                {
-                    _avgWorkcenters = new ObservableCollection<string>(_setupData.AvgManualWorkcenters);
-                }
-                if (_setupData.ProjectorWorkcenters != null)
-                {
-                    _projWorkcenters = new ObservableCollection<string>(_setupData.ProjectorWorkcenters);
-                }
+            if (_setupData.EmailList != null)
+            {
+                _emailList = new ObservableCollection<string>(_setupData.EmailList);
+            }
+            if (_setupData.LeaderEmailList != null)
+            {
+                _leaderEmailList = new ObservableCollection<string>(_setupData.LeaderEmailList);
+            }
+            if (_setupData.ProdMeetingWorkcenters != null)
+            {
+                _prodMeetingWorkcenters = new ObservableCollection<string>(_setupData.ProdMeetingWorkcenters);
+            }
+            if (_setupData.AvgManualWorkcenters != null)
+            {
+                _avgWorkcenters = new ObservableCollection<string>(_setupData.AvgManualWorkcenters);
+            }
+            if (_setupData.ProjectorWorkcenters != null)
+            {
+                _projWorkcenters = new ObservableCollection<string>(_setupData.ProjectorWorkcenters);
+            }
 
-                var documents = _connectionManagement.GetCollection<MasterFollowupDocument>(_connectionManagement.DbName).Find(FilterDefinition<MasterFollowupDocument>.Empty).ToList();
-                _documents = documents.OrderByDescending(x => x.DocumentName).Select(x => x.DocumentName).ToList();
-                _selectedDocument = _setupData.ActualFollowup;
-            
+            var documents = _connectionManagement.GetCollection<MasterFollowupDocument>(_connectionManagement.DbName).Find(FilterDefinition<MasterFollowupDocument>.Empty).ToList();
+            _documents = documents.OrderByDescending(x => x.DocumentName).Select(x => x.DocumentName).ToList();
+            _selectedDocument = _setupData.ActualFollowup;
+
             LoadTrWorkdays();
             OnPropertyChanged();
             LoadDataWithDapper();
         }
         private void LoadDataWithDapper()
         {
-            DapperFunctions df = new DapperFunctions();
-            AvailWorkcenterList = new ObservableCollection<string>(df.GetErpMachineCenters().Select(x => x.Workcenter).ToList());
+            try
+            {
+                DapperFunctions df = new DapperFunctions();
+                AvailWorkcenterList = new ObservableCollection<string>(df.GetErpMachineCenters().Select(x => x.Workcenter).ToList());
+            }
+            catch (Exception ex)
+            {
+                _dialogs.ShowErrorInfo($"Hiba történt : {ex.Message}", "Gépcsoportlista betöltés");
+            }
         }
         private void LoadTrWorkdays()
         {

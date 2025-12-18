@@ -33,7 +33,7 @@ namespace ProdInfoSys.ViewModels.Nested
         private string _selectedWorkcenter = string.Empty;
         private MasterFollowupDocument? _followupDocument;
         private List<string> _notInvolvedScrapCodes = new() { "E", "TST" };
-        public Action? ForceCommit {get; set;}
+        public Action? ForceCommit { get; set; }
 
         #region PropChangedInterface
 
@@ -199,10 +199,7 @@ namespace ProdInfoSys.ViewModels.Nested
                     actualDocument.Shift2KftReject = (int)capacity.Where(s => s.ShiftCode == "2" && !_notInvolvedScrapCodes.Contains(s.ScrapCode)).Sum(s => s.OutputQuantity * 1000);
                     actualDocument.Shift3KftReject = (int)capacity.Where(s => s.ShiftCode == "3" && !_notInvolvedScrapCodes.Contains(s.ScrapCode)).Sum(s => s.OutputQuantity * 1000);
                     actualDocument.SupplierReject = (int)capacity.Where(s => s.ScrapCode == "E").Sum(s => s.ScrapQuantity * 1000);
-                    //actualDocument.TST = (int)capacity.Where(s => s.ScrapCode == "TST").Sum(s => s.ScrapQuantity * 1000);
-                    //actualDocument.NK = (int)capacity.Where(s => s.ScrapCode == "NK").Sum(s => s.ScrapQuantity * 1000);
                     actualDocument.BS = (int)capacity.Where(s => s.ScrapCode == "BS").Sum(s => s.ScrapQuantity * 1000);
-                    //actualDocument.OperatingHour = (double)capacity.Sum(s => s.RunTime);
 
                     if (capacity.Where(s => s.Perf != 0).Count() != 0)
                     {
@@ -273,8 +270,15 @@ namespace ProdInfoSys.ViewModels.Nested
         public ICommand? ExportExcel => new ProjectCommandRelay(_ => ExportingExcel());
         private void ExportingExcel()
         {
-            ExcelIO e = new ExcelIO();            
-            e.ExcelExport(_manualFollowupDocs, $"{_selectedWorkcenter} followup", $"{_selectedWorkcenter} followup");
+            try
+            {
+                ExcelIO e = new ExcelIO();
+                e.ExcelExport(_manualFollowupDocs, $"{_selectedWorkcenter} followup", $"{_selectedWorkcenter} followup");
+            }
+            catch (Exception ex)
+            {
+                _dialogs.ShowErrorInfo($"{ex.Message}", "Excel export");
+            }
         }
 
         #endregion
@@ -285,10 +289,10 @@ namespace ProdInfoSys.ViewModels.Nested
             IConnectionManagement connectionManagement
             )
         {
-            _dialogs = dialogs;            
+            _dialogs = dialogs;
             _extraWorkday = DateTime.Now;
             _userControlFunctions = userControlFunctions;
-            _connectionManagement = connectionManagement;            
+            _connectionManagement = connectionManagement;
         }
         #endregion
 
@@ -450,7 +454,7 @@ namespace ProdInfoSys.ViewModels.Nested
                 e.PropertyName == nameof(ManualFollowupDocument.Shift3SubconReject) ||
                 e.PropertyName == nameof(ManualFollowupDocument.CommentForRejects)
                 )
-            {                
+            {
                 _mustSave = "Nem mentett dokumentum";
                 OnPropertyChanged(nameof(MustSave));
                 GetComulatedOut();

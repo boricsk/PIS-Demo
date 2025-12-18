@@ -10,7 +10,7 @@
         xmlns:Windows="clr-namespace:ProdInfoSys.Windows.Nested"
         
         mc:Ignorable="d"
-        Title="SEI Production Information System" Height="800" Width="1200" WindowStartupLocation="CenterScreen">
+        Title="Production Information System" Height="800" Width="1200" WindowStartupLocation="CenterScreen">
     <!--
     <Window.DataContext>
         <ViewModels:MainWindowViewModel/>
@@ -24,7 +24,7 @@
         </Grid.RowDefinitions>
         <Border Grid.Row="0" BorderBrush="#4DA1A9" BorderThickness="1" CornerRadius="5" Padding="2" Margin="4">
             <ToolBar Grid.Row="0">
-                <Image Grid.Row="0" Source="/img/SEI.png" Margin="5 5 5 5" VerticalAlignment="Center" HorizontalAlignment="Left"/>
+                <Image Grid.Row="0" Source="/img/logo_small.png" Margin="5 5 5 5" VerticalAlignment="Center" HorizontalAlignment="Left"/>
                 <TextBlock Grid.Row="0" Text="Production Information System" VerticalAlignment="Center" HorizontalAlignment="Center" FontFamily="Cascadia Code" FontSize="14" Margin="0 0 5 0 "/>
                 <Button Margin="0" Height="64" ToolTip="Beállítások" Command="{Binding ShowSetupWindow}">
                     <StackPanel Orientation="Horizontal">

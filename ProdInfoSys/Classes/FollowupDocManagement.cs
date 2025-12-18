@@ -14,6 +14,15 @@ using System.Windows.Controls;
 
 namespace ProdInfoSys.Classes
 {
+    /// <summary>
+    /// Provides management functionality for follow-up documents, including data aggregation and preparation for report
+    /// views based on the caller context.
+    /// </summary>
+    /// <remarks>This class is typically used to retrieve and organize follow-up document data for reporting
+    /// scenarios, adapting the output according to the specified caller entity (such as QRQC or production). It
+    /// encapsulates logic for selecting relevant reports, extracting key metrics, and preparing collections for
+    /// consumption by reporting views. Thread safety is not guaranteed; create a new instance per usage
+    /// context.</remarks>
     public class FollowupDocManagement
     {
         private MasterFollowupDocument _doc;
@@ -22,6 +31,14 @@ namespace ProdInfoSys.Classes
         private List<string> _affectedManualWorkcenters = new List<string>(); 
 
         private decimal ManualProcessAvgEffForQrqc = 0;
+
+        /// <summary>
+        /// Initializes a new instance of the FollowupDocManagement class with the specified document, report name, and
+        /// caller entity.
+        /// </summary>
+        /// <param name="doc">The master follow-up document to be managed. Cannot be null.</param>
+        /// <param name="selectedReportName">The name of the report to be selected for follow-up operations. Cannot be null or empty.</param>
+        /// <param name="callerEntity">The entity that is initiating the follow-up management operation.</param>
         public FollowupDocManagement(MasterFollowupDocument doc, string selectedReportName, EnumCallerEntity callerEntity)
         {
             _doc = doc;
@@ -30,6 +47,16 @@ namespace ProdInfoSys.Classes
             _affectedManualWorkcenters = SetupManagement.LoadSetupData().AvgManualWorkcenters.ToList();
         }
 
+        /// <summary>
+        /// Retrieves and assembles metadata required for displaying nested report views based on the current caller
+        /// entity and selected report.
+        /// </summary>
+        /// <remarks>The returned metadata includes different sets of data depending on whether the caller
+        /// entity is QRQC or PROD. This method aggregates information such as status reports, machine and manual
+        /// process metrics, planning and cost data, and daily plan quantities to support detailed reporting
+        /// views.</remarks>
+        /// <returns>A <see cref="FollowupMetadata"/> object containing the relevant status reports, planning data, efficiency
+        /// metrics, and other details for the selected report and caller context.</returns>
         public FollowupMetadata GetDataForNestedReportViews()
         {
             FollowupMetadata ret = new FollowupMetadata();

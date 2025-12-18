@@ -284,14 +284,14 @@ namespace ProdInfoSys.ViewModels
             MustSave = "Nem mentett dokumentum";
             DataExchangeManagement dem = new DataExchangeManagement();
             //CS1503 miatt async-et kell használni
-            
+
             _stopTimes = new ObservableCollection<ExtCapacityLedgerEntry>(await dem.GetExtCapacityLedgerEntriesIntervallStopCodes(_followupDocument.StartDate, _followupDocument.FinishDate));
-            grouppedStopTimes = _stopTimes.GroupBy(s => new { s.StopCode, s.Workcenter})
+            grouppedStopTimes = _stopTimes.GroupBy(s => new { s.StopCode, s.Workcenter })
                 .Select(s => new StopTime
                 {
-                    Workcenter = s.Key.Workcenter, 
-                    StopCode = s.Key.StopCode, 
-                    TtlStopTime = s.Sum(s => s.StopTime) 
+                    Workcenter = s.Key.Workcenter,
+                    StopCode = s.Key.StopCode,
+                    TtlStopTime = s.Sum(s => s.StopTime)
                 }).ToList();
             _isLoading = false;
             OnPropertyChanged(nameof(IsLoading));
@@ -300,16 +300,17 @@ namespace ProdInfoSys.ViewModels
 
         #region Private methods
         private void LoadDataWithDapper()
-        {            
-            DapperFunctions df = new DapperFunctions();
-            _plan = df.GetPlanningMasterData(_followupDocument.PlanName);
-            _yearMonth = $"{_plan.Select(p => p.Plan_StartPeriod).FirstOrDefault().Year.ToString()}{_plan.Select(p => p.Plan_StartPeriod).FirstOrDefault().Month.ToString("D2")}";
-            //_itemDcCost = df.GetItemDc();
-
-            //if (!_yearMonth.IsNullOrEmpty())
-            //{
-            //    _turnover = df.GetTurnover(_followupDocument.PlanName, _yearMonth);
-            //}
+        {
+            try
+            {
+                DapperFunctions df = new DapperFunctions();
+                _plan = df.GetPlanningMasterData(_followupDocument.PlanName);
+                _yearMonth = $"{_plan.Select(p => p.Plan_StartPeriod).FirstOrDefault().Year.ToString()}{_plan.Select(p => p.Plan_StartPeriod).FirstOrDefault().Month.ToString("D2")}";
+            }
+            catch (Exception ex)
+            {
+                _dialogs.ShowErrorInfo($"Hiba történt : {ex.Message}", "Termelési terv betöltés");
+            }
         }
         private void GetFollowupDocument()
         {
@@ -490,10 +491,10 @@ namespace ProdInfoSys.ViewModels
 
             __samplePrice = _plan.Where(p => p.Plan_isSample == 1).Select(p => p.Plan_PriceOfPlanned).Sum();
             _planData.Sample = __samplePrice;
-            SamplePrice = __samplePrice.ToString("N2");                    
-           
-            __planPrice = _plan.Where(p => p.Plan_isSample == 0).Select(p => p.Plan_PriceOfPlanned).Sum();           
-            _planData.OutputPlanSales = __planPrice;            
+            SamplePrice = __samplePrice.ToString("N2");
+
+            __planPrice = _plan.Where(p => p.Plan_isSample == 0).Select(p => p.Plan_PriceOfPlanned).Sum();
+            _planData.OutputPlanSales = __planPrice;
 
             PlanPrice = __planPrice.ToString("N2");
 
@@ -530,7 +531,7 @@ namespace ProdInfoSys.ViewModels
             _currentWorkday = _followupDocument.Headcount.Where(s => s.ActualHC > 0).Select(s => s.ActualHC).ToList().Count();
             var _completedKftProduction = _plan.Where(s => s.Plan_isFinished == 0).Select(s => s.Plan_FinishedQty).Sum();
             var _ttlPlanKftProduction = _plan.Where(s => s.Plan_isFinished == 0).Select(s => s.Plan_PlannedQty).Sum();
-            
+
             var _completeRepackProduction = _plan.Where(s => s.Plan_isFinished == 1).Select(s => s.Plan_FinishedQty).Sum();
             var _ttlPlanRepackProduction = _plan.Where(s => s.Plan_isFinished == 1).Select(s => s.Plan_PlannedQty).Sum();
 
@@ -568,7 +569,7 @@ namespace ProdInfoSys.ViewModels
         }
 
         private void BuildReport()
-        {            
+        {
             //Order is important!!
             WorkcenterDataProcess();
             PlanningDataProcess();
