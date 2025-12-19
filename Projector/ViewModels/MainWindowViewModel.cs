@@ -12,11 +12,18 @@ using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Threading;
-using MessageBox = Xceed.Wpf.Toolkit.MessageBox;
-
 
 namespace Projector.ViewModels
 {
+    /// <summary>
+    /// Represents the view model for the main application window, providing data binding and logic for chart
+    /// visualization, status reporting, and follow-up document management in a WPF application.
+    /// </summary>
+    /// <remarks>This view model implements the INotifyPropertyChanged interface to support property change
+    /// notifications for data binding in WPF. It manages chart data, titles, axis formatting, and periodic updates
+    /// using dispatcher timers. The MainWindowViewModel coordinates the retrieval and processing of follow-up documents
+    /// and status reports, and exposes properties for use in the main window's UI. Thread safety is not guaranteed; all
+    /// members are intended to be accessed from the UI thread.</remarks>
     public class MainWindowViewModel : INotifyPropertyChanged
     {
         private string _parent = string.Empty;
@@ -24,7 +31,6 @@ namespace Projector.ViewModels
         private ObservableCollection<ProjectorDataModel>? _charts;
         private int _projectCounter = 0;
         private List<string> _affectedWorkcenters = new List<string>(); 
-        //{ "AD AMI", "AD AUTOMATA PUNCHING", "CYT", "APIM", "SS AUTOMATA BENDING", "BUNDLING", "PACKAGING" };
 
         private DispatcherTimer? _visualizationTimer;
         private DispatcherTimer? _updateTimer;
@@ -33,8 +39,22 @@ namespace Projector.ViewModels
         private ObservableCollection<StopTime> _statusReportStopTimes = new ObservableCollection<StopTime>();
 
         #region PropChangedInterface
-
+        /// <summary>
+        /// Occurs when a property value changes.
+        /// </summary>
+        /// <remarks>Subscribe to this event to receive notifications when a property on the object has
+        /// changed. This event is typically raised by calling the OnPropertyChanged method after a property value is
+        /// modified. Handlers receive the name of the property that changed in the event arguments.</remarks>
         public event PropertyChangedEventHandler? PropertyChanged;
+
+        /// <summary>
+        /// Raises the PropertyChanged event to notify listeners that a property value has changed.
+        /// </summary>
+        /// <remarks>Call this method in the setter of a property to notify subscribers that the
+        /// property's value has changed. This is commonly used to support data binding in applications that implement
+        /// the INotifyPropertyChanged interface.</remarks>
+        /// <param name="propertyName">The name of the property that changed. This value is optional and will be automatically provided when called
+        /// from a property setter.</param>
         protected void OnPropertyChanged([CallerMemberName] string? propertyName = null)
         {
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
@@ -108,7 +128,12 @@ namespace Projector.ViewModels
         #endregion
 
         #region Private methods
-
+        /// <summary>
+        /// Initializes and starts the update timer and visualization timer for periodic data updates.
+        /// </summary>
+        /// <remarks>This method configures the update timer to trigger data updates at regular intervals.
+        /// It should be called to ensure that both timers are properly initialized and running. Calling this method
+        /// multiple times will reset the timers.</remarks>
         private void UpdateTimerInit()
         {
             _visualizationTimer.Stop();
@@ -123,6 +148,9 @@ namespace Projector.ViewModels
             _visualizationTimer.Start();
         }
 
+        /// <summary>
+        /// Performs a data update by retrieving follow-up documents and building chart data.
+        /// </summary>
         private void RunDataUpdate()
         {
 
@@ -130,6 +158,13 @@ namespace Projector.ViewModels
             BuildChartData();
 
         }
+
+        /// <summary>
+        /// Starts the timer-based loop that cycles through available charts for visualization.
+        /// </summary>
+        /// <remarks>This method initializes and starts a timer to periodically display the next chart in
+        /// the collection. If there are no charts available, the method does nothing. This method is intended to be
+        /// called when chart visualization should begin or resume.</remarks>
         private void StartVisualizationLoop()
         {
             if (_charts == null || _charts.Count == 0)
@@ -147,6 +182,11 @@ namespace Projector.ViewModels
             _visualizationTimer.Start();
         }
 
+        /// <summary>
+        /// Advances to the next chart in the collection and updates the chart-related properties to display its data.
+        /// </summary>
+        /// <remarks>If the end of the chart collection is reached, the method cycles back to the first
+        /// chart. If there are no charts available, the method performs no action.</remarks>
         private void ShowNextChart()
         {
             if (_charts == null || _charts.Count == 0)
@@ -170,6 +210,13 @@ namespace Projector.ViewModels
             if (_currentChartIndex >= _charts.Count)
                 _currentChartIndex = 0;
         }
+
+        /// <summary>
+        /// Loads the follow-up document and updates related status report collections for the current context.
+        /// </summary>
+        /// <remarks>This method retrieves a follow-up document based on the parent document name and
+        /// updates internal collections with the latest status report and stop time data. If an error occurs during the
+        /// loading process, an error message is displayed to the user.</remarks>
         private void GetFollowupDocument()
         {
             try
@@ -189,6 +236,14 @@ namespace Projector.ViewModels
                  MessageBox.Show($"A következő hiba lépett fel a followup dokumentum betöltése közben : {ex.Message}", "GetFollowupDocuments", System.Windows.MessageBoxButton.OK, System.Windows.MessageBoxImage.Error);
             }
         }
+        /// <summary>
+        /// Builds and populates the chart data collections based on the current follow-up document and affected
+        /// workcenters.
+        /// </summary>
+        /// <remarks>This method clears any existing chart data and generates new chart series for output,
+        /// efficiency, operation hours, headcount, and machine downtime. The generated charts reflect the current state
+        /// of the follow-up document and are filtered by the set of affected workcenters. This method should be called
+        /// whenever the underlying data changes to ensure that the chart data remains up to date.</remarks>
         private void BuildChartData()
         {
 
@@ -369,8 +424,8 @@ namespace Projector.ViewModels
                     }
                 }
 
-                var _kftEff = _statusReportMahines.Where(m => m.WorkcenterType == EnumMachineType.FFCManualProcess.ToString()).Select(m => m.AvgEfficiency).ToList();
-                AffectedManualWorkcenters = _statusReportMahines.Where(m => m.WorkcenterType == EnumMachineType.FFCManualProcess.ToString()).Select(m => m.Workcenter).ToList();
+                var _kftEff = _statusReportMahines.Where(m => m.WorkcenterType == EnumMachineType.ManualProcess.ToString()).Select(m => m.AvgEfficiency).ToList();
+                AffectedManualWorkcenters = _statusReportMahines.Where(m => m.WorkcenterType == EnumMachineType.ManualProcess.ToString()).Select(m => m.Workcenter).ToList();
 
                 ProjectorDataModel projectorManualEff = new ProjectorDataModel();
                 projectorManualEff.Id = $"Kézi folyamat hatékonyság / Manual process efficiency";
@@ -425,11 +480,9 @@ namespace Projector.ViewModels
                     List<string> stopCodes = new List<string> { "GEPHIBA" };
                     ProjectorDataModel statusReportStopTimes = new ProjectorDataModel();
                     statusReportStopTimes.Id = "Géphiba / Machine down time";
-                    //statusReportStopTimes.XAxisTitle = "Munkanap / Workday";
                     statusReportStopTimes.YAxisTitle = "Állásidő / Down time";
                     statusReportStopTimes.XAxisLabel = stopCodes;
                     statusReportStopTimes.YAxisFormatter = value => value.ToString("N2");
-                    //AffectedManualWorkcenters = workcenters.ToList();
 
                     statusReportStopTimes.ChartData = new SeriesCollection
                     {
@@ -460,10 +513,12 @@ namespace Projector.ViewModels
             }
         }
 
-
+        /// <summary>
+        /// Retrieves the first available setup configuration from the PisSetup database collection.
+        /// </summary>
+        /// <returns>A <see cref="PisSetup"/> object representing the setup configuration if found; otherwise, <c>null</c>.</returns>
         public static PisSetup LoadSetupData()
         {
-            //var emailSetupData = new ObservableCollection<PisSetup>();
             ConnectionManagement conMgmnt = new ConnectionManagement();
             var databaseCollection = conMgmnt.GetCollection<PisSetup>(conMgmnt.PisSetupDbName);
             return databaseCollection.Find(FilterDefinition<PisSetup>.Empty).FirstOrDefault();

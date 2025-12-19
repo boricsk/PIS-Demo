@@ -7,6 +7,14 @@ using System.Threading.Tasks;
 
 namespace Projector.Models
 {
+    /// <summary>
+    /// Represents the master data for a production or sales planning record, including quantities, pricing, scheduling,
+    /// and related metadata.
+    /// </summary>
+    /// <remarks>This class encapsulates detailed information about a single planning entry, such as planned
+    /// and finished quantities, pricing breakdowns, scheduling dates, and customer or item references. It is typically
+    /// used to transfer or store planning data within manufacturing or sales management systems. All properties are
+    /// auto-implemented and should be set according to the requirements of the planning process.</remarks>
     public class PlanningMasterData
     {
         public string Plan_Name { get; set; }

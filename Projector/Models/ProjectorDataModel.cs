@@ -9,6 +9,12 @@ using System.Threading.Tasks;
 
 namespace Projector.Models
 {
+    /// <summary>
+    /// Represents the data model for a projector chart, including axis titles, labels, formatting, and chart data.
+    /// </summary>
+    /// <remarks>This model is typically used to supply data and configuration for rendering projector-style
+    /// charts in data visualization scenarios. It encapsulates axis metadata, label formatting, and the underlying
+    /// chart data series.</remarks>
     public class ProjectorDataModel
     {
         public string Id { get; set; }

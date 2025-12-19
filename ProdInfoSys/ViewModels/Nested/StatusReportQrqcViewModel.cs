@@ -547,17 +547,17 @@ namespace ProdInfoSys.ViewModels.Nested
                 foreach (var workcenter in WorkcenterData)
                 {
 
-                    if (workcenter.WorkcenterType == EnumMachineType.FFCInscpectionProcess.ToString())
+                    if (workcenter.WorkcenterType == EnumMachineType.InscpectionProcess.ToString())
                     {
                         _workcenterNamesInspection.Add(workcenter.Workcenter);
                     }
 
-                    if (workcenter.WorkcenterType == EnumMachineType.FFCManualProcess.ToString())
+                    if (workcenter.WorkcenterType == EnumMachineType.ManualProcess.ToString())
                     {
                         _workcenterNamesManual.Add(workcenter.Workcenter);
                     }
 
-                    if (workcenter.WorkcenterType == EnumMachineType.FFCMachineProcess.ToString())
+                    if (workcenter.WorkcenterType == EnumMachineType.MachineProcess.ToString())
                     {
                         _workcenterNamesMachine.Add(workcenter.Workcenter);
                     }

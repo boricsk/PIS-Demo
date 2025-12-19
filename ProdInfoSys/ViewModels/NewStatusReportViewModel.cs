@@ -402,7 +402,7 @@ namespace ProdInfoSys.ViewModels
             foreach (var document in _followupDocument.MachineFollowups)
             {
                 StatusReportMachineList sr = new StatusReportMachineList();
-                sr.WorkcenterType = EnumMachineType.FFCMachineProcess.ToString();
+                sr.WorkcenterType = EnumMachineType.MachineProcess.ToString();
                 sr.Workcenter = document.Workcenter;
                 sr.ComulatedOut = document.MachineFollowupDocuments.Select(s => s.TTLOutput).Sum();
                 sr.ComulatedPlan = document.MachineFollowupDocuments.Where(x => x.TTLOutput > 0).Select(x => x.ComulatedPlan).LastOrDefault();
@@ -439,7 +439,7 @@ namespace ProdInfoSys.ViewModels
             foreach (var document in _followupDocument.InspectionFollowups)
             {
                 StatusReportMachineList sr = new StatusReportMachineList();
-                sr.WorkcenterType = EnumMachineType.FFCInscpectionProcess.ToString();
+                sr.WorkcenterType = EnumMachineType.InscpectionProcess.ToString();
                 sr.Workcenter = document.Workcenter;
                 sr.ComulatedOut = document.InspectionFollowupDocuments.Select(s => s.TTLOutput).Sum();
                 sr.ComulatedPlan = document.InspectionFollowupDocuments.Where(x => x.TTLOutput > 0).Select(x => x.ComulatedPlan).LastOrDefault();
@@ -472,7 +472,7 @@ namespace ProdInfoSys.ViewModels
             {
                 _wordayNumber = document.MaualFollowupDocuments.Select(c => c.Workday).ToList().Count();
                 StatusReportMachineList sr = new StatusReportMachineList();
-                sr.WorkcenterType = EnumMachineType.FFCManualProcess.ToString();
+                sr.WorkcenterType = EnumMachineType.ManualProcess.ToString();
                 sr.Workcenter = document.Workcenter;
                 sr.ComulatedOut = document.MaualFollowupDocuments.Select(s => s.TTLOutput).Sum();
                 sr.ComulatedPlan = document.MaualFollowupDocuments.Where(x => x.TTLOutput > 0).Select(x => x.ComulatedPlan).LastOrDefault();

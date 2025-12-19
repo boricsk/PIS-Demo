@@ -6,6 +6,9 @@ using System.Threading.Tasks;
 
 namespace Projector.Models
 {
+    /// <summary>
+    /// Represents an inspection record, including the associated work center and any follow-up documents.
+    /// </summary>
     public class Inspection
     {
         public string Workcenter { get; set; }

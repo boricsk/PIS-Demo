@@ -7,6 +7,14 @@ using System.Threading.Tasks;
 
 namespace Projector.Models
 {
+    /// <summary>
+    /// Represents a comprehensive status report containing production, planning, and operational data for a specific
+    /// reporting period.
+    /// </summary>
+    /// <remarks>The StatusReport class aggregates information such as issue date, report name, workday
+    /// counts, machine data, production plans, turnover, shipout plans, daily plans, production completion ratios, and
+    /// stop times. It is typically used to encapsulate all relevant data for generating or analyzing a production
+    /// status report.</remarks>
     public class StatusReport
     {
         public DateOnly IssueDate {get;set;}

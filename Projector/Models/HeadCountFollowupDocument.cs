@@ -12,8 +12,15 @@ using System.Threading.Tasks;
 namespace Projector.Models
 {
     /// <summary>
-    /// A WPF-ben történt változásokat figyelégéhez implementálni kell a INotifyCollectionChanged-t és a propertyket így kell deklarálni.
+    /// Represents a data model for tracking and reporting headcount and related workforce metrics for a specific
+    /// workday, supporting property and collection change notifications.
     /// </summary>
+    /// <remarks>This class implements the INotifyPropertyChanged interface to support data binding scenarios,
+    /// such as those found in UI frameworks. It exposes a range of properties for planned and actual headcount,
+    /// absences, shift information, and calculated workforce statistics. Property changes for key metrics automatically
+    /// trigger notifications for dependent calculated properties, ensuring that consumers receive up-to-date values.
+    /// The class is suitable for use in applications that require dynamic updates to headcount and shift-related data,
+    /// such as workforce planning or HR analytics tools.</remarks>
     public class HeadCountFollowupDocument : INotifyPropertyChanged
     {
         public event PropertyChangedEventHandler? PropertyChanged;
@@ -24,7 +31,7 @@ namespace Projector.Models
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
             // Ha ezen oszlopok értékei változnak
             if (propertyName == nameof(ActualHC) || 
-                propertyName == nameof(FFCIndirect) ||
+                propertyName == nameof(Indirect) ||
                 propertyName == nameof(NettoHCPlan) ||              
                 propertyName == nameof(Subcontactor) ||              
                 propertyName == nameof(HCPlan) ||              
@@ -35,14 +42,14 @@ namespace Projector.Models
                 ) 
                 {
                     // akkor frissítenie kéne az összegeket
-                    PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(FFCDirectPlusIndirect)));
+                    PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(DirectPlusIndirect)));
                     PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(Diff)));
                     PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(CalcActualSH)));
                     PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(CalcPlannedSH)));
                     PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(AbsebseTotal)));
                 }
         }
-        public int FFCDirectPlusIndirect => FFCIndirect + ActualHC;
+        public int DirectPlusIndirect => Indirect + ActualHC;
         public int Diff => ActualHC - NettoHCPlan;
         public int AbsebseTotal => Sick + Holiday;
         public double CalcActualSH => (double)ActualHC * (double)ShiftNum * (double)ShiftLen;
@@ -110,11 +117,11 @@ namespace Projector.Models
             }
         }
 
-        private int _ffcIndirect;
-        public int FFCIndirect
+        private int _Indirect;
+        public int Indirect
         {
-            get => _ffcIndirect;
-            set { _ffcIndirect = value; OnPropertyChanged(); }
+            get => _Indirect;
+            set { _Indirect = value; OnPropertyChanged(); }
         }
 
         private int _qaIndirect;
@@ -216,43 +223,3 @@ namespace Projector.Models
 
     }
 }
-/*
- 
-     public class HeadCountFollowupDocument
-    {       
-        public DateOnly Workday { get; set; }
-
-        public int NumberOfWorkdays { get; set; }
-
-        public int NettoHCPlan { get; set; }
-
-        public int ComulatedHCPlanNet { get; set; }
-
-        public int HCPlan { get; set; }
-
-        public int Subcontactor { get; set; }
-
-        public int ActualHC { get; set; }
-
-        public int FFCIndirect { get; set; }
-
-        public int QAIndirect { get; set; }
-
-        public int FFCDirectIndirect { get; set; }
-
-        public int ActualHCComulated { get; set; }
-
-        public int ActualHCDaily { get; set; }
-
-        public int DailyHCPlanAvg { get; set; }
-        
-        public int Holiday { get; set; }
-
-        public int Sick { get; set; }
-
-        public int Difference { get; set; }
-
-        public decimal AvailWorkingHour { get; set; }
-
-    }
- */

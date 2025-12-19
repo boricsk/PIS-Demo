@@ -7,12 +7,15 @@ using System.ComponentModel;
 
 namespace Projector.Enums
 {
+    /// <summary>
+    /// Specifies the types of machines or processes used in production operations.
+    /// </summary>
     public enum EnumMachineType
     {
-        FFCInspectionMachine = 0,
-        FFCMachineProcess = 1,
-        FFCManualProcess = 2,
-        FFCManualInspection = 3,
-        FFCInscpectionProcess = 4
+        InspectionMachine = 0,
+        MachineProcess = 1,
+        ManualProcess = 2,
+        ManualInspection = 3,
+        InscpectionProcess = 4
     }
 }

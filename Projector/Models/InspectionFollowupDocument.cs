@@ -9,6 +9,16 @@ using System.Threading.Tasks;
 
 namespace Projector.Models
 {
+    /// <summary>
+    /// Represents a data model for tracking inspection follow-up information, including production outputs, rejects,
+    /// plans, and utilization metrics for multiple shifts within a workday.
+    /// </summary>
+    /// <remarks>This class provides properties for recording and aggregating production and quality data
+    /// across up to three shifts, as well as supplier rejects and operational hours. It implements property change
+    /// notification to support data binding scenarios, such as in UI frameworks. Calculated properties, such as output
+    /// sums, reject ratios, and utilization, are automatically updated when relevant input properties change. Thread
+    /// safety is not guaranteed; if used in multi-threaded scenarios, external synchronization may be
+    /// required.</remarks>
     public class InspectionFollowupDocument : INotifyPropertyChanged
     {
         public event PropertyChangedEventHandler? PropertyChanged;

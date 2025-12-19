@@ -8,6 +8,16 @@ using System.Threading.Tasks;
 
 namespace Projector.Models
 {
+    /// <summary>
+    /// Represents a data model for tracking machine production follow-up, including shift outputs, rejects, operational
+    /// hours, and related production metrics. Supports property change notification for data binding scenarios.
+    /// </summary>
+    /// <remarks>This class is typically used in manufacturing or production monitoring applications to
+    /// aggregate and expose daily and cumulative production data for a machine. It implements the
+    /// INotifyPropertyChanged interface to support UI frameworks that rely on property change notifications, such as
+    /// WPF or Xamarin.Forms. Calculated properties such as OutputSum, RejectSum, CalcRejectRatio, and Utilization
+    /// automatically update when relevant underlying properties change. Thread safety is not guaranteed; access from
+    /// multiple threads should be synchronized externally if required.</remarks>
     public class MachineFollowupDocument : INotifyPropertyChanged
     {
         public event PropertyChangedEventHandler? PropertyChanged;

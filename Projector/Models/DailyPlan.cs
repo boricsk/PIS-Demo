@@ -6,6 +6,9 @@ using System.Threading.Tasks;
 
 namespace Projector.Models
 {
+    /// <summary>
+    /// 
+    /// </summary>
     public class DailyPlan
     {
         public decimal Diff => ActualQty - PlannedQty;

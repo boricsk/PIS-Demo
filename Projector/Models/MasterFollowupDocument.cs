@@ -8,6 +8,15 @@ using System.Threading.Tasks;
 
 namespace Projector.Models
 {
+    /// <summary>
+    /// Represents a master follow-up document containing scheduling, staffing, and status information for a production
+    /// plan or project.
+    /// </summary>
+    /// <remarks>This class aggregates key details such as document and plan names, scheduling dates, workday
+    /// calculations, shift information, headcount, machine and manual follow-ups, inspections, and status reports. It
+    /// is typically used to track and manage the progress and resources associated with a manufacturing or operational
+    /// plan. All properties are intended for data storage and retrieval; business logic should be implemented
+    /// externally.</remarks>
     public class MasterFollowupDocument
     {
         [BsonId]

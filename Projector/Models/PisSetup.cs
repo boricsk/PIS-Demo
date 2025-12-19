@@ -9,6 +9,14 @@ using System.Threading.Tasks;
 
 namespace Projector.Models
 {
+    /// <summary>
+    /// Represents the configuration settings for a Production Information System (PIS), including email distribution
+    /// lists and workcenter groupings.
+    /// </summary>
+    /// <remarks>This class is typically used to store and retrieve PIS setup data from a MongoDB database.
+    /// The properties correspond to various configuration elements such as email lists for notifications and
+    /// collections of workcenters used in production meetings, manual average calculations, and projector
+    /// displays.</remarks>
     public class PisSetup
     {
         [BsonId]

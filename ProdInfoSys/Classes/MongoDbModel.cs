@@ -106,7 +106,7 @@ namespace ProdInfoSys.Classes
                 //munkanaplista a követési adatokkal.
                 foreach (var workcenter in _newFollowupDocument.MachineCenters)
                 {
-                    if (workcenter.MachineType == EnumMachineType.FFCMachineProcess)
+                    if (workcenter.MachineType == EnumMachineType.MachineProcess)
                     {
                         int currentComulatedQty = 0;
                         //FirstOfDefault, mert a select listát ad vissza
@@ -135,7 +135,7 @@ namespace ProdInfoSys.Classes
                         machines.Add(m);
                     }
 
-                    if (workcenter.MachineType == EnumMachineType.FFCInspectionMachine || workcenter.MachineType == EnumMachineType.FFCManualInspection)
+                    if (workcenter.MachineType == EnumMachineType.InspectionMachine || workcenter.MachineType == EnumMachineType.ManualInspection)
                     {
                         int currentComulatedQty = 0;
                         int dailyPlan = _newFollowupDocument.MachineCenters.Where(m => m.Workcenter == workcenter.Workcenter).Select(m => m.DailyPlan).FirstOrDefault();
@@ -164,7 +164,7 @@ namespace ProdInfoSys.Classes
                         inspections.Add(i);
                     }
 
-                    if (workcenter.MachineType == EnumMachineType.FFCManualProcess)
+                    if (workcenter.MachineType == EnumMachineType.ManualProcess)
                     {
                         int currentComulatedQty = 0;
                         var induvidualFollowups = new List<ManualFollowupDocument>();

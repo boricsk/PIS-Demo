@@ -59,14 +59,14 @@ namespace ProdInfoSys.Classes
             {
                 ret.AllStatusReportForQrqc = new ObservableCollection<StatusReportQrqc>(_doc.StatusReportsQRQC.ToList());
                 ret.SelectedStatusReportQrqc = _doc.StatusReportsQRQC.Where(x => x.ReportName == _selectedReportName).FirstOrDefault();
-                ret.ManualRejectRatio = ret.SelectedStatusReportQrqc.MachineData.Where(s => s.WorkcenterType == EnumMachineType.FFCManualProcess.ToString()).Select(s => s.AvgRejectRatio).ToList();
-                ret.MachineRejectRatio = ret.SelectedStatusReportQrqc.MachineData.Where(s => s.WorkcenterType == EnumMachineType.FFCMachineProcess.ToString()).Select(s => s.AvgRejectRatio).ToList();
-                ret.InspectionRejectRatio = ret.SelectedStatusReportQrqc.MachineData.Where(s => s.WorkcenterType == EnumMachineType.FFCInscpectionProcess.ToString()).Select(s => s.AvgRejectRatio).ToList();
+                ret.ManualRejectRatio = ret.SelectedStatusReportQrqc.MachineData.Where(s => s.WorkcenterType == EnumMachineType.ManualProcess.ToString()).Select(s => s.AvgRejectRatio).ToList();
+                ret.MachineRejectRatio = ret.SelectedStatusReportQrqc.MachineData.Where(s => s.WorkcenterType == EnumMachineType.MachineProcess.ToString()).Select(s => s.AvgRejectRatio).ToList();
+                ret.InspectionRejectRatio = ret.SelectedStatusReportQrqc.MachineData.Where(s => s.WorkcenterType == EnumMachineType.InscpectionProcess.ToString()).Select(s => s.AvgRejectRatio).ToList();
                 ret.MachineStatusReports = new ObservableCollection<StatusReportMachineList>(_doc.StatusReportsQRQC.Where(s => s.ReportName == _selectedReportName).SelectMany(s => s.MachineData));
 
-                ret.KftEfficiency = new ObservableCollection<decimal>(ret.MachineStatusReports.Where(s => s.WorkcenterType == EnumMachineType.FFCManualProcess.ToString()).Select(s => s.AvgEfficiency).ToList());
+                ret.KftEfficiency = new ObservableCollection<decimal>(ret.MachineStatusReports.Where(s => s.WorkcenterType == EnumMachineType.ManualProcess.ToString()).Select(s => s.AvgEfficiency).ToList());
                 ManualProcessAvgEffForQrqc = ret.MachineStatusReports.Where(s => _affectedManualWorkcenters.Contains(s.Workcenter)).Select(s => s.AvgEfficiency).Average();
-                ret.SubconEfficiency = new ObservableCollection<decimal>(ret.MachineStatusReports.Where(s => s.WorkcenterType == EnumMachineType.FFCManualProcess.ToString()).Select(s => s.AvgEfficiencySubcon).ToList());
+                ret.SubconEfficiency = new ObservableCollection<decimal>(ret.MachineStatusReports.Where(s => s.WorkcenterType == EnumMachineType.ManualProcess.ToString()).Select(s => s.AvgEfficiencySubcon).ToList());
                 ret.KftEfficiency.Add(ManualProcessAvgEffForQrqc);
                 ret.AffectedMachineStatusReportsForQrqcMeeting = new ObservableCollection<StatusReportMachineList>(ret.MachineStatusReports.ToList());
 
@@ -100,14 +100,14 @@ namespace ProdInfoSys.Classes
 
                 ret.SalesOutputValues = ret.AllStatusReportForProd.Select(s => s.PlansData).Select(s => s.SalesPlan).ToList();
                 ret.SelectedStatusReportProd = _doc.StatusReports.Where(x => x.ReportName == _selectedReportName).FirstOrDefault();
-                ret.ManualRejectRatio = ret.SelectedStatusReportProd.MachineData.Where(s => s.WorkcenterType == EnumMachineType.FFCManualProcess.ToString()).Select(s => s.AvgRejectRatio).ToList();
-                ret.MachineRejectRatio = ret.SelectedStatusReportProd.MachineData.Where(s => s.WorkcenterType == EnumMachineType.FFCMachineProcess.ToString()).Select(s => s.AvgRejectRatio).ToList();
-                ret.InspectionRejectRatio = ret.SelectedStatusReportProd.MachineData.Where(s => s.WorkcenterType == EnumMachineType.FFCInscpectionProcess.ToString()).Select(s => s.AvgRejectRatio).ToList();
+                ret.ManualRejectRatio = ret.SelectedStatusReportProd.MachineData.Where(s => s.WorkcenterType == EnumMachineType.ManualProcess.ToString()).Select(s => s.AvgRejectRatio).ToList();
+                ret.MachineRejectRatio = ret.SelectedStatusReportProd.MachineData.Where(s => s.WorkcenterType == EnumMachineType.MachineProcess.ToString()).Select(s => s.AvgRejectRatio).ToList();
+                ret.InspectionRejectRatio = ret.SelectedStatusReportProd.MachineData.Where(s => s.WorkcenterType == EnumMachineType.InscpectionProcess.ToString()).Select(s => s.AvgRejectRatio).ToList();
 
                 ret.MachineStatusReports = new ObservableCollection<StatusReportMachineList>(_doc.StatusReports.Where(s => s.ReportName == _selectedReportName).SelectMany(s => s.MachineData));
                 ret.AffectedMachineStatusReportsForProdMeeting = new ObservableCollection<StatusReportMachineList>(ret.MachineStatusReports.Where(s => _prodMeetingWorkcenterList.Contains(s.Workcenter)).ToList());
-                ret.KftEfficiency = new ObservableCollection<decimal>(ret.MachineStatusReports.Where(s => s.WorkcenterType == EnumMachineType.FFCManualProcess.ToString()).Select(s => s.AvgEfficiency).ToList());
-                ret.SubconEfficiency = new ObservableCollection<decimal>(ret.MachineStatusReports.Where(s => s.WorkcenterType == EnumMachineType.FFCManualProcess.ToString()).Select(s => s.AvgEfficiencySubcon).ToList());
+                ret.KftEfficiency = new ObservableCollection<decimal>(ret.MachineStatusReports.Where(s => s.WorkcenterType == EnumMachineType.ManualProcess.ToString()).Select(s => s.AvgEfficiency).ToList());
+                ret.SubconEfficiency = new ObservableCollection<decimal>(ret.MachineStatusReports.Where(s => s.WorkcenterType == EnumMachineType.ManualProcess.ToString()).Select(s => s.AvgEfficiencySubcon).ToList());
 
                 ret.PlanningDataOfReport = _doc.StatusReports.Where(s => s.ReportName == _selectedReportName).Select(s => s.PlansData).FirstOrDefault();
                 ret.PlanChangeDetails = new ObservableCollection<PlanningMasterData>(ret.PlanningDataOfReport.PlanChanges);

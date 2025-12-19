@@ -6,6 +6,9 @@ using System.Threading.Tasks;
 
 namespace Projector.Models
 {
+    /// <summary>
+    /// Represents information about a stop event, including the work center, stop code, and total stop time.
+    /// </summary>
     public class StopTime
     {
         public string Workcenter {get; set;}

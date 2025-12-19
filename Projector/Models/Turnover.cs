@@ -6,9 +6,16 @@ using System.Threading.Tasks;
 
 namespace Pojector.Models
 {
+    /// <summary>
+    /// Represents a sales turnover record, including details such as document numbers, customer information, product
+    /// data, pricing, amounts, and related financial and logistical fields.
+    /// </summary>
+    /// <remarks>This class is typically used to model individual sales line items or transactions for
+    /// reporting, analysis, or integration with financial systems. It includes properties for both base and calculated
+    /// values, such as amounts with and without VAT, currency conversion factors, and cost information. All properties
+    /// are intended to be set and retrieved as part of the turnover data lifecycle.</remarks>
     public class Turnover
     {
-
         public decimal LineTTLDcPrice => DCPrice * Quantity;
 
         public string DocumentNo { get; set; }

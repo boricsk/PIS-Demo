@@ -8,7 +8,9 @@ namespace Projector.Models
 {
     public class ShipoutPlan
     {
-
+        /// <summary>
+        /// Gets or sets the document number associated with the record.
+        /// </summary>
         public string Bizonylatszam { get; set; }
         public string Szam { get; set; }
         public decimal NyitottMennyiseg { get; set; }

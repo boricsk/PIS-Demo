@@ -1,6 +1,13 @@
 ﻿
 namespace updater
 {
+    /// <summary>
+    /// Provides the entry point and core update logic for the Production Information System Updater application.
+    /// </summary>
+    /// <remarks>This class is intended for internal use as the main executable logic of the updater tool. It
+    /// reads configuration values from the registry, validates required settings, and performs the update process by
+    /// copying files from the update source to the local installation directory. The class is not intended to be
+    /// instantiated or used as a library component.</remarks>
     internal class Program
     {
         static void Main(string[] args)
@@ -30,6 +37,16 @@ namespace updater
             Console.ReadLine();
         }
 
+        /// <summary>
+        /// Copies all files and subdirectories from the specified source directory to the specified destination
+        /// directory.
+        /// </summary>
+        /// <remarks>Files whose names contain the substring "updater" are excluded from copying. The
+        /// method copies all files and subdirectories recursively.</remarks>
+        /// <param name="sourceDir">The path of the directory to copy from. Must refer to an existing directory.</param>
+        /// <param name="destinationDir">The path of the directory to copy to. The directory will be created if it does not exist.</param>
+        /// <param name="overwrite">true to overwrite existing files in the destination directory; otherwise, false. The default is true.</param>
+        /// <exception cref="DirectoryNotFoundException">Thrown if the directory specified by sourceDir does not exist.</exception>
         public static void CopyDirectory(string sourceDir, string destinationDir, bool overwrite = true)
         {
             // Ha a forrás nem létezik, hiba

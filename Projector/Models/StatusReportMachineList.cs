@@ -10,9 +10,16 @@ using System.Threading.Tasks;
 
 namespace Projector.Models
 {
+    /// <summary>
+    /// Represents a summary of production and efficiency metrics for a group of machines or work centers in a status
+    /// report.
+    /// </summary>
+    /// <remarks>This class aggregates planned and actual output, efficiency, and reject statistics for
+    /// reporting purposes. It is typically used to present or analyze production performance data for a specific work
+    /// center or machine group. The properties include both cumulative totals and per-period series data to support
+    /// detailed reporting and visualization scenarios.</remarks>
     public class StatusReportMachineList
     {
-
         public int Diff => ComulatedOut - ComulatedPlan;        
         public string Workcenter {get; set;}
         public string WorkcenterType {get; set;}

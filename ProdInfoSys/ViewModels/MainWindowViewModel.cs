@@ -312,17 +312,17 @@ namespace ProdInfoSys.ViewModels
                 LoadTree();
                 LoadDataWithDapper();
                 _inspectionMachines = _erpMachineCenters
-                    .Where(m => m.MachineType == EnumMachineType.FFCInspectionMachine || m.MachineType == EnumMachineType.FFCManualInspection)
+                    .Where(m => m.MachineType == EnumMachineType.InspectionMachine || m.MachineType == EnumMachineType.ManualInspection)
                     .Select(m => m.Workcenter)
                     .ToList();
 
                 _manualMachines = _erpMachineCenters
-                    .Where(m => m.MachineType == EnumMachineType.FFCManualProcess)
+                    .Where(m => m.MachineType == EnumMachineType.ManualProcess)
                     .Select(m => m.Workcenter)
                     .ToList();
 
                 _machines = _erpMachineCenters
-                    .Where(m => m.MachineType == EnumMachineType.FFCMachineProcess)
+                    .Where(m => m.MachineType == EnumMachineType.MachineProcess)
                     .Select(m => m.Workcenter)
                     .ToList();
 
